@@ -1,0 +1,25 @@
+42 ICON "res/icons/icon.ico"
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+	BLOCK "StringFileInfo"
+	BEGIN
+		BLOCK "040904E4"
+		BEGIN
+			VALUE "CompanyName", "RetiredSphinx game design"
+			VALUE "FileDescription", "Magic Hexagon"
+			VALUE "FileVersion", "1.0"
+			VALUE "InternalName", "Pony48"
+			VALUE "LegalCopyright", "RetiredSphinx"
+			VALUE "OriginalFilename", "Pony48.exe"
+			VALUE "ProductName", "Magic Hexagon"
+			VALUE "ProductVersion", "1.0"
+		END
+	END
+
+	BLOCK "VarFileInfo"
+	BEGIN
+		VALUE "Translation", 0x409, 1252
+	END
+END

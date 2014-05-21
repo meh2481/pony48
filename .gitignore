@@ -1,0 +1,8 @@
+*.d
+*.o
+Pony48_64
+Pony48_32
+Pony48.exe
+_downloaded/*
+_gfxbase/*
+*.dll
