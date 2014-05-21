@@ -6,3 +6,4 @@ Pony48.exe
 _downloaded/*
 _gfxbase/*
 *.dll
+*.directory
