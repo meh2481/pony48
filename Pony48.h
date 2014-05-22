@@ -63,7 +63,7 @@ private:
 	Color m_BoardBg;
 	Color m_TileBg;
 	Color m_BgCol;
-	TilePiece m_Board[BOARD_WIDTH][BOARD_HEIGHT];
+	TilePiece* m_Board[BOARD_WIDTH][BOARD_HEIGHT];
 
 protected:
 	void frame(float32 dt);
@@ -102,7 +102,7 @@ public:
 	
 	//board.cpp functions
 	void drawBoard();						//Draw the tiles and such on the board
-	TilePiece loadTile(string sFilename);	//Load a tile piece from an XML file
+	TilePiece* loadTile(string sFilename);	//Load a tile piece from an XML file
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine

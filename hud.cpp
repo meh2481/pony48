@@ -478,6 +478,7 @@ void HUD::create(string sXMLFilename)
     if(root == NULL)
 	{
 		errlog << "Error: No toplevel \"hud\" item in XML file " << sXMLFilename << endl;
+		delete doc;
 		return;
 	}
     const char* cName = root->Attribute("name");

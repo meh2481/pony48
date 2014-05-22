@@ -51,7 +51,15 @@ Pony48Engine::~Pony48Engine()
 {
 	errlog << "~Pony48Engine()" << endl;
 	saveConfig(getSaveLocation() + "config.xml");
-	//Delete stuffs
+	//Clean up board
+	for(int i = 0; i < BOARD_HEIGHT; i++)
+	{
+		for(int j = 0; j < BOARD_WIDTH; j++)
+		{
+			if(m_Board[j][i] != NULL)
+				delete m_Board[j][i];
+		}
+	}
 	errlog << "delete hud" << endl;
 	//delete m_hud;
 }
@@ -104,14 +112,25 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	//Set gravity to 0
 	getWorld()->SetGravity(b2Vec2(0,0));
 	
-	physSegment* testseg = new physSegment;
-	testseg->img = getImage("res/gfx/ab/1.png");
-	testseg->size = Point(TILE_WIDTH,TILE_HEIGHT);
-	m_Board[2][1].seg = testseg;
-	testseg = new physSegment;
-	testseg->img = getImage("res/gfx/tilebg.png");
-	testseg->size = Point(TILE_WIDTH,TILE_HEIGHT);
-	m_Board[2][1].bg = testseg;
+	//Init board
+	for(int i = 0; i < BOARD_HEIGHT; i++)
+	{
+		for(int j = 0; j < BOARD_WIDTH; j++)
+			m_Board[j][i] = NULL;
+	}
+	
+	//Start with 2 random tiles
+	for(int start = 0; start < 2; start++)
+	{
+		while(true)
+		{
+			int x = randInt(0, BOARD_WIDTH-1);
+			int y = randInt(0, BOARD_HEIGHT-1);
+			if(m_Board[x][y] != NULL) continue;
+			m_Board[x][y] = loadTile("res/tiles/2.xml");
+			break;
+		}
+	}
 	
 	//Create sounds up front
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items
