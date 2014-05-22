@@ -1,6 +1,6 @@
 /*
-    Pony48 source - Engine.cpp
-    Copyright (c) 2014 Mark Hutcheson
+	Pony48 source - Engine.cpp
+	Copyright (c) 2014 Mark Hutcheson
 */
 
 #include "Engine.h"
@@ -25,87 +25,87 @@ int lockFunc(void*);
 void unlockFunc(void*);
 #endif
 
-GLfloat LightAmbient[]  = { 0.1f, 0.1f, 0.1f, 1.0f };
+GLfloat LightAmbient[]	= { 0.1f, 0.1f, 0.1f, 1.0f };
 // Diffuse Light Values
-GLfloat LightDiffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat LightDiffuse[]	= { 1.0f, 1.0f, 1.0f, 1.0f };
 // Light Position 
 GLfloat LightPosition[] = { 0.0f, 0.0f, 2.0f, 1.0f };
 
 void PrintEvent(const SDL_Event * event)
 {
-    if (event->type == SDL_WINDOWEVENT) {
-        switch (event->window.event) {
-        case SDL_WINDOWEVENT_SHOWN:
-            printf("Window %d shown\n", event->window.windowID);
-            break;
-        case SDL_WINDOWEVENT_HIDDEN:
-            printf("Window %d hidden\n", event->window.windowID);
-            break;
-        case SDL_WINDOWEVENT_EXPOSED:
-            printf("Window %d exposed\n", event->window.windowID);
-            break;
-        case SDL_WINDOWEVENT_MOVED:
-            printf("Window %d moved to %d,%d\n",
-                    event->window.windowID, event->window.data1,
-                    event->window.data2);
-            break;
-        case SDL_WINDOWEVENT_RESIZED:
-            printf("Window %d resized to %dx%d\n",
-                    event->window.windowID, event->window.data1,
-                    event->window.data2);
-            break;
-        case SDL_WINDOWEVENT_MINIMIZED:
-            printf("Window %d minimized\n", event->window.windowID);
-            break;
-        case SDL_WINDOWEVENT_MAXIMIZED:
-            printf("Window %d maximized\n", event->window.windowID);
-            break;
-        case SDL_WINDOWEVENT_RESTORED:
-            printf("Window %d restored\n", event->window.windowID);
-            break;
-        case SDL_WINDOWEVENT_ENTER:
-            printf("Mouse entered window %d\n",
-                    event->window.windowID);
-            break;
-        case SDL_WINDOWEVENT_LEAVE:
-            printf("Mouse left window %d\n", event->window.windowID);
-            break;
-        case SDL_WINDOWEVENT_FOCUS_GAINED:
-            printf("Window %d gained keyboard focus\n",
-                    event->window.windowID);
-            break;
-        case SDL_WINDOWEVENT_FOCUS_LOST:
-            printf("Window %d lost keyboard focus\n",
-                    event->window.windowID);
-            break;
-        case SDL_WINDOWEVENT_CLOSE:
-            printf("Window %d closed\n", event->window.windowID);
-            break;
-        default:
-            printf("Window %d got unknown event %d\n",
-                    event->window.windowID, event->window.event);
-            break;
-        }
-    }
+	if (event->type == SDL_WINDOWEVENT) {
+		switch (event->window.event) {
+		case SDL_WINDOWEVENT_SHOWN:
+			printf("Window %d shown\n", event->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_HIDDEN:
+			printf("Window %d hidden\n", event->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_EXPOSED:
+			printf("Window %d exposed\n", event->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_MOVED:
+			printf("Window %d moved to %d,%d\n",
+					event->window.windowID, event->window.data1,
+					event->window.data2);
+			break;
+		case SDL_WINDOWEVENT_RESIZED:
+			printf("Window %d resized to %dx%d\n",
+					event->window.windowID, event->window.data1,
+					event->window.data2);
+			break;
+		case SDL_WINDOWEVENT_MINIMIZED:
+			printf("Window %d minimized\n", event->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_MAXIMIZED:
+			printf("Window %d maximized\n", event->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_RESTORED:
+			printf("Window %d restored\n", event->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_ENTER:
+			printf("Mouse entered window %d\n",
+					event->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_LEAVE:
+			printf("Mouse left window %d\n", event->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_FOCUS_GAINED:
+			printf("Window %d gained keyboard focus\n",
+					event->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_FOCUS_LOST:
+			printf("Window %d lost keyboard focus\n",
+					event->window.windowID);
+			break;
+		case SDL_WINDOWEVENT_CLOSE:
+			printf("Window %d closed\n", event->window.windowID);
+			break;
+		default:
+			printf("Window %d got unknown event %d\n",
+					event->window.windowID, event->window.event);
+			break;
+		}
+	}
 }
 
 bool Engine::_frame()
 {
 #ifndef AUDIO_THREADING
-  if(!m_bSoundDied)
-	  tyrsound_update();	//Just update audio in main thread on non-Windows systems
+	if(!m_bSoundDied)
+		m_audioSystem->update();
 #endif
-    //Handle input events from SDL
-    SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
+	//Handle input events from SDL
+	SDL_Event event;
+	while(SDL_PollEvent(&event))
+	{
 		//PrintEvent(&event);
-        //Update internal cursor position if cursor has moved
-        if(event.type == SDL_MOUSEMOTION)
-        {
-            m_ptCursorPos.x = event.motion.x;
-            m_ptCursorPos.y = event.motion.y;
-        }
+		//Update internal cursor position if cursor has moved
+		if(event.type == SDL_MOUSEMOTION)
+		{
+			m_ptCursorPos.x = event.motion.x;
+			m_ptCursorPos.y = event.motion.y;
+		}
 		if(event.type == SDL_WINDOWEVENT)
 		{
 			if(event.window.event == SDL_WINDOWEVENT_FOCUS_LOST && m_bPauseOnKeyboardFocus)
@@ -126,38 +126,38 @@ bool Engine::_frame()
 					errlog << "Error! Resize event generated, but resizable flag not set." << endl;
 			}
 		}
-        if(event.type == SDL_QUIT)
-            return true;
+		if(event.type == SDL_QUIT)
+			return true;
 		if(!m_bPaused)
 			handleEvent(event);
-    }
+	}
 	if(m_bPaused)
 	{
 		SDL_Delay(100);	//Wait 100 ms
 		return m_bQuitting;	//Break out here
 	}
 
-    float32 fCurTime = ((float32)SDL_GetTicks())/1000.0;
-    if(m_fAccumulatedTime <= fCurTime)
-    {
-        m_fAccumulatedTime += m_fTargetTime;
+	float32 fCurTime = ((float32)SDL_GetTicks())/1000.0;
+	if(m_fAccumulatedTime <= fCurTime)
+	{
+		m_fAccumulatedTime += m_fTargetTime;
 		m_iKeystates = SDL_GetKeyboardState(NULL);	//Get current key state
-        frame(m_fTargetTime);	//Box2D wants fixed timestep, so we use target framerate here instead of actual elapsed time
-        _render();
-    }
+		frame(m_fTargetTime);	//Box2D wants fixed timestep, so we use target framerate here instead of actual elapsed time
+		_render();
+	}
 
-    if(m_fAccumulatedTime + m_fTargetTime * 3.0 < fCurTime)    //We've gotten far too behind; we could have a huge FPS jump if the load lessens
-        m_fAccumulatedTime = fCurTime;   //Drop any frames past this
-    return m_bQuitting;
+	if(m_fAccumulatedTime + m_fTargetTime * 3.0 < fCurTime)	//We've gotten far too behind; we could have a huge FPS jump if the load lessens
+		m_fAccumulatedTime = fCurTime;	 //Drop any frames past this
+	return m_bQuitting;
 }
 
 void Engine::_render()
 {
-    // Begin rendering by clearing the screen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Begin rendering by clearing the screen
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Game-specific drawing
-    draw();
+	// Game-specific drawing
+	draw();
 	
 	//Draw gamma/brightness overlay on top of everything else
 	glEnable(GL_BLEND);
@@ -190,7 +190,7 @@ void Engine::_render()
 	glPopMatrix();
 	
 	//Reset blend func & color
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor3f(1.0, 1.0, 1.0);
 	
 	//Draw cursor at absolute location
@@ -200,8 +200,8 @@ void Engine::_render()
 	//glClear(GL_DEPTH_BUFFER_BIT); //TODO Draw cursor over everything
 	//glPopMatrix();
 	
-    // End rendering and update the screen
-     SDL_GL_SwapWindow(m_Window);
+	// End rendering and update the screen
+	 SDL_GL_SwapWindow(m_Window);
 }
 
 Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName, string sIcon, bool bResizable)
@@ -213,94 +213,61 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 		errlog.open("err.log");
 	m_sIcon = sIcon;
 	m_bResizable = bResizable;
-    b2Vec2 gravity(0.0, -9.8);  //Vector for our world's gravity
-    m_physicsWorld = new b2World(gravity);
-    m_ptCursorPos.SetZero();
-    m_physicsWorld->SetAllowSleeping(true);
-    m_iWidth = iWidth;
-    m_iHeight = iHeight;
-    m_iKeystates = NULL;
-    m_bShowCursor = true;
-    setFramerate(60);   //60 fps default
-    m_bFullscreen = true;
-    setup_sdl();
-    setup_opengl();
+	b2Vec2 gravity(0.0, -9.8);	//Vector for our world's gravity
+	m_physicsWorld = new b2World(gravity);
+	m_ptCursorPos.SetZero();
+	m_physicsWorld->SetAllowSleeping(true);
+	m_iWidth = iWidth;
+	m_iHeight = iHeight;
+	m_iKeystates = NULL;
+	m_bShowCursor = true;
+	setFramerate(60);	 //60 fps default
+	m_bFullscreen = true;
+	setup_sdl();
+	setup_opengl();
 	m_fGamma = 1.0f;
 	m_bPaused = false;
 	m_bPauseOnKeyboardFocus = true;
 
-    //Initialize engine stuff
-    m_fAccumulatedTime = 0.0;
-    //m_bFirstMusic = true;
-    m_bQuitting = false;
-    srand(SDL_GetTicks());  //Not as random as it could be... narf
+	//Initialize engine stuff
+	m_fAccumulatedTime = 0.0;
+	//m_bFirstMusic = true;
+	m_bQuitting = false;
+	srand(SDL_GetTicks());	//Not as random as it could be... narf
 	m_fTimeScale = 1.0f;
 
-#ifdef AUDIO_THREADING
-	tyrsound_setupMT(newMutexFunc, deleteMutexFunc, lockFunc, unlockFunc);
-#endif
-
-	if(tyrsound_init(NULL, NULL) != TYRSOUND_ERR_OK)
+	if(FMOD::System_Create(&m_audioSystem) != FMOD_OK || m_audioSystem->init(32, FMOD_INIT_NORMAL, 0) != FMOD_OK)
 	{
-		errlog << "Failed to init tyrsound." << std::endl;
+		errlog << "Failed to init FMOD." << std::endl;
 		m_bSoundDied = true;
 	}
 	else
 		m_bSoundDied = false;
-	
-	//Handle Windows audio issues
-#ifdef AUDIO_THREADING	
-	if(!m_bSoundDied)
-	{
-		bAudioQuit = false;
-		
-		//Set up new thread and global mutex for audio
-		//Create mutex
-		hAudioMutex = SDL_CreateMutex();
-		
-		//Create thread
-		hAudioThread = SDL_CreateThread(updateAudio, "audio", NULL);
-	}
-#endif
 }
 
 Engine::~Engine()
 {
 	SDL_DestroyWindow(m_Window);
 
-    //Clean up our image map
+	//Clean up our image map
 	errlog << "Clearing images" << endl;
-    clearImages();
+	clearImages();
 
-    //Clean up our sound effects
-    if(!m_bSoundDied)
-    {
-      for(map<string, tyrsound_Handle>::iterator i = m_sounds.begin(); i != m_sounds.end(); i++)
-        tyrsound_unload(i->second);
-    }
-	
-	//Notify audio thread to exit on Win32, and wait for it to do so
-#ifdef AUDIO_THREADING
+	//Clean up our sound effects
 	if(!m_bSoundDied)
 	{
-		//Wait for mutex, and let thread know to quit
-		SDL_LockMutex(hAudioMutex);
-		bAudioQuit = true;
-		SDL_UnlockMutex(hAudioMutex);	//Release mutex
-		
-		//Wait for audio thread to exit
-		SDL_WaitThread(hAudioThread, NULL);
-		
-		//Clean up thread handles
-		SDL_DestroyMutex(hAudioMutex);
+		for(map<string, FMOD::Sound*>::iterator i = m_sounds.begin(); i != m_sounds.end(); i++)
+			i->second->release();
 	}
-#endif
 	
-	//Clean up tyrsound
+	//Clean up FMOD
 	if(!m_bSoundDied)
-	  tyrsound_shutdown();
+	{
+		m_audioSystem->close();
+		m_audioSystem->release();
+	}
 
-    // Clean up and shutdown
+	// Clean up and shutdown
 	errlog << "Deleting phys world" << endl;
 	delete m_physicsWorld;
 	errlog << "Quit SDL" << endl;
@@ -309,120 +276,103 @@ Engine::~Engine()
 
 void Engine::start()
 {
-    // Load all that we need to
-    init(lCommandLine);
-    // Let's rock now!
-    while(!_frame());
+	// Load all that we need to
+	init(lCommandLine);
+	// Let's rock now!
+	while(!_frame());
 }
 
 /*void Engine::fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
-    fillRect(p1.x, p1.y, p2.x, p2.y, red, green, blue, alpha);
+	fillRect(p1.x, p1.y, p2.x, p2.y, red, green, blue, alpha);
 }
 
 void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
-    Color col;
-    col.from256(red, green, blue, alpha);
+	Color col;
+	col.from256(red, green, blue, alpha);
 	fillRect(x1, y1, x2, y2, col);
 }
 
 void Engine::fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
-    fillRect(rc.left, rc.top, rc.right, rc.bottom, red, green, blue, alpha);
+	fillRect(rc.left, rc.top, rc.right, rc.bottom, red, green, blue, alpha);
 }
 
 void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, Color col)
 {
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBegin(GL_QUADS);
-    glColor4f(col.r,col.g,col.b,col.a);	//Colorize
-    //Draw (No, I have no idea how these formulas work, either)
-    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x1/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y1/(GLfloat)m_iHeight + 1.0, 0.0);
-    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x1/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y2/(GLfloat)m_iHeight+1.0, 0.0);
-    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x2/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y2/(GLfloat)m_iHeight+1.0, 0.0);
-    glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x2/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y1/(GLfloat)m_iHeight+1.0, 0.0);
-    glEnd();
-    glColor4f(1.0,1.0,1.0,1.0);	//Back to normal
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBegin(GL_QUADS);
+	glColor4f(col.r,col.g,col.b,col.a);	//Colorize
+	//Draw (No, I have no idea how these formulas work, either)
+	glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x1/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y1/(GLfloat)m_iHeight + 1.0, 0.0);
+	glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x1/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y2/(GLfloat)m_iHeight+1.0, 0.0);
+	glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x2/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y2/(GLfloat)m_iHeight+1.0, 0.0);
+	glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x2/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y1/(GLfloat)m_iHeight+1.0, 0.0);
+	glEnd();
+	glColor4f(1.0,1.0,1.0,1.0);	//Back to normal
 }*/
 
 void Engine::createSound(string sPath, string sName)
 {
-  if(m_bSoundDied) return;
-	tyrsound_Stream strm;
-    if(tyrsound_createFileNameStream(&strm, sPath.c_str(), "rb") != TYRSOUND_ERR_OK)
-    {
-        errlog << "File not found: " << sPath << endl;
-        return;
-    }
-
-    tyrsound_Handle handle = tyrsound_load(strm);
-
-    if(handle == TYRSOUND_NULLHANDLE)
-    {
-        errlog << "Invalid handle for song " << sPath << endl;
-        return;
-    }
-	m_sounds[sName] = handle;
+	if(m_bSoundDied) return;
+	FMOD::Sound* handle;
+	if(m_audioSystem->createSound(sPath.c_str(), FMOD_CREATESTREAM, 0, &handle) == FMOD_OK)
+		m_sounds[sName] = handle;
 }
 
 void Engine::playSound(string sName, int volume, int pan, float32 pitch)
 {
-  if(m_bSoundDied) return;
-	tyrsound_Handle handle = m_sounds[sName];
-    tyrsound_setVolume(handle, (float)(volume)/100.0);
-	tyrsound_setSpeed(handle, pitch);
-	tyrsound_setPosition(handle, pan, 0, 0);
-	//TODO: Play sounds more than once at a time
-	tyrsound_stop(handle);
-	tyrsound_seek(handle, 0);
-    tyrsound_play(handle);
+	if(m_bSoundDied) return;
+	FMOD::Channel* channel;
+	m_audioSystem->playSound(FMOD_CHANNEL_FREE, m_sounds[sName], false, &channel);
+	m_channels[sName] = channel;
+	//TODO: Volume, pan, pitch
 }
 
 void Engine::pauseMusic()
 {
-  if(m_bSoundDied) return;
-    tyrsound_pause(m_sounds["music"]);
+	if(m_bSoundDied) return;
+	if(!m_channels.count("music")) return;
+	m_channels["music"]->setPaused(true);
 }
 
 void Engine::stopMusic()
 {
-  if(m_bSoundDied) return;
-	if(!m_sounds.count("music")) return;
-	tyrsound_Handle handle = m_sounds["music"];
-	tyrsound_stop(handle);
-	tyrsound_seek(handle, 0);
+	if(m_bSoundDied) return;
+	if(!m_channels.count("music")) return;
+	m_channels["music"]->setPaused(true);
 }
 
 void Engine::restartMusic()
 {
-  if(m_bSoundDied) return;
-	tyrsound_Handle handle = m_sounds["music"];
-	tyrsound_stop(handle);
-	tyrsound_seek(handle, 0);
-    tyrsound_play(handle);
+	if(m_bSoundDied) return;
+	if(!m_channels.count("music")) return;
+	m_channels["music"]->setPosition(0, FMOD_TIMEUNIT_MS);
 }
 
 void Engine::resumeMusic()
 {
-  if(m_bSoundDied) return;
-	if(m_sounds.count("music"))
-		tyrsound_play(m_sounds["music"]);
+	if(m_bSoundDied) return;
+	if(!m_channels.count("music")) return;
+	m_channels["music"]->setPaused(false);
 }
 
 void Engine::seekMusic(float32 fTime)
 {
-  if(m_bSoundDied) return;
-	tyrsound_seek(m_sounds["music"], fTime);
+	if(m_bSoundDied) return;
+	if(!m_channels.count("music")) return;
+	m_channels["music"]->setPosition(fTime * 1000.0, FMOD_TIMEUNIT_MS);
 }
 
 void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
 {
-  if(m_bSoundDied) return;
+	if(m_bSoundDied) return;
 	if(!m_sounds.count("music"))
 		createSound(sName, "music");
-	tyrsound_setLoop(m_sounds["music"], 0.0f, -1);
 	playSound("music", volume, pan, pitch);
+	if(m_channels.count("music"))
+		m_channels["music"]->setLoopCount(-1);
 }
 
 bool Engine::keyDown(int32_t keyCode)
@@ -436,152 +386,152 @@ bool Engine::keyDown(int32_t keyCode)
 	if(keyCode == SDL_SCANCODE_GUI) return (keyDown(SDL_SCANCODE_LGUI)||keyDown(SDL_SCANCODE_RGUI));
 	
 	//Otherwise, just use our pre-polled list we got from SDL
-    return(m_iKeystates[keyCode]);
+	return(m_iKeystates[keyCode]);
 }
 
 void Engine::setFramerate(float32 fFramerate)
 {
-  if(fFramerate < 30.0)
-    fFramerate = 30.0;  //30fps is bare minimum
-    if(m_fFramerate == 0.0)
-        m_fAccumulatedTime = (float32)SDL_GetTicks()/1000.0;   //If we're stuck at 0fps for a while, this number could be huge, which would cause unlimited fps for a bit
-    m_fFramerate = fFramerate;
-    m_fTargetTime = 1.0 / m_fFramerate;
+	if(fFramerate < 30.0)
+	fFramerate = 30.0;	//30fps is bare minimum
+	if(m_fFramerate == 0.0)
+		m_fAccumulatedTime = (float32)SDL_GetTicks()/1000.0;	 //If we're stuck at 0fps for a while, this number could be huge, which would cause unlimited fps for a bit
+	m_fFramerate = fFramerate;
+	m_fTargetTime = 1.0 / m_fFramerate;
 }
 
 void Engine::setup_sdl()
 {
 
 	if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
-    {
+	{
 		errlog << "SDL_InitSubSystem Error: " << SDL_GetError() << std::endl;
-        exit(1);
-    }
+		exit(1);
+	}
 
-    errlog << "Loading OpenGL..." << std::endl;
+	errlog << "Loading OpenGL..." << std::endl;
 
-    if (SDL_GL_LoadLibrary(NULL) == -1)
-    {
+	if (SDL_GL_LoadLibrary(NULL) == -1)
+	{
 		errlog << "SDL_GL_LoadLibrary Error: " << SDL_GetError() << std::endl;
-        exit(1);
-    }
+		exit(1);
+	}
 
-  // Quit SDL properly on exit
-  atexit(SDL_Quit);
-  
-  // Set the minimum requirements for the OpenGL window
-  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-  SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
-  
-  //Vsync and stuff	//TODO: Toggle? Figure out what it's actually doing? My pathetic gfx card doesn't do anything with any of these values
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	//Apparently double-buffering or something
-  
-  //Apparently MSAA or something (disable by default; my Linux gfx drivers seem to not like)
-  //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-  //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-  
-  // Create SDL window
-  Uint32 flags = SDL_WINDOW_OPENGL;
-  if(m_bResizable)
+	// Quit SDL properly on exit
+	atexit(SDL_Quit);
+	
+	// Set the minimum requirements for the OpenGL window
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
+	
+	//Vsync and stuff	//TODO: Toggle? Figure out what it's actually doing? My pathetic gfx card doesn't do anything with any of these values
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	//Apparently double-buffering or something
+	
+	//Apparently MSAA or something (disable by default; my Linux gfx drivers seem to not like)
+	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+	
+	// Create SDL window
+	Uint32 flags = SDL_WINDOW_OPENGL;
+	if(m_bResizable)
 	flags |= SDL_WINDOW_RESIZABLE;
-  
-  m_Window = SDL_CreateWindow(m_sTitle.c_str(),
-                             SDL_WINDOWPOS_UNDEFINED,
-                             SDL_WINDOWPOS_UNDEFINED,
-                             m_iWidth, 
+	
+	m_Window = SDL_CreateWindow(m_sTitle.c_str(),
+							 SDL_WINDOWPOS_UNDEFINED,
+							 SDL_WINDOWPOS_UNDEFINED,
+							 m_iWidth, 
 							 							 m_iHeight,
-                             flags);
+							 flags);
 
-  if(m_Window == NULL)
-  {
-  	errlog << "Couldn't set video mode: " << SDL_GetError() << endl;
-    exit(1);
-  }
-  SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1); //Share objects between OpenGL contexts
-  SDL_GL_CreateContext(m_Window);
-  if(SDL_GL_SetSwapInterval(-1) == -1) //Apparently Vsync or something
+	if(m_Window == NULL)
+	{
+		errlog << "Couldn't set video mode: " << SDL_GetError() << endl;
+	exit(1);
+	}
+	SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1); //Share objects between OpenGL contexts
+	SDL_GL_CreateContext(m_Window);
+	if(SDL_GL_SetSwapInterval(-1) == -1) //Apparently Vsync or something
 		SDL_GL_SetSwapInterval(1);
 
-  SDL_DisplayMode mode;
-  SDL_GetDisplayMode(0, 0, &mode);
-  if(!mode.refresh_rate)  //If 0, display doesn't care, so default to 60
-    mode.refresh_rate = 60;
-  setFramerate(mode.refresh_rate);
-  
-  int numDisplays = SDL_GetNumVideoDisplays();
-  errlog << "Available displays: " << numDisplays << endl;
-  for(int display = 0; display < numDisplays; display++)
-  {
-    int num = SDL_GetNumDisplayModes(display);
-    errlog << "Available modes for display " << display+1 << ':' << endl;
-    for(int i = 0; i < num; i++)
-    {
-      SDL_GetDisplayMode(display, i, &mode);
-      errlog << "Mode: " << mode.w << "x" << mode.h << " " << mode.refresh_rate << "Hz" << endl;
-    }
-  }
-  
-  
-  //Hide system cursor for SDL, so we can use our own
-  SDL_ShowCursor(0);
-  
-  OpenGLAPI::LoadSymbols();	//Load our OpenGL symbols to use
-  
-  _loadicon();	//Load our window icon
-  
+	SDL_DisplayMode mode;
+	SDL_GetDisplayMode(0, 0, &mode);
+	if(!mode.refresh_rate)	//If 0, display doesn't care, so default to 60
+	mode.refresh_rate = 60;
+	setFramerate(mode.refresh_rate);
+	
+	int numDisplays = SDL_GetNumVideoDisplays();
+	errlog << "Available displays: " << numDisplays << endl;
+	for(int display = 0; display < numDisplays; display++)
+	{
+	int num = SDL_GetNumDisplayModes(display);
+	errlog << "Available modes for display " << display+1 << ':' << endl;
+	for(int i = 0; i < num; i++)
+	{
+		SDL_GetDisplayMode(display, i, &mode);
+		errlog << "Mode: " << mode.w << "x" << mode.h << " " << mode.refresh_rate << "Hz" << endl;
+	}
+	}
+	
+	
+	//Hide system cursor for SDL, so we can use our own
+	SDL_ShowCursor(0);
+	
+	OpenGLAPI::LoadSymbols();	//Load our OpenGL symbols to use
+	
+	_loadicon();	//Load our window icon
+	
 }
 
 //Set up OpenGL
 void Engine::setup_opengl()
 {
 	// Make the viewport
-    glViewport(0, 0, m_iWidth, m_iHeight);
+	glViewport(0, 0, m_iWidth, m_iHeight);
 
-    // set the clear color to black
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClearDepth( 1.0f );
-    glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_LEQUAL );
+	// set the clear color to black
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClearDepth( 1.0f );
+	glEnable( GL_DEPTH_TEST );
+	glDepthFunc( GL_LEQUAL );
 
-    glEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 
-    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
-  
-    //Enable image transparency
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+	
+	//Enable image transparency
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // Set the camera projection matrix
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+	// Set the camera projection matrix
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
 
-    gluPerspective( 45.0f, (GLfloat)m_iWidth/(GLfloat)m_iHeight, 0.1f, 500.0f );
+	gluPerspective( 45.0f, (GLfloat)m_iWidth/(GLfloat)m_iHeight, 0.1f, 500.0f );
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 	glPushMatrix();
 	
 	//Set up lighting
-    glShadeModel(GL_SMOOTH);
-    glEnable( GL_LIGHT0 );
-    glEnable( GL_LIGHT1 );
-    glEnable( GL_COLOR_MATERIAL );
+	glShadeModel(GL_SMOOTH);
+	glEnable( GL_LIGHT0 );
+	glEnable( GL_LIGHT1 );
+	glEnable( GL_COLOR_MATERIAL );
 
-    // Setup The Ambient Light
-    glLightfv( GL_LIGHT1, GL_AMBIENT, LightAmbient );
+	// Setup The Ambient Light
+	glLightfv( GL_LIGHT1, GL_AMBIENT, LightAmbient );
 
-    // Setup The Diffuse Light
-    glLightfv( GL_LIGHT1, GL_DIFFUSE, LightDiffuse );
+	// Setup The Diffuse Light
+	glLightfv( GL_LIGHT1, GL_DIFFUSE, LightDiffuse );
 
-    // Position The Light
-    glLightfv( GL_LIGHT1, GL_POSITION, LightPosition );
+	// Position The Light
+	glLightfv( GL_LIGHT1, GL_POSITION, LightPosition );
 
-    // Enable Light One
-    glEnable( GL_LIGHT1 );
+	// Enable Light One
+	glEnable( GL_LIGHT1 );
 }
 
 void Engine::setMSAA(int iMSAA)
@@ -631,7 +581,7 @@ void Engine::_loadicon()	//Load icon into SDL window
 		errlog << "Unknown image type for file " << m_sIcon << endl;
 		return;
 	}
-  
+	
 	//check that the plugin has reading capabilities and load the file
 	if(FreeImage_FIFSupportsReading(fif))
 		dib = FreeImage_Load(fif, m_sIcon.c_str());
@@ -642,15 +592,15 @@ void Engine::_loadicon()	//Load icon into SDL window
 	{
 		errlog << "Error loading image " << m_sIcon.c_str() << endl;
 		return;
-	}  
+	}	
 	//retrieve the image data
-  
+	
 	//get the image width and height
 	width = FreeImage_GetWidth(dib);
 	height = FreeImage_GetHeight(dib);
 	
 	FreeImage_FlipVertical(dib);
-  
+	
 	bits = FreeImage_GetBits(dib);	//if this somehow one of these failed (they shouldn't), return failure
 	if((bits == 0) || (width == 0) || (height == 0))
 	{
@@ -667,7 +617,7 @@ void Engine::_loadicon()	//Load icon into SDL window
 		SDL_SetWindowIcon(m_Window, surface);
 		SDL_FreeSurface(surface);
 	}
-  
+	
 	FreeImage_Unload(dib);
 }
 
@@ -754,10 +704,10 @@ void Engine::changeScreenResolution(float32 w, float32 h)
 
 void Engine::toggleFullscreen()
 {
-  m_bFullscreen = !m_bFullscreen;
-  if(m_bFullscreen)
+	m_bFullscreen = !m_bFullscreen;
+	if(m_bFullscreen)
 	SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-  else
+	else
 	SDL_SetWindowFullscreen(m_Window, 0);
 }
 
@@ -809,9 +759,9 @@ bool Engine::isMaximized()
 
 void Engine::setCursorPos(int32_t x, int32_t y)
 {
-    SDL_WarpMouseInWindow(m_Window, x, y);
+	SDL_WarpMouseInWindow(m_Window, x, y);
 //#ifdef __APPLE__
-//    hideCursor(); //TODO: Warping the mouse shows it again in Mac, and this doesn't work. Hermph.
+//	hideCursor(); //TODO: Warping the mouse shows it again in Mac, and this doesn't work. Hermph.
 //#endif
 }
 

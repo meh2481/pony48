@@ -1,6 +1,6 @@
 /*
-    Pony48 source - Pony48.cpp
-    Copyright (c) 2014 Mark Hutcheson
+	Pony48 source - Pony48.cpp
+	Copyright (c) 2014 Mark Hutcheson
 */
 
 #include "Pony48.h"
@@ -14,7 +14,7 @@ static Pony48Engine* g_pGlobalEngine;
 
 void signalHandler(string sSignal)
 {
-    g_pGlobalEngine->hudSignalHandler(sSignal);
+	g_pGlobalEngine->hudSignalHandler(sSignal);
 }
 
 Pony48Engine::Pony48Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName, string sIcon, bool bResizable) : 
@@ -99,9 +99,8 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items
 	
 	//Play music
-	//playMusic("res/sfx/encore-micro_hexagon_courtesy.ogg");
+	playMusic("res/mus/justfluttershy.mp3");
 	//pauseMusic();
-	//playSound("Pony48");	
 	hideCursor();
 }
 
@@ -112,16 +111,16 @@ void Pony48Engine::hudSignalHandler(string sSignal)
 
 void Pony48Engine::handleEvent(SDL_Event event)
 {
-    //m_hud->event(event);    //Let our HUD handle any events it needs to
-    switch(event.type)
-    {
-        //Key pressed
-        case SDL_KEYDOWN:
-            switch(event.key.keysym.scancode)
-            {
-                case SDL_SCANCODE_ESCAPE:
+	//m_hud->event(event);	//Let our HUD handle any events it needs to
+	switch(event.type)
+	{
+		//Key pressed
+		case SDL_KEYDOWN:
+			switch(event.key.keysym.scancode)
+			{
+				case SDL_SCANCODE_ESCAPE:
 					quit();
-                    break;
+					break;
 				
 				case SDL_SCANCODE_F10:
 				case SDL_SCANCODE_G:
@@ -140,27 +139,27 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					//m_hud->setScene(sScene);
 					//break;
 				}
-            }
-            break;
+			}
+			break;
 
-        //Key released
-        case SDL_KEYUP:
-            switch(event.key.keysym.scancode)
-            {
-            }
-            break;
+		//Key released
+		case SDL_KEYUP:
+			switch(event.key.keysym.scancode)
+			{
+			}
+			break;
 		
 		case SDL_MOUSEBUTTONDOWN:
-            if(event.button.button == SDL_BUTTON_LEFT)
-            {
-            }
-            else if(event.button.button == SDL_BUTTON_RIGHT)
-            {
-            }
+			if(event.button.button == SDL_BUTTON_LEFT)
+			{
+			}
+			else if(event.button.button == SDL_BUTTON_RIGHT)
+			{
+			}
 			else if(event.button.button == SDL_BUTTON_MIDDLE)
 			{
 			}
-            break;
+			break;
 			
 		case SDL_MOUSEWHEEL:
 			/*if(event.wheel.y > 0)
@@ -174,11 +173,11 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			cameraBounds();*/
 			break;
 
-        case SDL_MOUSEBUTTONUP:
-            if(event.button.button == SDL_BUTTON_LEFT)
-            {
+		case SDL_MOUSEBUTTONUP:
+			if(event.button.button == SDL_BUTTON_LEFT)
+			{
 				
-            }
+			}
 			else if(event.button.button == SDL_BUTTON_RIGHT)
 			{
 			
@@ -187,10 +186,10 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			{
 				
 			}
-            break;
+			break;
 
-        case SDL_MOUSEMOTION:
-            break;
+		case SDL_MOUSEMOTION:
+			break;
 		
 		case SDL_WINDOWEVENT:
 			switch (event.window.event)
