@@ -51,6 +51,7 @@ public:
 	float32 r,g,b,a;
 	Color();
 	Color(int32_t ir, int32_t ig, int32_t ib) {from256(ir,ig,ib);};
+	Color(float32 fr, float32 fg, float32 fb, float32 fa) {r=fr;g=fg;b=fb;a=fa;};
 
 	void from256(int32_t ir, int32_t ig, int32_t ib, int32_t a = 255);
 	void fromHSV(float h, float s, float v, float fa = 1.0f);

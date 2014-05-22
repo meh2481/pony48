@@ -12,19 +12,6 @@
 #include "opengl-api.h"
 ofstream errlog;
 
-//In Windows, because window dragging can hang the program, make a new thread so audio doesn't die horribly in the process
-#ifdef AUDIO_THREADING
-SDL_Thread* hAudioThread;
-SDL_mutex* hAudioMutex;
-bool bAudioQuit;
-int updateAudio(void* data);
-//Tyrsound mutex functions
-void* newMutexFunc(void);
-void deleteMutexFunc(void*);
-int lockFunc(void*);
-void unlockFunc(void*);
-#endif
-
 GLfloat LightAmbient[]	= { 0.1f, 0.1f, 0.1f, 1.0f };
 // Diffuse Light Values
 GLfloat LightDiffuse[]	= { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -91,10 +78,9 @@ void PrintEvent(const SDL_Event * event)
 
 bool Engine::_frame()
 {
-#ifndef AUDIO_THREADING
 	if(!m_bSoundDied)
 		m_audioSystem->update();
-#endif
+	
 	//Handle input events from SDL
 	SDL_Event event;
 	while(SDL_PollEvent(&event))
@@ -171,7 +157,7 @@ void Engine::_render()
 		glBlendFunc( GL_ZERO, GL_SRC_COLOR );
 		glColor3f(m_fGamma, m_fGamma, m_fGamma);
 	}
-	//Fill whole screen with rect ( Example taken from http://yuhasapoint.blogspot.com/2012/07/draw-quad-that-fills-entire-opengl.html on 11/20/13)
+	//Fill whole screen with rect (Example taken from http://yuhasapoint.blogspot.com/2012/07/draw-quad-that-fills-entire-opengl.html on 11/20/13)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -282,36 +268,18 @@ void Engine::start()
 	while(!_frame());
 }
 
-/*void Engine::fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-{
-	fillRect(p1.x, p1.y, p2.x, p2.y, red, green, blue, alpha);
-}
-
-void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-{
-	Color col;
-	col.from256(red, green, blue, alpha);
-	fillRect(x1, y1, x2, y2, col);
-}
-
-void Engine::fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-{
-	fillRect(rc.left, rc.top, rc.right, rc.bottom, red, green, blue, alpha);
-}
-
-void Engine::fillRect(float32 x1, float32 y1, float32 x2, float32 y2, Color col)
+void Engine::fillRect(Point p1, Point p2, Color col)
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBegin(GL_QUADS);
-	glColor4f(col.r,col.g,col.b,col.a);	//Colorize
-	//Draw (No, I have no idea how these formulas work, either)
-	glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x1/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y1/(GLfloat)m_iHeight + 1.0, 0.0);
-	glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x1/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y2/(GLfloat)m_iHeight+1.0, 0.0);
-	glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x2/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y2/(GLfloat)m_iHeight+1.0, 0.0);
-	glVertex3f((2.0*(float32)m_iWidth/(float32)m_iHeight)*((GLfloat)x2/(GLfloat)m_iWidth-0.5), -2.0*(GLfloat)y1/(GLfloat)m_iHeight+1.0, 0.0);
+	glTexCoord2f(0.0, 0.0);
+	glColor4f(col.r,col.g,col.b,col.a);
+	glVertex3f(p1.x, p1.y, 0.0);
+	glVertex3f(p2.x, p1.y, 0.0);
+	glVertex3f(p2.x, p2.y, 0.0);
+	glVertex3f(p1.x, p2.y, 0.0);
 	glEnd();
-	glColor4f(1.0,1.0,1.0,1.0);	//Back to normal
-}*/
+}
 
 void Engine::createSound(string sPath, string sName)
 {
@@ -874,45 +842,6 @@ string Engine::getSaveLocation()
 	ttvfs::CreateDirRec(s.c_str());
 	return s;
 }
-
-#ifdef AUDIO_THREADING
-int updateAudio(void* data)
-{
-	while(true)//Loop forever
-	{
-		tyrsound_update();
-		SDL_Delay(10);	//Sleep 10ms so we don't hog CPU
-		
-		//Check and see if we should quit
-		SDL_LockMutex(hAudioMutex);
-		if(bAudioQuit)
-			break;
-		SDL_UnlockMutex(hAudioMutex);
-	}
-	SDL_UnlockMutex(hAudioMutex);
-}
-
-void* newMutexFunc(void)
-{
-	return (void*)SDL_CreateMutex();
-}
-
-void deleteMutexFunc(void* mutex)
-{
-	SDL_DestroyMutex((SDL_mutex*)mutex);
-}
-
-int lockFunc(void* mutex)
-{
-	return(SDL_LockMutex((SDL_mutex*)mutex) == 0);
-}
-
-void unlockFunc(void* mutex)
-{
-	SDL_UnlockMutex((SDL_mutex*)mutex);
-}
-
-#endif
 
 
 

@@ -40,6 +40,11 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	//m_hud->setScene("start");
 	
 	setTimeScale(DEFAULT_TIMESCALE);
+	
+	//Game stuff!
+	m_BoardBg.set(0.7,0.7,0.7,1);
+	m_TileBg.set(0.5,0.5,0.5,1);
+	m_BgCol.set(0,0,0,1.0);
 }
 
 Pony48Engine::~Pony48Engine()
@@ -53,15 +58,19 @@ Pony48Engine::~Pony48Engine()
 
 void Pony48Engine::frame(float32 dt)
 {
+	//First half of camera bounce; move back a bit every frame in an attempt to get back to default position
 	if(CameraPos.z > m_fDefCameraZ)
 		CameraPos.z -= 0.3;
 	if(CameraPos.z < m_fDefCameraZ)
 		CameraPos.z = m_fDefCameraZ;
+	
+	//Second half of camera bounce; move forward on every bass kick
 	beatDetect();
 }
 
 void Pony48Engine::draw()
 {
+	glClearColor(m_BgCol.r, m_BgCol.g, m_BgCol.b, m_BgCol.a);
 	//Set up camera and OpenGL flags
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_LIGHTING);
@@ -70,6 +79,7 @@ void Pony48Engine::draw()
 	glTranslatef(CameraPos.x, CameraPos.y, CameraPos.z);
 	
 	
+	drawBoard();
 	drawObjects();
 	
 	
@@ -96,8 +106,8 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	
 	physSegment* testseg = new physSegment;
 	testseg->img = getImage("res/gfx/ab/1.png");
-	testseg->size = Point(2,2);
-	addScenery(testseg);
+	testseg->size = Point(TILE_WIDTH,TILE_HEIGHT);
+	m_Board[2][1].seg = testseg;
 	
 	//Create sounds up front
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items

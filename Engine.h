@@ -6,10 +6,6 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-//#ifdef _WIN32
-//#define AUDIO_THREADING
-//#endif
-
 #include "globaldefs.h"
 #include "Image.h"
 #include "Object.h"
@@ -102,10 +98,7 @@ public:
 	//Methods
 	void commandline(list<string> argv);	//Pass along commandline arguments for the engine to use
 	void start();   //Runs engine and doesn't exit until the engine ends
-	/*void fillRect(Point p1, Point p2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha); //Fill the specified rect with the specified color
-	void fillRect(float32 x1, float32 y1, float32 x2, float32 y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
-	void fillRect(Rect rc, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
-	void fillRect(float32 x1, float32 y1, float32 x2, float32 y2, Color col);*/
+	void fillRect(Point p1, Point p2, Color col);
 	void createSound(string sPath, string sName);   //Creates a sound from this name and file path
 	virtual void playSound(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);	 //Play a sound
 	FMOD::Channel* getChannel(string sSoundName);	//Return the channel of this sound
