@@ -330,6 +330,12 @@ void Engine::playSound(string sName, int volume, int pan, float32 pitch)
 	//TODO: Volume, pan, pitch
 }
 
+FMOD::Channel* Engine::getChannel(string sSoundName)
+{
+	if(!m_channels.count(sSoundName)) return NULL;
+	return m_channels[sSoundName];
+}
+
 void Engine::pauseMusic()
 {
 	if(m_bSoundDied) return;
@@ -372,7 +378,11 @@ void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
 		createSound(sName, "music");
 	playSound("music", volume, pan, pitch);
 	if(m_channels.count("music"))
+	{
 		m_channels["music"]->setLoopCount(-1);
+		m_channels["music"]->setMode(FMOD_LOOP_NORMAL);
+		m_channels["music"]->setPosition(0, FMOD_TIMEUNIT_MS);
+	}
 }
 
 bool Engine::keyDown(int32_t keyCode)

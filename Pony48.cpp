@@ -53,7 +53,11 @@ Pony48Engine::~Pony48Engine()
 
 void Pony48Engine::frame(float32 dt)
 {
-	
+	if(CameraPos.z > m_fDefCameraZ)
+		CameraPos.z -= 0.3;
+	if(CameraPos.z < m_fDefCameraZ)
+		CameraPos.z = m_fDefCameraZ;
+	beatDetect();
 }
 
 void Pony48Engine::draw()

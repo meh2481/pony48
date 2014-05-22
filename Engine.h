@@ -108,6 +108,7 @@ public:
 	void fillRect(float32 x1, float32 y1, float32 x2, float32 y2, Color col);*/
 	void createSound(string sPath, string sName);   //Creates a sound from this name and file path
 	virtual void playSound(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);	 //Play a sound
+	FMOD::Channel* getChannel(string sSoundName);	//Return the channel of this sound
 	void playMusic(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);	 //Play looping music, or resume paused music
 	void pauseMusic();																	 //Pause music that's currently playing
 	void resumeMusic();																		//Resume music that was paused
