@@ -108,6 +108,10 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	testseg->img = getImage("res/gfx/ab/1.png");
 	testseg->size = Point(TILE_WIDTH,TILE_HEIGHT);
 	m_Board[2][1].seg = testseg;
+	testseg = new physSegment;
+	testseg->img = getImage("res/gfx/tilebg.png");
+	testseg->size = Point(TILE_WIDTH,TILE_HEIGHT);
+	m_Board[2][1].bg = testseg;
 	
 	//Create sounds up front
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items

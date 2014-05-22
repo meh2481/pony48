@@ -39,12 +39,13 @@ class TilePiece
 {
 public:
 	physSegment* seg;
+	physSegment* bg;
 	int 	value;	//The actual value of the piece (2, 4, 8, etc, or 0 for nothing here)
 	
-	TilePiece() {seg=NULL;value=0;};
-	~TilePiece() {if(seg!=NULL)delete seg;};
+	TilePiece() {seg=NULL;bg=NULL;value=0;};
+	~TilePiece() {if(seg!=NULL)delete seg;if(bg!=NULL)delete bg;};
 	
-	void draw() {if(seg!=NULL)seg->draw();};
+	void draw() {if(bg!=NULL)bg->draw();if(seg!=NULL)seg->draw();};
 };
 
 class Pony48Engine : public Engine
