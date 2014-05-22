@@ -1,3 +1,5 @@
 -OpenCV for camera madness
 -FMOD mic madness
 -Different effects that happen at different points in a song
+-Nukes
+-Bop-It

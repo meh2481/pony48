@@ -30,7 +30,14 @@ void Pony48Engine::drawBoard()
 	}
 }
 
-
+TilePiece Pony48Engine::loadTile(string sFilename)
+{
+	TilePiece ret;
+	
+	
+	
+	return ret;
+}
 
 
 

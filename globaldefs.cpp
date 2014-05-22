@@ -112,8 +112,14 @@ Color colorFromString(string s)
 
     //Now, parse
     istringstream iss(s);
-    if(!(iss >> c.r >> c.g >> c.b >> c.a))
-		c.clear();
+	int r, g, b, a;
+    if(iss >> r >> g >> b)
+	{
+		if(!(iss >> a))
+			c.from256(r,g,b);
+		else
+			c.from256(r,g,b,a);
+	}
 	s_cLastCol = c;
     return c;
 }

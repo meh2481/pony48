@@ -101,7 +101,8 @@ public:
 	void beatDetect();
 	
 	//board.cpp functions
-	void drawBoard();
+	void drawBoard();						//Draw the tiles and such on the board
+	TilePiece loadTile(string sFilename);	//Load a tile piece from an XML file
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine

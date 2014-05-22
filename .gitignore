@@ -9,3 +9,4 @@ _gfxbase/*
 *.directory
 *.mp3
 *.flac
+*.kate-swp

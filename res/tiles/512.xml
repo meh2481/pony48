@@ -1,0 +1,6 @@
+<tile value="512" bgcolor="251,190,210"> 
+	<img path="res/gfx/twi/1.png" />
+	<img path="res/gfx/twi/2.png" />
+	<img path="res/gfx/twi/3.png" />
+	<img path="res/gfx/twi/4.png" />
+</tile>
