@@ -8,6 +8,7 @@
 
 #include <string>
 #include <fstream>
+#include <sstream>
 using namespace std;
 #include "Box2D.h"
 #include "tinyxml2.h"

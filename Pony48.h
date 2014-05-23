@@ -113,7 +113,10 @@ public:
 	//board.cpp functions
 	void drawBoard();						//Draw the tiles and such on the board
 	TilePiece* loadTile(string sFilename);	//Load a tile piece from an XML file
-	void move(direction dir);
+	bool move(direction dir);				//Move in the given direction (if possible)
+	bool movePossible(direction dir);		//Test to see if it's possible to move in the given direction
+	bool movePossible();
+	void placenew();						//Places a new tile at a random location
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine

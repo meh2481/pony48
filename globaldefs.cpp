@@ -4,7 +4,6 @@
 */
 
 #include "globaldefs.h"
-#include <sstream>
 
 float32 myabs(float x)	//Stupid namespace stuff
 {

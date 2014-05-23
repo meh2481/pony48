@@ -80,25 +80,211 @@ TilePiece* Pony48Engine::loadTile(string sFilename)
 	return ret;
 }
 
-void Pony48Engine::move(direction dir)
+bool Pony48Engine::movePossible()
+{
+	return (movePossible(UP) || movePossible(DOWN) || movePossible(LEFT) || movePossible(RIGHT));
+}
+
+bool Pony48Engine::movePossible(direction dir)
 {
 	switch(dir)
 	{
 		case UP:
+			for(int j = 0; j < BOARD_WIDTH; j++)
+			{
+				for(int i = 1; i < BOARD_HEIGHT; i++)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j][i-1] == NULL || m_Board[j][i-1]->value == m_Board[j][i]->value)
+							return true;
+					}
+				}
+			}
 			break;
 		
 		case DOWN:
+			for(int j = 0; j < BOARD_WIDTH; j++)
+			{
+				for(int i = BOARD_HEIGHT-2; i >= 0; i--)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j][i+1] == NULL || m_Board[j][i+1]->value == m_Board[j][i]->value)
+							return true;
+					}
+				}
+			}
 			break;
 			
 		case LEFT:
+			for(int i = 0; i < BOARD_HEIGHT; i++)
+			{
+				for(int j = 1; j < BOARD_WIDTH; j++)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j-1][i] == NULL || m_Board[j-1][i]->value == m_Board[j][i]->value)
+							return true;
+					}
+				}
+			}
 			break;
 			
 		case RIGHT:
+			for(int i = 0; i < BOARD_HEIGHT; i++)
+			{
+				for(int j = BOARD_WIDTH-2; j >= 0; j--)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j+1][i] == NULL || m_Board[j+1][i]->value == m_Board[j][i]->value)
+							return true;
+					}
+				}
+			}
 			break;
 	}
+	return false;
 }
 
+bool Pony48Engine::move(direction dir)
+{
+	bool mademove = false;
+	
+	switch(dir)
+	{
+		case UP:
+			for(int j = 0; j < BOARD_WIDTH; j++)
+			{
+				for(int i = 1; i < BOARD_HEIGHT; i++)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j][i-1] == NULL)
+						{
+							m_Board[j][i-1] = m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+						}
+						else if(m_Board[j][i-1]->value == m_Board[j][i]->value)
+						{
+							delete m_Board[j][i-1];
+							ostringstream oss;
+							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
+							m_Board[j][i-1] = loadTile(oss.str());
+							delete m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+						}
+					}
+				}
+			}
+			break;
+		
+		case DOWN:
+			for(int j = 0; j < BOARD_WIDTH; j++)
+			{
+				for(int i = BOARD_HEIGHT-2; i >= 0; i--)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j][i+1] == NULL)
+						{
+							m_Board[j][i+1] = m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+						}
+						else if(m_Board[j][i+1]->value == m_Board[j][i]->value)
+						{
+							delete m_Board[j][i+1];
+							ostringstream oss;
+							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
+							m_Board[j][i+1] = loadTile(oss.str());
+							delete m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+						}
+					}
+				}
+			}
+			break;
+			
+		case LEFT:
+			for(int i = 0; i < BOARD_HEIGHT; i++)
+			{
+				for(int j = 1; j < BOARD_WIDTH; j++)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j-1][i] == NULL)
+						{
+							m_Board[j-1][i] = m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+						}
+						else if(m_Board[j-1][i]->value == m_Board[j][i]->value)
+						{
+							delete m_Board[j-1][i];
+							ostringstream oss;
+							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
+							m_Board[j-1][i] = loadTile(oss.str());
+							delete m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+						}
+					}
+				}
+			}
+			break;
+			
+		case RIGHT:
+			for(int i = 0; i < BOARD_HEIGHT; i++)
+			{
+				for(int j = BOARD_WIDTH-2; j >= 0; j--)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j+1][i] == NULL)
+						{
+							m_Board[j+1][i] = m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+						}
+						else if(m_Board[j+1][i]->value == m_Board[j][i]->value)
+						{
+							delete m_Board[j+1][i];
+							ostringstream oss;
+							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
+							m_Board[j+1][i] = loadTile(oss.str());
+							delete m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+						}
+					}
+				}
+			}
+			break;
+	}
+	return mademove;
+}
 
+void Pony48Engine::placenew()
+{
+	ostringstream oss;
+	oss << "res/tiles/" << randInt(1,2) * 2 << ".xml";
+	if(movePossible())	//Make sure there aren't no blank spaces or something
+	{
+		while(true)	//Could possibly hang here for a while
+		{
+			int x = randInt(0, BOARD_WIDTH-1);
+			int y = randInt(0, BOARD_HEIGHT-1);
+			if(m_Board[x][y] != NULL) continue;
+			m_Board[x][y] = loadTile(oss.str());
+			break;
+		}
+	}
+}
 
 
 

@@ -179,6 +179,50 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					//m_hud->setScene(sScene);
 					//break;
 				}
+				
+				case SDL_SCANCODE_W:
+				case SDL_SCANCODE_UP:
+				{
+					bool moved = false;
+					while(move(UP)) 
+						moved = true;
+					if(moved)
+						placenew();
+					break;
+				}
+					
+				case SDL_SCANCODE_S:
+				case SDL_SCANCODE_DOWN:
+				{
+					bool moved = false;
+					while(move(DOWN)) 
+						moved = true;
+					if(moved)
+						placenew();
+					break;
+				}
+					
+				case SDL_SCANCODE_A:
+				case SDL_SCANCODE_LEFT:
+				{
+					bool moved = false;
+					while(move(LEFT)) 
+						moved = true;
+					if(moved)
+						placenew();
+					break;
+				}
+					
+				case SDL_SCANCODE_D:
+				case SDL_SCANCODE_RIGHT:
+				{
+					bool moved = false;
+					while(move(RIGHT)) 
+						moved = true;
+					if(moved)
+						placenew();
+					break;
+				}
 			}
 			break;
 
