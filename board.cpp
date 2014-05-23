@@ -74,6 +74,9 @@ TilePiece* Pony48Engine::loadTile(string sFilename)
 	tmpseg = new physSegment();
 	tmpseg->img = getImage("res/gfx/tilebg.png");
 	tmpseg->size = Point(TILE_WIDTH,TILE_HEIGHT);
+	const char* cBgColor = root->Attribute("bgcolor");
+	if(cBgColor != NULL)
+		tmpseg->col = colorFromString(cBgColor);
 	ret->bg = tmpseg;
 	
 	delete doc;

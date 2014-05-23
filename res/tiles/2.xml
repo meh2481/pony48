@@ -1,4 +1,4 @@
-<tile value="2"> 
+<tile value="2" bgcolor="255,198,86"> 
 	<img path="res/gfx/ab/1.png" />
 	<img path="res/gfx/ab/2.png" />
 	<img path="res/gfx/ab/3.png" />
