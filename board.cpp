@@ -17,15 +17,18 @@ void Pony48Engine::drawBoard()
 		for(int j = 0; j < BOARD_WIDTH; j++)
 		{
 			//Draw tile bg
+			glPushMatrix();
+			glTranslatef(0, 0, 0.2);
 			Point ptDrawPos(-fTotalWidth/2.0 + TILE_SPACING + (TILE_SPACING + TILE_WIDTH) * j,
 							fTotalHeight/2.0 - TILE_SPACING - (TILE_SPACING + TILE_HEIGHT) * i);
 			fillRect(ptDrawPos, Point(ptDrawPos.x + TILE_WIDTH, ptDrawPos.y - TILE_HEIGHT), m_TileBg);
+			glPopMatrix();
 			
 			//Draw tile
 			if(m_Board[j][i] != NULL)
 			{
 				glPushMatrix();
-				glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0, ptDrawPos.y-TILE_HEIGHT/2.0, 0);
+				glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0, ptDrawPos.y-TILE_HEIGHT/2.0, 0.5);
 				m_Board[j][i]->draw();
 				glPopMatrix();
 			}
@@ -77,7 +80,23 @@ TilePiece* Pony48Engine::loadTile(string sFilename)
 	return ret;
 }
 
-
+void Pony48Engine::move(direction dir)
+{
+	switch(dir)
+	{
+		case UP:
+			break;
+		
+		case DOWN:
+			break;
+			
+		case LEFT:
+			break;
+			
+		case RIGHT:
+			break;
+	}
+}
 
 
 

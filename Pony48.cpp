@@ -24,10 +24,9 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	vfs.Prepare();
 	
 	//Set camera position for this game
-	m_fDefCameraZ = -15;
-	CameraPos.x = 0;
-	CameraPos.y = 0;
-	CameraPos.z = m_fDefCameraZ;
+	m_fDefCameraZ = -16;
+	CameraPos.set(0,0,m_fDefCameraZ);
+	m_BoardRotAngle = 0;
 #ifdef DEBUG
 	m_bMouseGrabOnWindowRegain = false;
 #else
@@ -74,6 +73,9 @@ void Pony48Engine::frame(float32 dt)
 	
 	//Second half of camera bounce; move forward on every bass kick
 	beatDetect();
+	
+	//Handle key presses
+	handleKeys();
 }
 
 void Pony48Engine::draw()
@@ -83,8 +85,9 @@ void Pony48Engine::draw()
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_LIGHTING);
 	glLoadIdentity();
-	
+	//m_BoardRot.normalize();
 	glTranslatef(CameraPos.x, CameraPos.y, CameraPos.z);
+	glRotatef(m_BoardRotAngle, m_BoardRot.x, m_BoardRot.y, m_BoardRot.z);
 	
 	
 	drawBoard();
@@ -397,6 +400,9 @@ obj* Pony48Engine::objFromXML(string sXMLFilename, Point ptOffset, Point ptVel)
 	return NULL;
 }
 
+#define BOARD_ROT_AMT	5
+#define MAX_BOARD_ROT_ANGLE	25
+
 void Pony48Engine::handleKeys()
 {
 #ifdef DEBUG
@@ -405,6 +411,85 @@ void Pony48Engine::handleKeys()
 	else
 		setTimeScale(DEFAULT_TIMESCALE);
 #endif
+	if(keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP))
+	{
+		m_BoardRot.x = 1;
+		m_BoardRot.y = 0;
+		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
+			m_BoardRotAngle -= BOARD_ROT_AMT;
+	}	
+	else if(keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN))
+	{
+		m_BoardRot.x = 1;
+		m_BoardRot.y = 0;
+		if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
+			m_BoardRotAngle += BOARD_ROT_AMT;
+	}
+	else if(keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT))
+	{
+		m_BoardRot.x = 0;
+		m_BoardRot.y = 1;
+		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
+			m_BoardRotAngle -= BOARD_ROT_AMT;
+	}
+	else if(keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT))
+	{
+		m_BoardRot.x = 0;
+		m_BoardRot.y = 1;
+		if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
+			m_BoardRotAngle += BOARD_ROT_AMT;
+	}
+	else if(m_BoardRotAngle < 0)
+	{
+		m_BoardRotAngle += BOARD_ROT_AMT;
+		if(m_BoardRotAngle > 0)
+		{
+			m_BoardRotAngle = 0;
+			m_BoardRot.x = m_BoardRot.y = 0;
+		}
+	}
+	else if(m_BoardRotAngle > 0)
+	{
+		m_BoardRotAngle -= BOARD_ROT_AMT;
+		if(m_BoardRotAngle < 0)
+		{
+			m_BoardRotAngle = 0;
+			m_BoardRot.x = m_BoardRot.y = 0;
+		}
+	}
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

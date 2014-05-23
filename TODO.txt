@@ -3,3 +3,6 @@
 -Different effects that happen at different points in a song
 -Nukes
 -Bop-It
+-Support controller
+-Support mouse
+-Support keybard
