@@ -86,6 +86,11 @@ void Pony48Engine::draw()
 	drawBoard();
 	drawObjects();
 	
+	//Update HUD score
+	HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("scorebox");
+	ostringstream oss;
+	oss << "SCORE: " << m_iScore;
+	txt->setText(oss.str());
 	
 	//Draw HUD always at this depth, on top of everything else
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -134,11 +139,6 @@ void Pony48Engine::hudSignalHandler(string sSignal)
 void Pony48Engine::handleEvent(SDL_Event event)
 {
 	m_hud->event(event);	//Let our HUD handle any events it needs to
-	if(event.type == SDL_TEXTINPUT)
-	{
-		HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("title1");
-		txt->setText(txt->getText() + event.text.text);
-	}
 	switch(event.type)
 	{
 		//Key pressed

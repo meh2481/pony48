@@ -34,6 +34,7 @@ void Pony48Engine::resetBoard()
 			break;
 		}
 	}
+	m_iScore = 0;	//Reset score also
 }
 
 void Pony48Engine::drawBoard()
@@ -203,6 +204,7 @@ bool Pony48Engine::move(direction dir)
 						}
 						else if(m_Board[j][i-1]->value == m_Board[j][i]->value)
 						{
+							addScore(m_Board[j][i]->value * 2);
 							delete m_Board[j][i-1];
 							ostringstream oss;
 							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
@@ -231,6 +233,7 @@ bool Pony48Engine::move(direction dir)
 						}
 						else if(m_Board[j][i+1]->value == m_Board[j][i]->value)
 						{
+							addScore(m_Board[j][i]->value * 2);
 							delete m_Board[j][i+1];
 							ostringstream oss;
 							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
@@ -259,6 +262,7 @@ bool Pony48Engine::move(direction dir)
 						}
 						else if(m_Board[j-1][i]->value == m_Board[j][i]->value)
 						{
+							addScore(m_Board[j][i]->value * 2);
 							delete m_Board[j-1][i];
 							ostringstream oss;
 							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
@@ -287,6 +291,7 @@ bool Pony48Engine::move(direction dir)
 						}
 						else if(m_Board[j+1][i]->value == m_Board[j][i]->value)
 						{
+							addScore(m_Board[j][i]->value * 2);
 							delete m_Board[j+1][i];
 							ostringstream oss;
 							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
@@ -320,7 +325,11 @@ void Pony48Engine::placenew()
 	}
 }
 
-
+void Pony48Engine::addScore(uint32_t amt)
+{
+	m_iScore += amt;
+	//TODO: Anim stuffs
+}
 
 
 

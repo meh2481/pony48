@@ -74,6 +74,7 @@ private:
 	TilePiece* m_Board[BOARD_WIDTH][BOARD_HEIGHT];
 	Vec3 m_BoardRot;
 	float32 m_BoardRotAngle;
+	uint32_t m_iScore;
 
 protected:
 	void frame(float32 dt);
@@ -120,6 +121,7 @@ public:
 	void placenew();						//Places a new tile at a random location
 	void resetBoard();						//Starts a new game
 	void clearBoard();						//Clears memory associated with the game board
+	void addScore(uint32_t amt);			//Add a value to the score (in function so we can have cool anim stuff)
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to the engine

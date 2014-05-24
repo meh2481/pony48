@@ -8,6 +8,6 @@
 	
 	<!-- playing HUD -->
 	<scene name="playing">
-		<textbox name="title1" font="cmr" text="" pos="0,0" pt="2" col="0.8549,0.6745,0.9098,1" />
+		<textbox name="scorebox" font="cmr" text="0" pos="0,5.5" pt="2" col="0.8549,0.6745,0.9098,1" />
 	</scene>
 </hud>
