@@ -1,0 +1,13 @@
+<hud name="pony48hud">
+	<fonts>
+		<font name="cmr" path="res/font/CelestiaMediumRedux.xml" />
+	</fonts>
+	<images />
+		<!--image name="mark" path="res/gfx/twilimark.png" />
+	</images-->
+	
+	<!-- playing HUD -->
+	<scene name="playing">
+		<textbox name="title1" font="cmr" text="SCORE: Over 9000!" pos="0,0" pt="2" col="0.8549,0.6745,0.9098,1" />
+	</scene>
+</hud>

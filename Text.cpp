@@ -33,7 +33,7 @@ Text::Text(string sXMLFilename)
 		cName = elem->Name();
 		if(cName == NULL) return;
 		string sName(cName);
-		if(sName == "image")	//Image
+		if(sName == "image" && m_imgFont == NULL)	//Image
 		{
 			const char* cPath = elem->Attribute("path");
 			if(cPath == NULL) return;
@@ -64,7 +64,6 @@ Text::~Text()
 		delete m_imgFont;
 }
 
-//TODO: Deal with kerning
 void Text::render(string sText, float32 x, float32 y, float pt)
 {
 	if(m_imgFont == NULL)
@@ -73,7 +72,7 @@ void Text::render(string sText, float32 x, float32 y, float pt)
 	y = -y;
 	glColor4f(col.r, col.g, col.b, col.a);
 	float width = size(sText, pt);
-	x += width / 2.0 - (width / sText.size()) / 2.0;
+	x += width / 2.0;// - (width / sText.size())/2.0;
 	for(string::iterator i = sText.begin(); i != sText.end(); i++)
 	{
 		unsigned char c = *i;
@@ -87,24 +86,29 @@ void Text::render(string sText, float32 x, float32 y, float pt)
 		Rect rc = iRect->second;
 
 		glPushMatrix();
+		x -= rc.width() * (pt / rc.height())/2.0;
 		glTranslatef(-x, -y, 0.0);
-		//TODO: Deal with non-monospace fonts
-		Point sz(width / sText.size(), pt);
+		Point sz(rc.width() * (pt / rc.height()), pt);
 		m_imgFont->render(sz, rc);
 		glPopMatrix();
-		x -= sz.x;
+		x -= (rc.width() - m_mKerning[c]*2.0) * (pt / rc.height())/2.0;
 	}
 	glColor4f(1.0f,1.0f,1.0f,1.0f);
 }
 
-//TODO: Deal with fonts where it's not all in a straight line, deal with kerning
 float32 Text::size(string sText, float pt)
 {
-	float width = m_imgFont->getWidth();
-	width /= m_mRectangles.size();
-	width *= pt / m_imgFont->getHeight();
-	width *= sText.size();
-	return width;
+	float32 len = 0.0f;
+	for(string::iterator i = sText.begin(); i != sText.end(); i++)
+	{
+		unsigned char c = *i;
+		if(c == '\0')
+			break;
+		
+		if(m_mRectangles.count(c))
+			len += (m_mRectangles[c].width() - m_mKerning[c]) * (pt / m_mRectangles[c].height());
+	}
+	return len;
 }
 
 

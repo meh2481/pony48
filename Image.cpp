@@ -195,8 +195,8 @@ void Image::render(Point size, Rect rcImg)
 #else
 	rcImg.left = rcImg.left / (float)m_iWidth;
 	rcImg.right = rcImg.right / (float)m_iWidth;
-	rcImg.top = rcImg.top / (float)m_iHeight;
-	rcImg.bottom = rcImg.bottom / (float)m_iHeight;
+	rcImg.top = 1.0 - rcImg.top / (float)m_iHeight;
+	rcImg.bottom = 1.0 - rcImg.bottom / (float)m_iHeight;
 #endif
 	
 	// tell opengl to use the generated texture
@@ -211,16 +211,16 @@ void Image::render(Point size, Rect rcImg)
 	// make a rectangle
 	glBegin(GL_QUADS);
 	// top left
-	glTexCoord2f(rcImg.left, rcImg.bottom);	//Our real image is in the upper-left corner of memory, flipped vertically. Compensate.
+	glTexCoord2f(rcImg.left, rcImg.top);
 	glVertex3f(-size.x/2.0, size.y/2.0, 0.0);
 	// bottom left
-	glTexCoord2f(rcImg.left, rcImg.top);
+	glTexCoord2f(rcImg.left, rcImg.bottom);
 	glVertex3f(-size.x/2.0, -size.y/2.0, 0.0);
 	// bottom right
-	glTexCoord2f(rcImg.right, rcImg.top);
+	glTexCoord2f(rcImg.right, rcImg.bottom);
 	glVertex3f(size.x/2.0, -size.y/2.0, 0.0);
 	// top right
-	glTexCoord2f(rcImg.right, rcImg.bottom);
+	glTexCoord2f(rcImg.right, rcImg.top);
 	glVertex3f(size.x/2.0, size.y/2.0, 0.0);
 
 	glEnd();

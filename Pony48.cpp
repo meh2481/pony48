@@ -34,9 +34,9 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 #endif	
 	showCursor();
 	
-	//m_hud = new HUD("hud");
-	//m_hud->create("res/hud.xml");
-	//m_hud->setScene("start");
+	m_hud = new HUD("hud");
+	m_hud->create("res/hud/hud.xml");
+	m_hud->setScene("playing");
 	
 	setTimeScale(DEFAULT_TIMESCALE);
 	
@@ -44,6 +44,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_BoardBg.set(0.7,0.7,0.7,1);
 	m_TileBg.set(0.5,0.5,0.5,1);
 	m_BgCol.set(0,0,0,1.0);
+	SDL_StartTextInput();
 }
 
 Pony48Engine::~Pony48Engine()
@@ -52,7 +53,7 @@ Pony48Engine::~Pony48Engine()
 	saveConfig(getSaveLocation() + "config.xml");
 	clearBoard();
 	errlog << "delete hud" << endl;
-	//delete m_hud;
+	delete m_hud;
 }
 
 void Pony48Engine::frame(float32 dt)
@@ -90,7 +91,7 @@ void Pony48Engine::draw()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	glTranslatef(0, 0, m_fDefCameraZ);
-	//m_hud->draw(0);
+	m_hud->draw(0);
 }
 
 void Pony48Engine::init(list<commandlineArg> sArgs)
@@ -132,7 +133,12 @@ void Pony48Engine::hudSignalHandler(string sSignal)
 
 void Pony48Engine::handleEvent(SDL_Event event)
 {
-	//m_hud->event(event);	//Let our HUD handle any events it needs to
+	m_hud->event(event);	//Let our HUD handle any events it needs to
+	if(event.type == SDL_TEXTINPUT)
+	{
+		HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("title1");
+		txt->setText(txt->getText() + event.text.text);
+	}
 	switch(event.type)
 	{
 		//Key pressed
@@ -153,12 +159,12 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					
 				case SDL_SCANCODE_F5:
 				{
-					//string sScene = m_hud->getScene();
-					//delete m_hud;
-					//m_hud = new HUD("hud");
-					//m_hud->create("res/hud.xml");
-					//m_hud->setScene(sScene);
-					//break;
+					string sScene = m_hud->getScene();
+					delete m_hud;
+					m_hud = new HUD("hud");
+					m_hud->create("res/hud/hud.xml");
+					m_hud->setScene(sScene);
+					break;
 				}
 				
 				case SDL_SCANCODE_W:
