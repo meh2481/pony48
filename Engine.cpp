@@ -353,6 +353,20 @@ void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
 	}
 }
 
+void Engine::musicLoop(float32 startSec, float32 endSec)
+{
+	if(m_bSoundDied) return;
+	if(m_channels.count("music"))
+	{
+		m_channels["music"]->setLoopPoints(startSec * 1000, FMOD_TIMEUNIT_MS, endSec * 1000, FMOD_TIMEUNIT_MS);
+		//Flush music stream
+		m_channels["music"]->setMode(FMOD_LOOP_NORMAL);
+		unsigned int ms;
+		m_channels["music"]->getPosition(&ms, FMOD_TIMEUNIT_MS);
+		m_channels["music"]->setPosition(ms, FMOD_TIMEUNIT_MS);
+	}
+}
+
 bool Engine::keyDown(int32_t keyCode)
 {
 	if(m_iKeystates == NULL) return false;	//On first cycle, this can be NULL and cause segfaults otherwise

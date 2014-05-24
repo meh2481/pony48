@@ -103,6 +103,7 @@ public:
 	virtual void playSound(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);	 //Play a sound
 	FMOD::Channel* getChannel(string sSoundName);	//Return the channel of this sound
 	void playMusic(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);	 //Play looping music, or resume paused music
+	void musicLoop(float32 startSec, float32 endSec);									//Set the starting and ending loop points for the currently-playing song
 	void pauseMusic();																	 //Pause music that's currently playing
 	void resumeMusic();																		//Resume music that was paused
 	void restartMusic();
