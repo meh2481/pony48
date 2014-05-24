@@ -9,7 +9,7 @@
 	<drop start="173.846" end="174.533" type="stutter"/>
 	<drop start="178.942" end="180.362" type="stutter"/>
 	<drop start="185.476" end="186.195" type="stutter"/>
-	<drop start="0" end="-1" type="bounce" />
+	<drop start="0" end="-1" type="bounce"/>
 	<main />
 	<mid />
 	<stutter />

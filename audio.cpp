@@ -42,7 +42,10 @@ void Pony48Engine::beatDetect()
 	delete [] specRight;
 }
 
-
+void Pony48Engine::loadSongs(string sFilename)
+{
+	
+}
 
 
 

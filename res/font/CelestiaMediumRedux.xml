@@ -1,0 +1,89 @@
+<!--Font from http://www.mattyhex.net/CMR/-->
+<font name="celestiamediumredux">
+  <image path="res/font/CelestiaMediumRedux.png"/>
+  <char ascii="A" rect="0,0,130,325"/>
+  <char ascii="B" rect="131,0,259,325"/>
+  <char ascii="C" rect="260,0,375,325"/>
+  <char ascii="D" rect="376,0,501,325"/>
+  <char ascii="E" rect="502,0,623,325"/>
+  <char ascii="F" rect="624,0,732,325"/>
+  <char ascii="G" rect="733,0,853,325"/>
+  <char ascii="H" rect="853,0,989,325"/>
+  <char ascii="I" rect="990,0,1085,325"/>
+  <char ascii="J" rect="1086,0,1211,325"/>
+  <char ascii="K" rect="1212,0,1357,325" kern="26"/>
+  <char ascii="L" rect="1358,0,1470,325"/>
+  <char ascii="M" rect="1471,0,1630,325"/>
+  <char ascii="N" rect="1631,0,1775,325"/>
+  <char ascii="O" rect="1776,0,1883,325"/>
+  <char ascii="P" rect="1884,0,2001,325"/>
+  <char ascii="Q" rect="0,326,138,650" kern="26"/>
+  <char ascii="R" rect="139,326,300,650" kern="53"/>
+  <char ascii="S" rect="301,326,412,650"/>
+  <char ascii="T" rect="413,326,543,650"/>
+  <char ascii="U" rect="544,326,678,650"/>
+  <char ascii="V" rect="679,326,838,650"/>
+  <char ascii="W" rect="839,326,1026,650"/>
+  <char ascii="X" rect="1027,326,1178,650"/>
+  <char ascii="Y" rect="1179,326,1338,650"/>
+  <char ascii="Z" rect="1339,326,1487,650"/>
+  <char ascii="a" rect="1488,326,1609,650"/>
+  <char ascii="b" rect="1610,326,1725,650"/>
+  <char ascii="c" rect="1726,326,1820,650"/>
+  <char ascii="d" rect="1821,326,1938,650"/>
+  <char ascii="e" rect="1939,326,2044,650"/>
+  <char ascii="f" rect="0,651,108,975"/>
+  <char ascii="g" rect="109,651,223,975"/>
+  <char ascii="h" rect="224,651,351,975"/>
+  <char ascii="i" rect="352,651,411,975"/>
+  <char ascii="j" rect="412,651,494,975"/>
+  <char ascii="k" rect="495,651,618,975"/>
+  <char ascii="l" rect="619,651,717,975"/>
+  <char ascii="m" rect="718,651,887,975"/>
+  <char ascii="n" rect="888,651,1016,975"/>
+  <char ascii="o" rect="1017,651,1120,975"/>
+  <char ascii="p" rect="1121,651,1240,975"/>
+  <char ascii="q" rect="1241,651,1395,975" kern="37"/>
+  <char ascii="r" rect="1396,651,1504,975"/>
+  <char ascii="s" rect="1505,651,1592,975"/>
+  <char ascii="t" rect="1593,651,1691,975"/>
+  <char ascii="u" rect="1692,651,1805,975"/>
+  <char ascii="v" rect="1806,651,1922,975"/>
+  <char ascii="w" rect="0,976,180,1300"/>
+  <char ascii="x" rect="181,976,306,1300"/>
+  <char ascii="y" rect="307,976,446,1300"/>
+  <char ascii="z" rect="446,976,561,1300"/>
+  <char ascii=" " rect="562,976,686,1300"/>
+  <char ascii="/" rect="687,976,812,1300"/>
+  <char ascii="." rect="813,976,859,1300"/>
+  <char ascii="," rect="860,976,919,1300"/>
+  <char ascii="&apos;" rect="919,976,970,1300"/>
+  <char ascii=";" rect="971,976,1028,1300"/>
+  <char ascii="\" rect="1029,976,1151,1300"/>
+  <char ascii="]" rect="1152,976,1231,1300"/>
+  <char ascii="[" rect="1232,976,1306,1300"/>
+  <char ascii="=" rect="1307,976,1412,1300"/>
+  <char ascii="-" rect="1413,976,1519,1300"/>
+  <char ascii="`" rect="1520,976,1587,1300"/>
+  <char ascii="~" rect="1588,976,1708,1300"/>
+  <char ascii="!" rect="1709,976,1771,1300"/>
+  <char ascii="@" rect="1772,976,1940,1300"/>
+  <char ascii="$" rect="0,1301,117,1625"/>
+  <char ascii="%" rect="118,1301,286,1625"/>
+  <char ascii="^" rect="287,1301,400,1625"/>
+  <char ascii="&amp;" rect="401,1301,546,1625"/>
+  <char ascii="*" rect="547,1301,651,1625"/>
+  <char ascii="(" rect="652,1301,717,1625"/>
+  <char ascii=")" rect="718,1301,786,1625"/>
+  <char ascii="_" rect="787,1301,910,1625"/>
+  <char ascii="+" rect="911,1301,1023,1625"/>
+  <char ascii="|" rect="1024,1301,1060,1625"/>
+  <char ascii="}" rect="1061,1301,1137,1625"/>
+  <char ascii="{" rect="1138,1301,1213,1625"/>
+  <char ascii="&quot;" rect="1214,1301,1312,1625"/>
+  <char ascii=":" rect="1313,1301,1365,1625"/>
+  <char ascii="?" rect="1366,1301,1471,1625"/>
+  <char ascii="&gt;" rect="1472,1301,1577,1625"/>
+  <char ascii="&lt;" rect="1579,1301,1683,1625"/>
+  <char ascii="#" rect="1684,1301,1795,1625"/>
+</font> 

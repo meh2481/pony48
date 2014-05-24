@@ -108,18 +108,21 @@ public:
 	void clearColors();
 	
 	//audio.cpp functions
-	void beatDetect();
+	void beatDetect();					//Bounce to da beat
+	void loadSongs(string sFilename);	//Load songs to play into memory
 	
 	//board.cpp functions
 	void drawBoard();						//Draw the tiles and such on the board
 	TilePiece* loadTile(string sFilename);	//Load a tile piece from an XML file
 	bool move(direction dir);				//Move in the given direction (if possible)
 	bool movePossible(direction dir);		//Test to see if it's possible to move in the given direction
-	bool movePossible();
+	bool movePossible();					//Test to see if it's possible to move at all
 	void placenew();						//Places a new tile at a random location
+	void resetBoard();						//Starts a new game
+	void clearBoard();						//Clears memory associated with the game board
 };
 
-void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to myEngine
+void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to the engine
 float myAbs(float v);	//Because stinking namespace stuff
 
 

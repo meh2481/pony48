@@ -5,6 +5,37 @@
 
 #include "Pony48.h"
 
+void Pony48Engine::clearBoard()
+{
+	//Clean up board
+	for(int i = 0; i < BOARD_HEIGHT; i++)
+	{
+		for(int j = 0; j < BOARD_WIDTH; j++)
+		{
+			if(m_Board[j][i] != NULL)
+				delete m_Board[j][i];
+		}
+	}
+}
+
+void Pony48Engine::resetBoard()
+{
+	clearBoard();
+	
+	//Start with 2 random tiles
+	for(int start = 0; start < 2; start++)
+	{
+		while(true)
+		{
+			int x = randInt(0, BOARD_WIDTH-1);
+			int y = randInt(0, BOARD_HEIGHT-1);
+			if(m_Board[x][y] != NULL) continue;
+			m_Board[x][y] = loadTile("res/tiles/2.xml");
+			break;
+		}
+	}
+}
+
 void Pony48Engine::drawBoard()
 {
 	float fTotalWidth = BOARD_WIDTH * TILE_WIDTH + (BOARD_WIDTH + 1) * TILE_SPACING;
