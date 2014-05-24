@@ -86,4 +86,14 @@
   <char ascii="&gt;" rect="1472,1301,1577,1625"/>
   <char ascii="&lt;" rect="1579,1301,1683,1625"/>
   <char ascii="#" rect="1684,1301,1795,1625"/>
+  <char ascii="0" rect="0,1626,103,1950"/>
+  <char ascii="1" rect="104,1626,182,1950"/>
+  <char ascii="2" rect="183,1626,304,1950"/>
+  <char ascii="3" rect="305,1626,425,1950"/>
+  <char ascii="4" rect="426,1626,548,1950"/>
+  <char ascii="5" rect="549,1626,664,1950"/>
+  <char ascii="6" rect="665,1626,788,1950"/>
+  <char ascii="7" rect="789,1626,908,1950"/>
+  <char ascii="8" rect="909,1626,1017,1950"/>
+  <char ascii="9" rect="1018,1626,1117,1950"/>
 </font> 

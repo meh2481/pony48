@@ -72,7 +72,7 @@ void Text::render(string sText, float32 x, float32 y, float pt)
 	y = -y;
 	glColor4f(col.r, col.g, col.b, col.a);
 	float width = size(sText, pt);
-	x += width / 2.0;// - (width / sText.size())/2.0;
+	x += width / 2.0;
 	for(string::iterator i = sText.begin(); i != sText.end(); i++)
 	{
 		unsigned char c = *i;
@@ -86,12 +86,12 @@ void Text::render(string sText, float32 x, float32 y, float pt)
 		Rect rc = iRect->second;
 
 		glPushMatrix();
-		x -= rc.width() * (pt / rc.height())/2.0;
+		x -= rc.width() * (pt / rc.height())/2.0;	//Add half the width to get the center (whyyy are we drawing from the center plz dood I fan)
 		glTranslatef(-x, -y, 0.0);
-		Point sz(rc.width() * (pt / rc.height()), pt);
+		Point sz(rc.width() * (pt / rc.height()), pt);	//Ignore kerning when drawing; we only care about that when computing position
 		m_imgFont->render(sz, rc);
 		glPopMatrix();
-		x -= (rc.width() - m_mKerning[c]*2.0) * (pt / rc.height())/2.0;
+		x -= (rc.width() - m_mKerning[c]*2.0) * (pt / rc.height())/2.0;	//Add second half of the width, plus kerning (times 2 because divided by 2... it all works out)
 	}
 	glColor4f(1.0f,1.0f,1.0f,1.0f);
 }
