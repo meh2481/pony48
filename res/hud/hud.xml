@@ -11,4 +11,12 @@
 		<textbox name="scorebox" font="cmr" text="SCORE: 0" pos="-5,6" pt="1.5" col="255,255,255,255" />
 		<textbox name="hiscorebox" font="cmr" text="BEST: 0" pos="5,6" pt="1.5" col="255,255,255,255" />
 	</scene>
+	<scene name="gameover">
+		<geom name="gameovertextbg" col="128,128,128,200">
+			<quad p1="-8, 4, 0" p2="8, 4, 0" p3="8, 0, 0" p4="-8, 0, 0" />
+			<quad p1="-5.5, -0.25, 0" p2="5.5, -0.25, 0" p3="5.5, -1.75, 0" p4="-5.5, -1.75, 0" />
+		</geom>
+		<textbox name="gameover" font="cmr" text="GAME OVER" pos="0,2" pt="4" col="255,255,255,255" />
+		<textbox name="finalscore" font="cmr" text="FINAL SCORE: 0" pos="0,-1" pt="1.5" col="255,255,255,255" />
+	</scene>
 </hud>

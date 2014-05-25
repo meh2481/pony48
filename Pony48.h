@@ -57,6 +57,12 @@ typedef enum
 	DOWN	
 } direction;
 
+typedef enum
+{
+	PLAYING,
+	GAMEOVER
+} gameMode;
+
 class Pony48Engine : public Engine
 {
 private:
@@ -78,6 +84,7 @@ private:
 	uint32_t m_iScore;
 	uint32_t m_iHighScore;
 	Background* m_bg;
+	gameMode m_iCurMode;
 
 protected:
 	void frame(float32 dt);

@@ -41,6 +41,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	setTimeScale(DEFAULT_TIMESCALE);
 	
 	//Game stuff!
+	m_iCurMode = PLAYING;
 	m_BoardBg.set(0.7,0.7,0.7,1);
 	m_TileBg.set(0.5,0.5,0.5,1);
 	m_BgCol.set(0,0,0,1.0);
@@ -78,7 +79,20 @@ void Pony48Engine::frame(float32 dt)
 	handleKeys();
 	
 	//Update background
-	m_bg->update(dt);
+	if(m_bg != NULL)
+		m_bg->update(dt);
+	
+	//Check if game is now over
+	if(m_iCurMode == PLAYING && !movePossible())
+	{
+		//Update final score counter
+		ostringstream oss;
+		HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("finalscore");
+		oss << "FINAL SCORE: " << m_iScore;
+		txt->setText(oss.str());
+		m_hud->setScene("gameover");
+		m_iCurMode = GAMEOVER;
+	}
 }
 
 void Pony48Engine::draw()
@@ -89,12 +103,15 @@ void Pony48Engine::draw()
 	glDisable(GL_LIGHTING);
 	
 	//Draw background behind everything else
-	glLoadIdentity();
-	glTranslatef(0, 0, m_fDefCameraZ);
-	Rect rcView = getCameraView();
-	m_bg->screenDiag = sqrt(rcView.width()*rcView.width()+rcView.height()*rcView.height());	//HACK: Update every frame to handle screen resize
-	m_bg->draw();
-	glClear(GL_DEPTH_BUFFER_BIT);
+	if(m_bg != NULL)
+	{
+		glLoadIdentity();
+		glTranslatef(0, 0, m_fDefCameraZ);
+		Rect rcView = getCameraView();
+		m_bg->screenDiag = sqrt(rcView.width()*rcView.width()+rcView.height()*rcView.height());	//HACK: Update every frame to handle screen resize
+		m_bg->draw();
+		glClear(GL_DEPTH_BUFFER_BIT);
+	}
 	
 	//Set up OpenGL matrices
 	glLoadIdentity();
@@ -112,7 +129,7 @@ void Pony48Engine::draw()
 	txt->setText(oss.str());
 	oss.str("");
 	txt = (HUDTextbox*)m_hud->getChild("hiscorebox");
-	oss << " BEST: " << m_iHighScore;
+	oss << "BEST: " << m_iHighScore;
 	txt->setText(oss.str());
 	
 	//Draw HUD always at this depth, on top of everything else
@@ -166,6 +183,24 @@ void Pony48Engine::handleEvent(SDL_Event event)
 	{
 		//Key pressed
 		case SDL_KEYDOWN:
+		{
+			if(m_iCurMode == GAMEOVER)
+			{
+				if(!(event.key.keysym.scancode == SDL_SCANCODE_W || 
+					 event.key.keysym.scancode == SDL_SCANCODE_UP || 
+					 event.key.keysym.scancode == SDL_SCANCODE_S ||
+					 event.key.keysym.scancode == SDL_SCANCODE_DOWN ||
+					 event.key.keysym.scancode == SDL_SCANCODE_A ||
+					 event.key.keysym.scancode == SDL_SCANCODE_LEFT ||
+					 event.key.keysym.scancode == SDL_SCANCODE_D ||
+					 event.key.keysym.scancode == SDL_SCANCODE_RIGHT))
+				{
+					m_iCurMode = PLAYING;
+					resetBoard();
+					m_hud->setScene("playing");
+				}
+				break;
+			}
 			switch(event.key.keysym.scancode)
 			{
 				case SDL_SCANCODE_ESCAPE:
@@ -197,50 +232,55 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				
 				case SDL_SCANCODE_W:
 				case SDL_SCANCODE_UP:
-				{
-					bool moved = false;
-					while(move(UP)) 
-						moved = true;
-					if(moved)
-						placenew();
+					if(m_iCurMode == PLAYING)
+					{
+						bool moved = false;
+						while(move(UP)) 
+							moved = true;
+						if(moved)
+							placenew();
+					}
 					break;
-				}
 					
 				case SDL_SCANCODE_S:
 				case SDL_SCANCODE_DOWN:
-				{
-					bool moved = false;
-					while(move(DOWN)) 
-						moved = true;
-					if(moved)
-						placenew();
+					if(m_iCurMode == PLAYING)
+					{
+						bool moved = false;
+						while(move(DOWN)) 
+							moved = true;
+						if(moved)
+							placenew();
+					}
 					break;
-				}
 					
 				case SDL_SCANCODE_A:
 				case SDL_SCANCODE_LEFT:
-				{
-					bool moved = false;
-					while(move(LEFT)) 
-						moved = true;
-					if(moved)
-						placenew();
+					if(m_iCurMode == PLAYING)
+					{
+						bool moved = false;
+						while(move(LEFT)) 
+							moved = true;
+						if(moved)
+							placenew();
+					}
 					break;
-				}
 					
 				case SDL_SCANCODE_D:
 				case SDL_SCANCODE_RIGHT:
-				{
-					bool moved = false;
-					while(move(RIGHT)) 
-						moved = true;
-					if(moved)
-						placenew();
+					if(m_iCurMode == PLAYING)
+					{
+						bool moved = false;
+						while(move(RIGHT)) 
+							moved = true;
+						if(moved)
+							placenew();
+					}
 					break;
-				}
 			}
 			break;
-
+		}
+		
 		//Key released
 		case SDL_KEYUP:
 			switch(event.key.keysym.scancode)
@@ -474,56 +514,59 @@ obj* Pony48Engine::objFromXML(string sXMLFilename, Point ptOffset, Point ptVel)
 
 void Pony48Engine::handleKeys()
 {
+	if(m_iCurMode == PLAYING)
+	{
 #ifdef DEBUG
-	if(keyDown(SDL_SCANCODE_B))
-		setTimeScale(DEFAULT_TIMESCALE/3);
-	else
-		setTimeScale(DEFAULT_TIMESCALE);
+		if(keyDown(SDL_SCANCODE_B))
+			setTimeScale(DEFAULT_TIMESCALE/3);
+		else
+			setTimeScale(DEFAULT_TIMESCALE);
 #endif
-	if(keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP))
-	{
-		m_BoardRot.x = 1;
-		m_BoardRot.y = 0;
-		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
-			m_BoardRotAngle -= BOARD_ROT_AMT;
-	}	
-	else if(keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN))
-	{
-		m_BoardRot.x = 1;
-		m_BoardRot.y = 0;
-		if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
-			m_BoardRotAngle += BOARD_ROT_AMT;
-	}
-	else if(keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT))
-	{
-		m_BoardRot.x = 0;
-		m_BoardRot.y = 1;
-		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
-			m_BoardRotAngle -= BOARD_ROT_AMT;
-	}
-	else if(keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT))
-	{
-		m_BoardRot.x = 0;
-		m_BoardRot.y = 1;
-		if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
-			m_BoardRotAngle += BOARD_ROT_AMT;
-	}
-	else if(m_BoardRotAngle < 0)
-	{
-		m_BoardRotAngle += BOARD_ROT_AMT;
-		if(m_BoardRotAngle > 0)
+		if(keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP))
 		{
-			m_BoardRotAngle = 0;
-			m_BoardRot.x = m_BoardRot.y = 0;
+			m_BoardRot.x = 1;
+			m_BoardRot.y = 0;
+			if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
+				m_BoardRotAngle -= BOARD_ROT_AMT;
+		}	
+		else if(keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN))
+		{
+			m_BoardRot.x = 1;
+			m_BoardRot.y = 0;
+			if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
+				m_BoardRotAngle += BOARD_ROT_AMT;
 		}
-	}
-	else if(m_BoardRotAngle > 0)
-	{
-		m_BoardRotAngle -= BOARD_ROT_AMT;
-		if(m_BoardRotAngle < 0)
+		else if(keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT))
 		{
-			m_BoardRotAngle = 0;
-			m_BoardRot.x = m_BoardRot.y = 0;
+			m_BoardRot.x = 0;
+			m_BoardRot.y = 1;
+			if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
+				m_BoardRotAngle -= BOARD_ROT_AMT;
+		}
+		else if(keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT))
+		{
+			m_BoardRot.x = 0;
+			m_BoardRot.y = 1;
+			if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
+				m_BoardRotAngle += BOARD_ROT_AMT;
+		}
+		else if(m_BoardRotAngle < 0)
+		{
+			m_BoardRotAngle += BOARD_ROT_AMT;
+			if(m_BoardRotAngle > 0)
+			{
+				m_BoardRotAngle = 0;
+				m_BoardRot.x = m_BoardRot.y = 0;
+			}
+		}
+		else if(m_BoardRotAngle > 0)
+		{
+			m_BoardRotAngle -= BOARD_ROT_AMT;
+			if(m_BoardRotAngle < 0)
+			{
+				m_BoardRotAngle = 0;
+				m_BoardRot.x = m_BoardRot.y = 0;
+			}
 		}
 	}
 	

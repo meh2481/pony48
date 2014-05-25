@@ -13,7 +13,10 @@ void Pony48Engine::clearBoard()
 		for(int j = 0; j < BOARD_WIDTH; j++)
 		{
 			if(m_Board[j][i] != NULL)
+			{
 				delete m_Board[j][i];
+				m_Board[j][i] = NULL;
+			}
 		}
 	}
 }
