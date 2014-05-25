@@ -95,10 +95,30 @@ public:
 	Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName, string sIcon, bool bResizable = false);
 	~Engine();
 
-	//Methods
+	//Misc. methods
 	void commandline(list<string> argv);	//Pass along commandline arguments for the engine to use
 	void start();   //Runs engine and doesn't exit until the engine ends
+	void quit() {m_bQuitting = true;};  //Stop the engine and quit nicely
+	string getSaveLocation();		//Get good location to save config files/save files
+	
+	//Drawing functions
 	void fillRect(Point p1, Point p2, Color col);
+	Rect getScreenRect()	{Rect rc = {0,0,getWidth(),getHeight()}; return rc;};
+	
+	//Window functions
+	void changeScreenResolution(float32 w, float32 h);  //Change resolution mid-game and reload OpenGL textures as needed
+	void toggleFullscreen();							//Switch between fullscreen/windowed modes
+	void setFullscreen(bool bFullscreen);				//Set fullscreen to true or false as needed
+	void setInitialFullscreen() {SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);};
+	bool isFullscreen()	{return m_bFullscreen;};
+	bool isMaximized();	
+	Point getWindowPos();	//Get the window position
+	void setWindowPos(Point pos);	//Set window position
+	void maximizeWindow();								//Call window manager to maximize application window
+	void pauseOnKeyboard(bool p)	{m_bPauseOnKeyboardFocus = p;};
+	bool pausesOnFocusLost()		{return m_bPauseOnKeyboardFocus;};
+	
+	//Sound functions
 	void createSound(string sPath, string sName);   //Creates a sound from this name and file path
 	virtual void playSound(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);	 //Play a sound
 	FMOD::Channel* getChannel(string sSoundName);	//Return the channel of this sound
@@ -109,10 +129,17 @@ public:
 	void restartMusic();
 	void stopMusic();
 	void seekMusic(float32 fTime);
+	
+	//Keyboard functions
 	bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
-	void quit() {m_bQuitting = true;};  //Stop the engine and quit nicely
-	Rect getScreenRect()	{Rect rc = {0,0,getWidth(),getHeight()}; return rc;};
+	
+	//Physics functions
 	b2Body* createBody(b2BodyDef* bdef) {return m_physicsWorld->CreateBody(bdef);};
+	void setGravity(Point ptGravity)	{m_physicsWorld->SetGravity(ptGravity);};
+	void setGravity(float32 x, float32 y)   {setGravity(Point(x,y));};
+	void stepPhysics(float32 dt)	{m_physicsWorld->Step(dt * m_fTimeScale, VELOCITY_ITERATIONS, PHYSICS_ITERATIONS);};
+	
+	//Mouse functions
 	Point getCursorPos()	{return m_ptCursorPos;};
 	void setCursorPos(int32_t x, int32_t y);
 	void setCursorPos(Point ptPos)  {setCursorPos(ptPos.x, ptPos.y);};
@@ -121,28 +148,19 @@ public:
 	void hideCursor()	{SDL_ShowCursor(0);};
 	bool isMouseGrabbed()	{return SDL_GetWindowGrab(m_Window);};
 	void grabMouse(bool bGrab = true) {SDL_SetWindowGrab(m_Window, (SDL_bool)bGrab);};
-	void setGravity(Point ptGravity)	{m_physicsWorld->SetGravity(ptGravity);};
-	void setGravity(float32 x, float32 y)   {setGravity(Point(x,y));};
-	void changeScreenResolution(float32 w, float32 h);  //Change resolution mid-game and reload OpenGL textures as needed
-	void toggleFullscreen();							//Switch between fullscreen/windowed modes
-	void setFullscreen(bool bFullscreen);				//Set fullscreen to true or false as needed
-	void setInitialFullscreen() {SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);};
-	bool isFullscreen()	{return m_bFullscreen;};
-	bool isMaximized();	
-	Point getWindowPos();	//Get the window position
-	void setWindowPos(Point pos);	//Set window position
-	void maximizeWindow();								//Call window manager to maximize application window
+	
+	//Time functions
 	float32 getTimeScale()	{return m_fTimeScale;};
 	void setTimeScale(float32 fScale)	{m_fTimeScale = fScale;};
+	Uint32 getTicks()	{return SDL_GetTicks();};
+	float32 getSeconds()	{return (float32)SDL_GetTicks()/1000.0;};
+	
+	//Object functions
 	void addObject(obj* o);
 	void addScenery(physSegment* seg) 	{m_lScenery.insert(seg);};
 	void drawObjects();
 	void cleanupObjects();
 	void updateObjects(float32 dt);
-	void stepPhysics(float32 dt)	{m_physicsWorld->Step(dt * m_fTimeScale, VELOCITY_ITERATIONS, PHYSICS_ITERATIONS);};
-	void pauseOnKeyboard(bool p)	{m_bPauseOnKeyboardFocus = p;};
-	bool pausesOnFocusLost()		{return m_bPauseOnKeyboardFocus;};
-	string getSaveLocation();		//Get good location to save config files/save files
 
 	//Accessor methods
 	void setFramerate(float32 fFramerate);
