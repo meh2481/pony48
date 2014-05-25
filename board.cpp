@@ -98,7 +98,6 @@ TilePiece* Pony48Engine::loadTile(string sFilename)
 	
 	physSegment* tmpseg = new physSegment();
 	int which = randInt(0, vImages.size()-1);
-	errlog << "Which: " << which << endl;
 	tmpseg->img = vImages[which];
 	tmpseg->size = Point(TILE_WIDTH,TILE_HEIGHT);
 	ret->seg = tmpseg;

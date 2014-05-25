@@ -45,6 +45,13 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_TileBg.set(0.5,0.5,0.5,1);
 	m_BgCol.set(0,0,0,1.0);
 	m_iHighScore = 0;
+	gradientBg* bg = new gradientBg();
+	bg->ul.set(1,0,0,1);
+	bg->ur.set(0,1,0,1);
+	bg->br.set(0,0,1,1);
+	bg->bl.set(1,1,1,1);
+	m_bg = (Background*) bg;
+	
 }
 
 Pony48Engine::~Pony48Engine()
@@ -52,6 +59,8 @@ Pony48Engine::~Pony48Engine()
 	errlog << "~Pony48Engine()" << endl;
 	saveConfig(getSaveLocation() + "config.xml");
 	clearBoard();
+	if(m_bg != NULL)
+		delete m_bg;
 	errlog << "delete hud" << endl;
 	delete m_hud;
 }
@@ -69,6 +78,9 @@ void Pony48Engine::frame(float32 dt)
 	
 	//Handle key presses
 	handleKeys();
+	
+	//Update background
+	m_bg->update(dt);
 }
 
 void Pony48Engine::draw()
@@ -77,12 +89,17 @@ void Pony48Engine::draw()
 	//Set up camera and OpenGL flags
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_LIGHTING);
+	
+	//Draw background behind everything else
+	m_bg->draw();
+	glClear(GL_DEPTH_BUFFER_BIT);
+	
+	//Set up OpenGL matrices
 	glLoadIdentity();
-	//m_BoardRot.normalize();
 	glTranslatef(CameraPos.x, CameraPos.y, CameraPos.z);
 	glRotatef(m_BoardRotAngle, m_BoardRot.x, m_BoardRot.y, m_BoardRot.z);
 	
-	
+	//Draw our game info
 	drawBoard();
 	drawObjects();
 	

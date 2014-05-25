@@ -6,6 +6,7 @@
 #define PONY48ENGINE_H
 
 #include "Engine.h"
+#include "bg.h"
 #include <vector>
 #include <set>
 
@@ -76,6 +77,7 @@ private:
 	float32 m_BoardRotAngle;
 	uint32_t m_iScore;
 	uint32_t m_iHighScore;
+	Background* m_bg;
 
 protected:
 	void frame(float32 dt);
