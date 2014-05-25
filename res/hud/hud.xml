@@ -8,7 +8,7 @@
 	
 	<!-- playing HUD -->
 	<scene name="playing">
-		<textbox name="scorebox" font="cmr" text="SCORE: 0" pos="-5,6" pt="1.5" col="0.8549,0.6745,0.9098,1" />
-		<textbox name="hiscorebox" font="cmr" text="BEST: 0" pos="5,6" pt="1.5" col="0.8549,0.6745,0.9098,1" />
+		<textbox name="scorebox" font="cmr" text="SCORE: 0" pos="-5,6" pt="1.5" col="255,255,255,255" />
+		<textbox name="hiscorebox" font="cmr" text="BEST: 0" pos="5,6" pt="1.5" col="255,255,255,255" />
 	</scene>
 </hud>
