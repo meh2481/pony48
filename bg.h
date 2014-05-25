@@ -9,8 +9,10 @@
 class Background
 {
 public:
-	Background(){};
+	Background(){screenDiag = 1;};
 	~Background(){};
+	
+	float32 screenDiag;
 	
 	virtual void draw() = 0;
 	virtual void update(float32 dt) = 0;
@@ -33,7 +35,6 @@ public:
 	float32 speed;
 	float32 rot;
 	float32 acceleration;
-	float32 screenDiag;	//How large the screen is diagonally, from corner to corner
 	
 protected:
 	Color* m_lWheel;
@@ -49,23 +50,20 @@ public:
 	void draw();
 	void update(float32 dt);
 	
-	void init();	//Creates stars already there, so it doesn't start with a blank screen
+	void init();	//Place all stars randomly to begin with
 	
-	Color bg;			//Background color
 	Color gen;		//Starting color
-	float32 acceleration;
-	float32 speed;	//Starting speed
+	float32 speed;	//Simulation speed
 	uint32_t num;	//Maximum number of stars
-	Point centerSize;	//Size of the image at center of screen
-	Point edgeSize;		//Size of the image at edge of screen
+	Point starSize;	//Size of stars
+	Vec3 fieldSize;	//How large the starfield is
 	
 protected:
 	class starfieldStar
 	{
 	public:
-		Point velocity;
 		Color col;
-		Point pos;
+		Vec3 pos;
 		Point size;
 	};
 

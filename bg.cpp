@@ -11,7 +11,6 @@
 pinwheelBg::pinwheelBg()
 {
 	m_iNumSpokes = 0;
-	screenDiag = 1;
 	acceleration = speed = rot = 0;
 	m_lWheel = NULL;
 }
@@ -78,56 +77,63 @@ Color* pinwheelBg::getWheelCol(uint32_t wheel)
 //-----------------------------------------------------------------------------
 starfieldBg::starfieldBg()
 {
-	bg.set(0,0,0,1);
 	gen.set(1,1,1,1);
-	acceleration = 0.01;
-	speed = 1;
-	num = 100;
-	centerSize.Set(0.1,0.1);
-	edgeSize.Set(0.3,0.3);
+	speed = 15;
+	num = 500;
+	fieldSize.set(40,40,75);
+	starSize.Set(0.1, 0.1);
 }
 
 void starfieldBg::init()
 {
-	//TODO
+	for(int i = 0; i < num; i++)
+	{
+		starfieldStar st;
+		st.col = gen;
+		st.size = starSize;
+		st.pos.z = randFloat(0,fieldSize.z);
+		st.pos.x = randFloat(-fieldSize.x/2.0, fieldSize.x/2.0);
+		st.pos.y = randFloat(-fieldSize.y/2.0, fieldSize.y/2.0);
+		m_lStars.push_back(st);
+	}
 }
 
 void starfieldBg::draw()
-{
-	//Fill in bg color
-	glColor4f(bg.r, bg.g, bg.b, bg.a);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glMatrixMode(GL_MODELVIEW);
+{	
 	glPushMatrix();
-	glLoadIdentity();
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glBegin(GL_QUADS);
-	glVertex3i(-1, -1, -1);
-	glVertex3i(1, -1, -1);
-	glVertex3i(1, 1, -1);
-	glVertex3i(-1, 1, -1);
-	glEnd();
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-	glColor4f(1,1,1,1);
-	
+	glLoadIdentity();	//So camera is at z = 0
 	//Draw stars
 	for(list<starfieldStar>::iterator i = m_lStars.begin(); i != m_lStars.end(); i++)
 	{
-		//TODO
+		glColor4f(i->col.r,i->col.g,i->col.b,i->col.a);
+		glPushMatrix();
+		glTranslatef(i->pos.x, i->pos.y, -i->pos.z);
+		glBegin(GL_QUADS);
+		glVertex3f(-i->size.x/2.0, i->size.y/2.0, 0);
+		glVertex3f(i->size.x/2.0, i->size.y/2.0, 0);
+		glVertex3f(i->size.x/2.0, -i->size.y/2.0, 0);
+		glVertex3f(-i->size.x/2.0, -i->size.y/2.0, 0);
+		glEnd();
+		glPopMatrix();
 	}
+	glColor4f(1,1,1,1);
+	glPopMatrix();
 }
 
 void starfieldBg::update(float32 dt)
 {
-	return;//TODO
-	while(m_lStars.size() < num)
+	//Update all the stars here
+	for(list<starfieldStar>::iterator i = m_lStars.begin(); i != m_lStars.end(); i++)
 	{
-		starfieldStar st;
-		//TODO
+		i->pos.z -= speed*dt;	//Update position
+		if(i->pos.z <= 0)	//If this particle has gone off the screen
+		{
+			i->col = gen;
+			i->size = starSize;
+			i->pos.z = fieldSize.z;
+			i->pos.x = randFloat(-fieldSize.x/2.0, fieldSize.x/2.0);
+			i->pos.y = randFloat(-fieldSize.y/2.0, fieldSize.y/2.0);
+		}
 	}
 }
 
