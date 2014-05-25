@@ -117,6 +117,8 @@ public:
 	void maximizeWindow();								//Call window manager to maximize application window
 	void pauseOnKeyboard(bool p)	{m_bPauseOnKeyboardFocus = p;};
 	bool pausesOnFocusLost()		{return m_bPauseOnKeyboardFocus;};
+	uint16_t getWidth() {return m_iWidth;};
+	uint16_t getHeight() {return m_iHeight;};
 	
 	//Sound functions
 	void createSound(string sPath, string sName);   //Creates a sound from this name and file path
@@ -154,6 +156,8 @@ public:
 	void setTimeScale(float32 fScale)	{m_fTimeScale = fScale;};
 	Uint32 getTicks()	{return SDL_GetTicks();};
 	float32 getSeconds()	{return (float32)SDL_GetTicks()/1000.0;};
+	void setFramerate(float32 fFramerate);
+	float32 getFramerate()   {return m_fFramerate;};
 	
 	//Object functions
 	void addObject(obj* o);
@@ -162,11 +166,7 @@ public:
 	void cleanupObjects();
 	void updateObjects(float32 dt);
 
-	//Accessor methods
-	void setFramerate(float32 fFramerate);
-	float32 getFramerate()   {return m_fFramerate;};
-	uint16_t getWidth() {return m_iWidth;};
-	uint16_t getHeight() {return m_iHeight;};
+	//OpenGL methods
 	void setDoubleBuffered(bool bDoubleBuffered)	{SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, bDoubleBuffered);};
 	bool getDoubleBuffered()	{int val = 1; SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &val); return val;};
 	void setVsync(int iVsync)	{SDL_GL_SetSwapInterval(iVsync);};
