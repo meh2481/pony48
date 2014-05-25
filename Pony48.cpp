@@ -44,7 +44,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_BoardBg.set(0.7,0.7,0.7,1);
 	m_TileBg.set(0.5,0.5,0.5,1);
 	m_BgCol.set(0,0,0,1.0);
-	SDL_StartTextInput();
+	m_iHighScore = 0;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -90,6 +90,10 @@ void Pony48Engine::draw()
 	HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("scorebox");
 	ostringstream oss;
 	oss << "SCORE: " << m_iScore;
+	txt->setText(oss.str());
+	oss.str("");
+	txt = (HUDTextbox*)m_hud->getChild("hiscorebox");
+	oss << " BEST: " << m_iHighScore;
 	txt->setText(oss.str());
 	
 	//Draw HUD always at this depth, on top of everything else
@@ -398,6 +402,12 @@ void Pony48Engine::loadConfig(string sFilename)
 		pauseOnKeyboard(bPausesOnFocus);
 	}
 	
+	XMLElement* pony48 = root->FirstChildElement("pony48");
+	if(pony48 != NULL)
+	{
+		pony48->QueryUnsignedAttribute("highscore", &m_iHighScore);
+	}
+	
 	delete doc;
 }
 
@@ -420,6 +430,10 @@ void Pony48Engine::saveConfig(string sFilename)
 	window->SetAttribute("brightness", getGamma());
 	window->SetAttribute("pauseminimized", pausesOnFocusLost());
 	root->InsertEndChild(window);
+	
+	XMLElement* pony48 = doc->NewElement("pony48");
+	pony48->SetAttribute("highscore", m_iHighScore);
+	root->InsertEndChild(pony48);
 	
 	doc->InsertFirstChild(root);
 	doc->SaveFile(sFilename.c_str());

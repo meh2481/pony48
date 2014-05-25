@@ -328,6 +328,8 @@ void Pony48Engine::placenew()
 void Pony48Engine::addScore(uint32_t amt)
 {
 	m_iScore += amt;
+	if(m_iScore > m_iHighScore)
+		m_iHighScore = m_iScore;
 	//TODO: Anim stuffs
 }
 

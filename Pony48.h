@@ -75,6 +75,7 @@ private:
 	Vec3 m_BoardRot;
 	float32 m_BoardRotAngle;
 	uint32_t m_iScore;
+	uint32_t m_iHighScore;
 
 protected:
 	void frame(float32 dt);
