@@ -190,6 +190,11 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					break;
 				}
 				
+				case SDL_SCANCODE_RETURN:
+                    if(keyDown(SDL_SCANCODE_ALT))
+						toggleFullscreen();
+					break;
+				
 				case SDL_SCANCODE_W:
 				case SDL_SCANCODE_UP:
 				{
