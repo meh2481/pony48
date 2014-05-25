@@ -45,11 +45,18 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_TileBg.set(0.5,0.5,0.5,1);
 	m_BgCol.set(0,0,0,1.0);
 	m_iHighScore = 0;
-	gradientBg* bg = new gradientBg();
-	bg->ul.set(1,0,0,1);
-	bg->ur.set(0,1,0,1);
-	bg->br.set(0,0,1,1);
-	bg->bl.set(1,1,1,1);
+	pinwheelBg* bg = new pinwheelBg();
+	bg->init(16);
+	for(int i = 0; i < 16; i++)
+	{
+		if(i % 2)
+			bg->setWheelCol(i, Color(0.75,0.75,1,1));
+		else
+			bg->setWheelCol(i, Color(0.75,1,0.75,1));
+	}
+	Rect rcView = getCameraView();
+	bg->screenDiag = sqrt(rcView.width()*rcView.width()+rcView.height()*rcView.height());	//TODO: Breaks on screen resize
+	bg->speed = 125;
 	m_bg = (Background*) bg;
 	
 }
@@ -91,6 +98,8 @@ void Pony48Engine::draw()
 	glDisable(GL_LIGHTING);
 	
 	//Draw background behind everything else
+	glLoadIdentity();
+	glTranslatef(0, 0, m_fDefCameraZ);
 	m_bg->draw();
 	glClear(GL_DEPTH_BUFFER_BIT);
 	

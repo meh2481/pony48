@@ -25,7 +25,7 @@ public:
 	void draw();
 	void update(float32 dt);
 	
-	void setNum(uint32_t num);
+	void init(uint32_t num);
 	uint32_t getNum(){return m_iNumSpokes;};
 	void setWheelCol(uint32_t wheel, Color col);
 	Color* getWheelCol(uint32_t wheel);
@@ -33,6 +33,7 @@ public:
 	float32 speed;
 	float32 rot;
 	float32 acceleration;
+	float32 screenDiag;	//How large the screen is diagonally, from corner to corner
 	
 protected:
 	Color* m_lWheel;

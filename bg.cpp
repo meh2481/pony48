@@ -11,6 +11,8 @@
 pinwheelBg::pinwheelBg()
 {
 	m_iNumSpokes = 0;
+	screenDiag = 1;
+	acceleration = speed = rot = 0;
 	m_lWheel = NULL;
 }
 
@@ -22,7 +24,22 @@ pinwheelBg::~pinwheelBg()
 
 void pinwheelBg::draw()
 {
-	//TODO
+	if(m_lWheel == NULL || !m_iNumSpokes) return;
+	float32 addAngle = 360.0 / m_iNumSpokes;
+	glPushMatrix();
+	glRotatef(rot, 0, 0, 1);	//Rotate according to current rotation
+	for(int i = 0; i < m_iNumSpokes; i++)
+	{
+		glBegin(GL_TRIANGLES);
+		glColor4f(m_lWheel[i].r, m_lWheel[i].g, m_lWheel[i].b, m_lWheel[i].a);
+		glVertex3f(0, 0, 0);	//Center pt
+		glVertex3f(-screenDiag, 0, 0);	//Leftmost pt
+		glVertex3f(-cos(DEG2RAD*addAngle)*screenDiag, sin(DEG2RAD*addAngle)*screenDiag, 0);	//Upper left pt
+		glEnd();
+		glRotatef(addAngle, 0, 0, 1);	//Rotate for next segment
+	}
+	glPopMatrix();
+		
 }
 
 void pinwheelBg::update(float32 dt)
@@ -31,7 +48,7 @@ void pinwheelBg::update(float32 dt)
 	speed += acceleration * dt;
 }
 
-void pinwheelBg::setNum(uint32_t num)
+void pinwheelBg::init(uint32_t num)
 {
 	if(num)
 	{
@@ -130,7 +147,6 @@ void gradientBg::draw()
 	glPushMatrix();
 	glLoadIdentity();
 	glBegin(GL_QUADS);
-	//TODO: Double-check that this is right
 	glColor4f(bl.r, bl.g, bl.b, bl.a);
 	glVertex3i(-1, -1, -1);
 	glColor4f(br.r, br.g, br.b, br.a);
