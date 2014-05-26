@@ -44,12 +44,14 @@ public:
 	physSegment* seg;
 	physSegment* bg;
 	int 	value;		//The actual value of the piece (2, 4, 8, etc, or 0 for nothing here)
+	
+	//Animation stuff
 	Point	drawSlide;	//Used for the slide animation
 	Point	drawSize;	//Used for appearing-tile animation
-	
 	int destx, desty;	//Destination piece we're trying to slide into
+	int iAnimDir;
 	
-	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();drawSize.SetZero();destx=desty=-1;};
+	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();drawSize.SetZero();destx=desty=-1;iAnimDir=1;};
 	~TilePiece() {if(seg!=NULL)delete seg;if(bg!=NULL)delete bg;};
 	
 	//Helper functions (Defined in board.cpp)

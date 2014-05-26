@@ -71,6 +71,8 @@ void Pony48Engine::pieceSlid(uint32_t startx, uint32_t starty, uint32_t endx, ui
 
 #define PIECE_MOVE_SPEED 100.0
 #define PIECE_APPEAR_SPEED	10.0
+#define PIECE_BOUNCE_SPEED	4.0
+#define PIECE_BOUNCE_SIZE TILE_WIDTH+TILE_SPACING*2.0
 
 void Pony48Engine::updateBoard(float32 dt)
 {
@@ -115,7 +117,8 @@ void Pony48Engine::updateBoard(float32 dt)
 					ostringstream oss;
 					oss << "res/tiles/" << (*i)->value * 2 << ".xml";	//TODO: Test for greater than 2048 or something
 					m_Board[(*i)->destx][(*i)->desty] = loadTile(oss.str());
-					m_Board[(*i)->destx][(*i)->desty]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);	//Don't have a newly-created piece make an appear animation here
+					m_Board[(*i)->destx][(*i)->desty]->drawSize.Set(TILE_WIDTH+0.001, TILE_HEIGHT+0.001);	//Start bounce animation
+					m_Board[(*i)->destx][(*i)->desty]->iAnimDir = 1;
 				}
 			}
 			delete (*i);
@@ -163,10 +166,26 @@ void Pony48Engine::updateBoard(float32 dt)
 				if(m_Board[j][i]->drawSize.x > TILE_WIDTH)
 					m_Board[j][i]->drawSize.x = TILE_WIDTH;
 			}
+			else if(m_Board[j][i]->drawSize.x > TILE_WIDTH)	//And bouncing animations
+			{
+				m_Board[j][i]->drawSize.x += m_Board[j][i]->iAnimDir * PIECE_BOUNCE_SPEED * dt;
+				if(m_Board[j][i]->drawSize.x > PIECE_BOUNCE_SIZE)
+					m_Board[j][i]->iAnimDir = -1;	//Reverse animation direction
+				else if(m_Board[j][i]->drawSize.x < TILE_WIDTH)
+					m_Board[j][i]->drawSize.x = TILE_WIDTH;	//This also stops bouncing
+			}
 			if(m_Board[j][i]->drawSize.y < TILE_HEIGHT)
 			{
 				m_Board[j][i]->drawSize.y += PIECE_APPEAR_SPEED * dt;
 				if(m_Board[j][i]->drawSize.y > TILE_HEIGHT)
+					m_Board[j][i]->drawSize.y = TILE_HEIGHT;
+			}
+			else if(m_Board[j][i]->drawSize.y > TILE_HEIGHT)
+			{
+				m_Board[j][i]->drawSize.y += m_Board[j][i]->iAnimDir * PIECE_BOUNCE_SPEED * dt;
+				if(m_Board[j][i]->drawSize.y > PIECE_BOUNCE_SIZE)
+					m_Board[j][i]->iAnimDir = -1;
+				else if(m_Board[j][i]->drawSize.y < TILE_HEIGHT)
 					m_Board[j][i]->drawSize.y = TILE_HEIGHT;
 			}
 		}
@@ -306,6 +325,7 @@ TilePiece* Pony48Engine::loadTile(string sFilename)
 
 bool Pony48Engine::movePossible()
 {
+	//Have to take animations into account here, otherwise we could gameover when moves are still possible
 	return (m_lSlideJoinAnimations.size() || movePossible(UP) || movePossible(DOWN) || movePossible(LEFT) || movePossible(RIGHT));
 }
 
