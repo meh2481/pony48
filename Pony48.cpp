@@ -66,6 +66,8 @@ Pony48Engine::~Pony48Engine()
 
 void Pony48Engine::frame(float32 dt)
 {
+	soundUpdate(dt);
+	
 	//First half of camera bounce; move back a bit every frame in an attempt to get back to default position
 	if(CameraPos.z > m_fDefCameraZ)
 		CameraPos.z -= 0.3;
@@ -92,6 +94,7 @@ void Pony48Engine::frame(float32 dt)
 		txt->setText(oss.str());
 		m_hud->setScene("gameover");
 		m_iCurMode = GAMEOVER;
+		scrubPause();
 	}
 }
 
@@ -165,6 +168,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items
 	
 	//Play music
+	loadSongs("res/mus/music.xml");
 	playMusic("res/mus/justfluttershy.mp3");
 	musicLoop(23.259, 222.582);
 	//pauseMusic();
@@ -193,13 +197,17 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					 event.key.keysym.scancode == SDL_SCANCODE_A ||
 					 event.key.keysym.scancode == SDL_SCANCODE_LEFT ||
 					 event.key.keysym.scancode == SDL_SCANCODE_D ||
+#ifdef DEBUG
+					 event.key.keysym.scancode == SDL_SCANCODE_F5 ||
+#endif
 					 event.key.keysym.scancode == SDL_SCANCODE_RIGHT))
 				{
 					m_iCurMode = PLAYING;
+					scrubResume();
 					resetBoard();
 					m_hud->setScene("playing");
+					break;
 				}
-				break;
 			}
 			switch(event.key.keysym.scancode)
 			{

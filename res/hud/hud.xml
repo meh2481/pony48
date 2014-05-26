@@ -15,8 +15,10 @@
 		<geom name="gameovertextbg" col="128,128,128,200">
 			<quad p1="-8, 4, 0" p2="8, 4, 0" p3="8, 0, 0" p4="-8, 0, 0" />
 			<quad p1="-5.5, -0.25, 0" p2="5.5, -0.25, 0" p3="5.5, -1.75, 0" p4="-5.5, -1.75, 0" />
+			<quad p1="-5, -3.5, 0" p2="5, -3.5, 0" p3="5, -4.75, 0" p4="-5, -4.75, 0" />
 		</geom>
 		<textbox name="gameover" font="cmr" text="GAME OVER" pos="0,2" pt="4" col="255,255,255,255" />
 		<textbox name="finalscore" font="cmr" text="FINAL SCORE: 0" pos="0,-1" pt="1.5" col="255,255,255,255" />
+		<textbox name="restart" font="cmr" text="Press any key to play again" pos="0,-4" pt="1.0" col="255,255,255,255" />
 	</scene>
 </hud>

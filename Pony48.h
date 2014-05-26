@@ -121,6 +121,9 @@ public:
 	//audio.cpp functions
 	void beatDetect();					//Bounce to da beat
 	void loadSongs(string sFilename);	//Load songs to play into memory
+	void scrubPause();					//Pauses music with a decreasing-frequency effect
+	void scrubResume();					//Resumes music with an increasing-frequency effect
+	void soundUpdate(float32 dt);		//Updates audio fx
 	
 	//board.cpp functions
 	void drawBoard();						//Draw the tiles and such on the board

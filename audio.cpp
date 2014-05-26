@@ -8,6 +8,8 @@ const int sampleSize = 64;
 
 void Pony48Engine::beatDetect()
 {
+	if(m_iCurMode == GAMEOVER) return;	//music stops when game is over, so it looks silly
+	
 	FMOD::Channel* channel = getChannel("music");
 	if(channel == NULL) return;
 	
@@ -47,6 +49,61 @@ void Pony48Engine::loadSongs(string sFilename)
 	
 }
 
+static float startedDecay = 0;
+
+void Pony48Engine::scrubPause()
+{
+	//pauseMusic();
+	startedDecay = getSeconds();
+}
+
+void Pony48Engine::scrubResume()
+{
+	//resumeMusic();
+	startedDecay = -getSeconds();
+}
+
+const float soundFreqDefault = 44100.0;
+const float timeToDecay = 0.5f;
+
+void Pony48Engine::soundUpdate(float32 dt)
+{
+	if(startedDecay < 0)	//Resuming
+	{
+		FMOD::Channel* channel = getChannel("music");
+		if(channel != NULL)
+		{
+			float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
+			float freq;
+			channel->getFrequency(&freq);
+			freq += amt;
+			if(freq >= soundFreqDefault)
+			{
+				freq = soundFreqDefault;
+				startedDecay = 0;
+			}
+			channel->setFrequency(freq);
+		}
+	}
+	else if(startedDecay > 0)	//Pausing
+	{
+		FMOD::Channel* channel = getChannel("music");
+		
+		if(channel != NULL)
+		{
+			float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
+			float freq;
+			channel->getFrequency(&freq);
+			freq -= amt;
+			if(freq <= 0)
+			{
+				freq = 0;
+				startedDecay = 0;
+			}
+			channel->setFrequency(freq);
+		}
+	}
+}
 
 
 
