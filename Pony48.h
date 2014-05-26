@@ -50,6 +50,7 @@ public:
 	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();drawSize.SetZero();};
 	~TilePiece() {if(seg!=NULL)delete seg;if(bg!=NULL)delete bg;};
 	
+	//Helper functions (Defined in board.cpp)
 	void draw();
 };
 
@@ -132,9 +133,12 @@ public:
 	
 	//board.cpp functions
 	void updateBoard(float32 dt);			//Update sliding pieces on the board
+	void clearBoardAnimations();			//Kill all currently-running animations on the board
 	void drawBoard();						//Draw the tiles and such on the board
 	TilePiece* loadTile(string sFilename);	//Load a tile piece from an XML file
-	bool move(direction dir);				//Move in the given direction (if possible)
+	void move(direction dir);				//Move in the given direction (if possible)
+	bool slide(direction dir);				//Slide pieces this direction (move part 1)
+	bool join(direction dir);				//Join pieces that you can in this direction (move part 2)
 	bool movePossible(direction dir);		//Test to see if it's possible to move in the given direction
 	bool movePossible();					//Test to see if it's possible to move at all
 	void placenew();						//Places a new tile at a random location

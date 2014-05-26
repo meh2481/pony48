@@ -107,6 +107,19 @@ void Pony48Engine::updateBoard(float32 dt)
 	}
 }
 
+void Pony48Engine::clearBoardAnimations()
+{
+	for(int i = 0; i < BOARD_HEIGHT; i++)
+	{
+		for(int j = 0; j < BOARD_WIDTH; j++)
+		{
+			if(m_Board[j][i] == NULL) continue;
+			m_Board[j][i]->drawSlide.SetZero();
+			m_Board[j][i]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);
+		}
+	}
+}
+
 void Pony48Engine::drawBoard()
 {
 	float fTotalWidth = BOARD_WIDTH * TILE_WIDTH + (BOARD_WIDTH + 1) * TILE_SPACING;
@@ -261,7 +274,17 @@ bool Pony48Engine::movePossible(direction dir)
 	return false;
 }
 
-bool Pony48Engine::move(direction dir)
+void Pony48Engine::move(direction dir)
+{
+	bool moved = false;
+	while(slide(dir))
+		moved = true;
+	moved = join(dir) || moved;
+	if(moved)
+		placenew();
+}
+
+bool Pony48Engine::join(direction dir)
 {
 	bool mademove = false;
 	
@@ -272,16 +295,9 @@ bool Pony48Engine::move(direction dir)
 			{
 				for(int i = 1; i < BOARD_HEIGHT; i++)
 				{
-					if(m_Board[j][i] != NULL)
+					if(m_Board[j][i] != NULL && m_Board[j][i-1] != NULL)
 					{
-						if(m_Board[j][i-1] == NULL)
-						{
-							m_Board[j][i-1] = m_Board[j][i];
-							m_Board[j][i] = NULL;
-							mademove = true;
-							m_Board[j][i-1]->drawSlide.y -= TILE_HEIGHT + TILE_SPACING;
-						}
-						else if(m_Board[j][i-1]->value == m_Board[j][i]->value)
+						if(m_Board[j][i-1]->value == m_Board[j][i]->value)
 						{
 							addScore(m_Board[j][i]->value * 2);
 							delete m_Board[j][i-1];
@@ -303,16 +319,9 @@ bool Pony48Engine::move(direction dir)
 			{
 				for(int i = BOARD_HEIGHT-2; i >= 0; i--)
 				{
-					if(m_Board[j][i] != NULL)
+					if(m_Board[j][i] != NULL && m_Board[j][i+1] != NULL)
 					{
-						if(m_Board[j][i+1] == NULL)
-						{
-							m_Board[j][i+1] = m_Board[j][i];
-							m_Board[j][i] = NULL;
-							mademove = true;
-							m_Board[j][i+1]->drawSlide.y += TILE_HEIGHT + TILE_SPACING;
-						}
-						else if(m_Board[j][i+1]->value == m_Board[j][i]->value)
+						if(m_Board[j][i+1]->value == m_Board[j][i]->value)
 						{
 							addScore(m_Board[j][i]->value * 2);
 							delete m_Board[j][i+1];
@@ -334,16 +343,9 @@ bool Pony48Engine::move(direction dir)
 			{
 				for(int j = 1; j < BOARD_WIDTH; j++)
 				{
-					if(m_Board[j][i] != NULL)
+					if(m_Board[j][i] != NULL && m_Board[j-1][i] != NULL)
 					{
-						if(m_Board[j-1][i] == NULL)
-						{
-							m_Board[j-1][i] = m_Board[j][i];
-							m_Board[j][i] = NULL;
-							mademove = true;
-							m_Board[j-1][i]->drawSlide.x += TILE_HEIGHT + TILE_SPACING;
-						}
-						else if(m_Board[j-1][i]->value == m_Board[j][i]->value)
+						if(m_Board[j-1][i]->value == m_Board[j][i]->value)
 						{
 							addScore(m_Board[j][i]->value * 2);
 							delete m_Board[j-1][i];
@@ -365,16 +367,9 @@ bool Pony48Engine::move(direction dir)
 			{
 				for(int j = BOARD_WIDTH-2; j >= 0; j--)
 				{
-					if(m_Board[j][i] != NULL)
+					if(m_Board[j][i] != NULL && m_Board[j+1][i] != NULL)
 					{
-						if(m_Board[j+1][i] == NULL)
-						{
-							m_Board[j+1][i] = m_Board[j][i];
-							m_Board[j][i] = NULL;
-							mademove = true;
-							m_Board[j+1][i]->drawSlide.x -= TILE_HEIGHT + TILE_SPACING;
-						}
-						else if(m_Board[j+1][i]->value == m_Board[j][i]->value)
+						if(m_Board[j+1][i]->value == m_Board[j][i]->value)
 						{
 							addScore(m_Board[j][i]->value * 2);
 							delete m_Board[j+1][i];
@@ -385,6 +380,91 @@ bool Pony48Engine::move(direction dir)
 							delete m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
+						}
+					}
+				}
+			}
+			break;
+	}
+	return mademove;
+}
+
+bool Pony48Engine::slide(direction dir)
+{
+	bool mademove = false;
+	
+	switch(dir)
+	{
+		case UP:
+			for(int j = 0; j < BOARD_WIDTH; j++)
+			{
+				for(int i = 1; i < BOARD_HEIGHT; i++)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j][i-1] == NULL)
+						{
+							m_Board[j][i-1] = m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+							m_Board[j][i-1]->drawSlide.y -= TILE_HEIGHT + TILE_SPACING;
+						}
+					}
+				}
+			}
+			break;
+		
+		case DOWN:
+			for(int j = 0; j < BOARD_WIDTH; j++)
+			{
+				for(int i = BOARD_HEIGHT-2; i >= 0; i--)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j][i+1] == NULL)
+						{
+							m_Board[j][i+1] = m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+							m_Board[j][i+1]->drawSlide.y += TILE_HEIGHT + TILE_SPACING;
+						}
+					}
+				}
+			}
+			break;
+			
+		case LEFT:
+			for(int i = 0; i < BOARD_HEIGHT; i++)
+			{
+				for(int j = 1; j < BOARD_WIDTH; j++)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j-1][i] == NULL)
+						{
+							m_Board[j-1][i] = m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+							m_Board[j-1][i]->drawSlide.x += TILE_HEIGHT + TILE_SPACING;
+						}
+					}
+				}
+			}
+			break;
+			
+		case RIGHT:
+			for(int i = 0; i < BOARD_HEIGHT; i++)
+			{
+				for(int j = BOARD_WIDTH-2; j >= 0; j--)
+				{
+					if(m_Board[j][i] != NULL)
+					{
+						if(m_Board[j+1][i] == NULL)
+						{
+							m_Board[j+1][i] = m_Board[j][i];
+							m_Board[j][i] = NULL;
+							mademove = true;
+							m_Board[j+1][i]->drawSlide.x -= TILE_HEIGHT + TILE_SPACING;
 						}
 					}
 				}

@@ -239,11 +239,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				case SDL_SCANCODE_UP:
 					if(m_iCurMode == PLAYING)
 					{
-						bool moved = false;
-						while(move(UP)) 
-							moved = true;
-						if(moved)
-							placenew();
+						clearBoardAnimations();
+						move(UP);
 					}
 					break;
 					
@@ -251,11 +248,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				case SDL_SCANCODE_DOWN:
 					if(m_iCurMode == PLAYING)
 					{
-						bool moved = false;
-						while(move(DOWN)) 
-							moved = true;
-						if(moved)
-							placenew();
+						clearBoardAnimations();
+						move(DOWN);
 					}
 					break;
 					
@@ -263,11 +257,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				case SDL_SCANCODE_LEFT:
 					if(m_iCurMode == PLAYING)
 					{
-						bool moved = false;
-						while(move(LEFT)) 
-							moved = true;
-						if(moved)
-							placenew();
+						clearBoardAnimations();
+						move(LEFT);
 					}
 					break;
 					
@@ -275,11 +266,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				case SDL_SCANCODE_RIGHT:
 					if(m_iCurMode == PLAYING)
 					{
-						bool moved = false;
-						while(move(RIGHT)) 
-							moved = true;
-						if(moved)
-							placenew();
+						clearBoardAnimations();
+						move(RIGHT);
 					}
 					break;
 			}
