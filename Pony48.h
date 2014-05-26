@@ -43,13 +43,14 @@ class TilePiece
 public:
 	physSegment* seg;
 	physSegment* bg;
-	int 	value;	//The actual value of the piece (2, 4, 8, etc, or 0 for nothing here)
-	Point 	drawSlide;
+	int 	value;		//The actual value of the piece (2, 4, 8, etc, or 0 for nothing here)
+	Point	drawSlide;	//Used for the slide animation
+	Point	drawSize;	//Used for appearing-tile animation
 	
-	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();};
+	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();drawSize.SetZero();};
 	~TilePiece() {if(seg!=NULL)delete seg;if(bg!=NULL)delete bg;};
 	
-	void draw() {if(bg!=NULL)bg->draw();if(seg!=NULL)seg->draw();};
+	void draw();
 };
 
 typedef enum 

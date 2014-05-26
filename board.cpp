@@ -5,6 +5,20 @@
 
 #include "Pony48.h"
 
+void TilePiece::draw()
+{
+	if(bg!=NULL)
+	{
+		bg->size = drawSize;
+		bg->draw();
+	}
+	if(seg!=NULL)
+	{
+		seg->size = drawSize;
+		seg->draw();
+	}
+}
+
 void Pony48Engine::clearBoard()
 {
 	//Clean up board
@@ -41,6 +55,7 @@ void Pony48Engine::resetBoard()
 }
 
 #define PIECE_MOVE_SPEED 100.0
+#define PIECE_APPEAR_SPEED	10.0
 
 void Pony48Engine::updateBoard(float32 dt)
 {
@@ -49,6 +64,7 @@ void Pony48Engine::updateBoard(float32 dt)
 		for(int j = 0; j < BOARD_WIDTH; j++)
 		{
 			if(m_Board[j][i] == NULL) continue;
+			//Check sliding animations
 			if(m_Board[j][i]->drawSlide.y < 0)
 			{
 				m_Board[j][i]->drawSlide.y += dt * PIECE_MOVE_SPEED;
@@ -72,6 +88,20 @@ void Pony48Engine::updateBoard(float32 dt)
 				m_Board[j][i]->drawSlide.x -= dt * PIECE_MOVE_SPEED;
 				if(m_Board[j][i]->drawSlide.x < 0)
 					m_Board[j][i]->drawSlide.x = 0;
+			}
+			
+			//Check appearing animations
+			if(m_Board[j][i]->drawSize.x < TILE_WIDTH)
+			{
+				m_Board[j][i]->drawSize.x += PIECE_APPEAR_SPEED * dt;
+				if(m_Board[j][i]->drawSize.x > TILE_WIDTH)
+					m_Board[j][i]->drawSize.x = TILE_WIDTH;
+			}
+			if(m_Board[j][i]->drawSize.y < TILE_HEIGHT)
+			{
+				m_Board[j][i]->drawSize.y += PIECE_APPEAR_SPEED * dt;
+				if(m_Board[j][i]->drawSize.y > TILE_HEIGHT)
+					m_Board[j][i]->drawSize.y = TILE_HEIGHT;
 			}
 		}
 	}
@@ -258,6 +288,7 @@ bool Pony48Engine::move(direction dir)
 							ostringstream oss;
 							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
 							m_Board[j][i-1] = loadTile(oss.str());
+							m_Board[j][i-1]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);	//Don't have a newly-created piece make an appear animation here
 							delete m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
@@ -288,6 +319,7 @@ bool Pony48Engine::move(direction dir)
 							ostringstream oss;
 							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
 							m_Board[j][i+1] = loadTile(oss.str());
+							m_Board[j][i+1]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);
 							delete m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
@@ -318,6 +350,7 @@ bool Pony48Engine::move(direction dir)
 							ostringstream oss;
 							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
 							m_Board[j-1][i] = loadTile(oss.str());
+							m_Board[j-1][i]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);
 							delete m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
@@ -348,6 +381,7 @@ bool Pony48Engine::move(direction dir)
 							ostringstream oss;
 							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
 							m_Board[j+1][i] = loadTile(oss.str());
+							m_Board[j+1][i]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);
 							delete m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
