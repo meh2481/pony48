@@ -54,11 +54,77 @@ void Pony48Engine::resetBoard()
 	m_iScore = 0;	//Reset score also
 }
 
+//Update slide-and-join animations if the to-join-to piece slid
+void Pony48Engine::pieceSlid(uint32_t startx, uint32_t starty, uint32_t endx, uint32_t endy)
+{
+	for(list<TilePiece*>::iterator i = m_lSlideJoinAnimations.begin(); i != m_lSlideJoinAnimations.end(); i++)
+	{
+		if((*i)->destx == startx && (*i)->desty == starty)
+		{
+			(*i)->drawSlide.x += (startx - endx) * (TILE_WIDTH + TILE_SPACING);
+			(*i)->drawSlide.y -= (starty - endy) * (TILE_HEIGHT + TILE_SPACING);
+			(*i)->destx = endx;
+			(*i)->desty = endy;
+		}
+	}
+}
+
 #define PIECE_MOVE_SPEED 100.0
 #define PIECE_APPEAR_SPEED	10.0
 
 void Pony48Engine::updateBoard(float32 dt)
 {
+	//Check slide-and-join animations
+	for(list<TilePiece*>::iterator i = m_lSlideJoinAnimations.begin(); i != m_lSlideJoinAnimations.end();)
+	{
+		if((*i)->drawSlide.y < 0)
+		{
+			(*i)->drawSlide.y += dt * PIECE_MOVE_SPEED;
+			if((*i)->drawSlide.y > 0)
+				(*i)->drawSlide.y = 0;
+		}
+		else if((*i)->drawSlide.y > 0)
+		{
+			(*i)->drawSlide.y -= dt * PIECE_MOVE_SPEED;
+			if((*i)->drawSlide.y < 0)
+				(*i)->drawSlide.y = 0;
+		}
+		
+		if((*i)->drawSlide.x < 0)
+		{
+			(*i)->drawSlide.x += dt * PIECE_MOVE_SPEED;
+			if((*i)->drawSlide.x > 0)
+				(*i)->drawSlide.x = 0;
+		}
+		else if((*i)->drawSlide.x > 0)
+		{
+			(*i)->drawSlide.x -= dt * PIECE_MOVE_SPEED;
+			if((*i)->drawSlide.x < 0)
+				(*i)->drawSlide.x = 0;
+		}
+		
+		if((*i)->drawSlide.x == 0 && (*i)->drawSlide.y == 0)
+		{
+			//Hit the end; join with destination tile
+			if((*i)->destx >= 0 && (*i)->desty >= 0)
+			{
+				if(m_Board[(*i)->destx][(*i)->desty] != NULL)
+				{
+					addScore((*i)->value * 2);
+					delete m_Board[(*i)->destx][(*i)->desty];
+					ostringstream oss;
+					oss << "res/tiles/" << (*i)->value * 2 << ".xml";	//TODO: Test for greater than 2048 or something
+					m_Board[(*i)->destx][(*i)->desty] = loadTile(oss.str());
+					m_Board[(*i)->destx][(*i)->desty]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);	//Don't have a newly-created piece make an appear animation here
+				}
+			}
+			delete (*i);
+			i = m_lSlideJoinAnimations.erase(i);
+			continue;
+		}
+		i++;
+	}
+	
 	for(int i = 0; i < BOARD_HEIGHT; i++)
 	{
 		for(int j = 0; j < BOARD_WIDTH; j++)
@@ -118,6 +184,27 @@ void Pony48Engine::clearBoardAnimations()
 			m_Board[j][i]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);
 		}
 	}
+	
+	//Check slide-and-join anims
+	for(list<TilePiece*>::iterator i = m_lSlideJoinAnimations.begin(); i != m_lSlideJoinAnimations.end();)
+	{
+		//Hit the end; join with destination tile
+		if((*i)->destx >= 0 && (*i)->desty >= 0)
+		{
+			if(m_Board[(*i)->destx][(*i)->desty] != NULL)
+			{
+				addScore((*i)->value * 2);
+				delete m_Board[(*i)->destx][(*i)->desty];
+				ostringstream oss;
+				oss << "res/tiles/" << (*i)->value * 2 << ".xml";	//TODO: Test for greater than 2048 or something
+				m_Board[(*i)->destx][(*i)->desty] = loadTile(oss.str());
+				m_Board[(*i)->destx][(*i)->desty]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);	//Don't have a newly-created piece make an appear animation here
+			}
+		}
+		//Wipe this out (Step through list this way, rather than incrementing i)
+		delete (*i);
+		i = m_lSlideJoinAnimations.erase(i);
+	}
 }
 
 void Pony48Engine::drawBoard()
@@ -125,7 +212,7 @@ void Pony48Engine::drawBoard()
 	float fTotalWidth = BOARD_WIDTH * TILE_WIDTH + (BOARD_WIDTH + 1) * TILE_SPACING;
 	float fTotalHeight = BOARD_HEIGHT * TILE_HEIGHT + (BOARD_HEIGHT + 1) * TILE_SPACING;
 	//Fill in bg
-	fillRect(Point(-fTotalWidth/2.0, fTotalHeight/2.0), Point(fTotalWidth/2.0, -fTotalHeight/2.0), m_BoardBg);
+	fillRect(Point(-fTotalWidth/2.0, fTotalHeight/2.0), Point(fTotalWidth/2.0, -fTotalHeight/2.0), m_BoardBg);	//Draw at z = 0
 	//Fill in bg for individual tiles
 	for(int i = 0; i < BOARD_HEIGHT; i++)
 	{
@@ -133,12 +220,23 @@ void Pony48Engine::drawBoard()
 		{
 			//Draw tile bg
 			glPushMatrix();
-			glTranslatef(0, 0, 0.2);
+			glTranslatef(0, 0, 0.2);	//Draw at z = 0.2
 			Point ptDrawPos(-fTotalWidth/2.0 + TILE_SPACING + (TILE_SPACING + TILE_WIDTH) * j,
 							fTotalHeight/2.0 - TILE_SPACING - (TILE_SPACING + TILE_HEIGHT) * i);
 			fillRect(ptDrawPos, Point(ptDrawPos.x + TILE_WIDTH, ptDrawPos.y - TILE_HEIGHT), m_TileBg);
 			glPopMatrix();
 		}
+	}
+	
+	//Draw joining-tile animations
+	for(list<TilePiece*>::iterator i = m_lSlideJoinAnimations.begin(); i != m_lSlideJoinAnimations.end(); i++)
+	{
+		Point ptDrawPos(-fTotalWidth/2.0 + TILE_SPACING + (TILE_SPACING + TILE_WIDTH) * (*i)->destx,
+						fTotalHeight/2.0 - TILE_SPACING - (TILE_SPACING + TILE_HEIGHT) * (*i)->desty);
+		glPushMatrix();
+		glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0+(*i)->drawSlide.x, ptDrawPos.y-TILE_HEIGHT/2.0+(*i)->drawSlide.y, 0.4);	//Draw at z = 0.4
+		(*i)->draw();
+		glPopMatrix();
 	}
 	
 	//Draw tiles themselves (separate loop because alpha issues with animations)
@@ -152,7 +250,7 @@ void Pony48Engine::drawBoard()
 			if(m_Board[j][i] != NULL)
 			{
 				glPushMatrix();
-				glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0+m_Board[j][i]->drawSlide.x, ptDrawPos.y-TILE_HEIGHT/2.0+m_Board[j][i]->drawSlide.y, 0.5);
+				glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0+m_Board[j][i]->drawSlide.x, ptDrawPos.y-TILE_HEIGHT/2.0+m_Board[j][i]->drawSlide.y, 0.5);	//Draw at z = 0.5
 				m_Board[j][i]->draw();
 				glPopMatrix();
 			}
@@ -208,7 +306,7 @@ TilePiece* Pony48Engine::loadTile(string sFilename)
 
 bool Pony48Engine::movePossible()
 {
-	return (movePossible(UP) || movePossible(DOWN) || movePossible(LEFT) || movePossible(RIGHT));
+	return (m_lSlideJoinAnimations.size() || movePossible(UP) || movePossible(DOWN) || movePossible(LEFT) || movePossible(RIGHT));
 }
 
 bool Pony48Engine::movePossible(direction dir)
@@ -277,11 +375,13 @@ bool Pony48Engine::movePossible(direction dir)
 void Pony48Engine::move(direction dir)
 {
 	bool moved = false;
-	while(slide(dir))
+	while(slide(dir))	//Slide as far as we can
 		moved = true;
-	moved = join(dir) || moved;
+	moved = join(dir) || moved;	//Join once
+	while(slide(dir))	//Slide again!
+		moved = true;
 	if(moved)
-		placenew();
+		placenew();	//Create a new tile if we've successfully moved
 }
 
 bool Pony48Engine::join(direction dir)
@@ -299,13 +399,10 @@ bool Pony48Engine::join(direction dir)
 					{
 						if(m_Board[j][i-1]->value == m_Board[j][i]->value)
 						{
-							addScore(m_Board[j][i]->value * 2);
-							delete m_Board[j][i-1];
-							ostringstream oss;
-							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
-							m_Board[j][i-1] = loadTile(oss.str());
-							m_Board[j][i-1]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);	//Don't have a newly-created piece make an appear animation here
-							delete m_Board[j][i];
+							m_Board[j][i]->destx = j;
+							m_Board[j][i]->desty = i-1;
+							m_Board[j][i]->drawSlide.y -= TILE_HEIGHT + TILE_SPACING;
+							m_lSlideJoinAnimations.push_back(m_Board[j][i]);
 							m_Board[j][i] = NULL;
 							mademove = true;
 						}
@@ -323,13 +420,10 @@ bool Pony48Engine::join(direction dir)
 					{
 						if(m_Board[j][i+1]->value == m_Board[j][i]->value)
 						{
-							addScore(m_Board[j][i]->value * 2);
-							delete m_Board[j][i+1];
-							ostringstream oss;
-							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
-							m_Board[j][i+1] = loadTile(oss.str());
-							m_Board[j][i+1]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);
-							delete m_Board[j][i];
+							m_Board[j][i]->destx = j;
+							m_Board[j][i]->desty = i+1;
+							m_Board[j][i]->drawSlide.y += TILE_HEIGHT + TILE_SPACING;
+							m_lSlideJoinAnimations.push_back(m_Board[j][i]);
 							m_Board[j][i] = NULL;
 							mademove = true;
 						}
@@ -347,13 +441,10 @@ bool Pony48Engine::join(direction dir)
 					{
 						if(m_Board[j-1][i]->value == m_Board[j][i]->value)
 						{
-							addScore(m_Board[j][i]->value * 2);
-							delete m_Board[j-1][i];
-							ostringstream oss;
-							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
-							m_Board[j-1][i] = loadTile(oss.str());
-							m_Board[j-1][i]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);
-							delete m_Board[j][i];
+							m_Board[j][i]->destx = j-1;
+							m_Board[j][i]->desty = i;
+							m_Board[j][i]->drawSlide.x += TILE_WIDTH + TILE_SPACING;
+							m_lSlideJoinAnimations.push_back(m_Board[j][i]);
 							m_Board[j][i] = NULL;
 							mademove = true;
 						}
@@ -371,13 +462,10 @@ bool Pony48Engine::join(direction dir)
 					{
 						if(m_Board[j+1][i]->value == m_Board[j][i]->value)
 						{
-							addScore(m_Board[j][i]->value * 2);
-							delete m_Board[j+1][i];
-							ostringstream oss;
-							oss << "res/tiles/" << m_Board[j][i]->value * 2 << ".xml";
-							m_Board[j+1][i] = loadTile(oss.str());
-							m_Board[j+1][i]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);
-							delete m_Board[j][i];
+							m_Board[j][i]->destx = j+1;
+							m_Board[j][i]->desty = i;
+							m_Board[j][i]->drawSlide.x -= TILE_WIDTH + TILE_SPACING;
+							m_lSlideJoinAnimations.push_back(m_Board[j][i]);
 							m_Board[j][i] = NULL;
 							mademove = true;
 						}
@@ -408,6 +496,7 @@ bool Pony48Engine::slide(direction dir)
 							m_Board[j][i] = NULL;
 							mademove = true;
 							m_Board[j][i-1]->drawSlide.y -= TILE_HEIGHT + TILE_SPACING;
+							pieceSlid(j, i, j, i-1);
 						}
 					}
 				}
@@ -427,6 +516,7 @@ bool Pony48Engine::slide(direction dir)
 							m_Board[j][i] = NULL;
 							mademove = true;
 							m_Board[j][i+1]->drawSlide.y += TILE_HEIGHT + TILE_SPACING;
+							pieceSlid(j, i, j, i+1);
 						}
 					}
 				}
@@ -445,7 +535,8 @@ bool Pony48Engine::slide(direction dir)
 							m_Board[j-1][i] = m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
-							m_Board[j-1][i]->drawSlide.x += TILE_HEIGHT + TILE_SPACING;
+							m_Board[j-1][i]->drawSlide.x += TILE_WIDTH + TILE_SPACING;
+							pieceSlid(j, i, j-1, i);
 						}
 					}
 				}
@@ -464,7 +555,8 @@ bool Pony48Engine::slide(direction dir)
 							m_Board[j+1][i] = m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
-							m_Board[j+1][i]->drawSlide.x -= TILE_HEIGHT + TILE_SPACING;
+							m_Board[j+1][i]->drawSlide.x -= TILE_WIDTH + TILE_SPACING;
+							pieceSlid(j, i, j+1, i);
 						}
 					}
 				}

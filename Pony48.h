@@ -47,7 +47,9 @@ public:
 	Point	drawSlide;	//Used for the slide animation
 	Point	drawSize;	//Used for appearing-tile animation
 	
-	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();drawSize.SetZero();};
+	int destx, desty;	//Destination piece we're trying to slide into
+	
+	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();drawSize.SetZero();destx=desty=-1;};
 	~TilePiece() {if(seg!=NULL)delete seg;if(bg!=NULL)delete bg;};
 	
 	//Helper functions (Defined in board.cpp)
@@ -84,6 +86,7 @@ private:
 	Color m_TileBg;
 	Color m_BgCol;
 	TilePiece* m_Board[BOARD_WIDTH][BOARD_HEIGHT];
+	list<TilePiece*> m_lSlideJoinAnimations;
 	Vec3 m_BoardRot;
 	float32 m_BoardRotAngle;
 	uint32_t m_iScore;
@@ -145,6 +148,7 @@ public:
 	void resetBoard();						//Starts a new game
 	void clearBoard();						//Clears memory associated with the game board
 	void addScore(uint32_t amt);			//Add a value to the score (in function so we can have cool anim stuff)
+	void pieceSlid(uint32_t startx, uint32_t starty, uint32_t endx, uint32_t endy);	//Called when a piece slides, to update animations
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to the engine
