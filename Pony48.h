@@ -44,8 +44,9 @@ public:
 	physSegment* seg;
 	physSegment* bg;
 	int 	value;	//The actual value of the piece (2, 4, 8, etc, or 0 for nothing here)
+	Point 	drawSlide;
 	
-	TilePiece() {seg=NULL;bg=NULL;value=0;};
+	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();};
 	~TilePiece() {if(seg!=NULL)delete seg;if(bg!=NULL)delete bg;};
 	
 	void draw() {if(bg!=NULL)bg->draw();if(seg!=NULL)seg->draw();};
@@ -129,6 +130,7 @@ public:
 	void soundUpdate(float32 dt);		//Updates audio fx
 	
 	//board.cpp functions
+	void updateBoard(float32 dt);			//Update sliding pieces on the board
 	void drawBoard();						//Draw the tiles and such on the board
 	TilePiece* loadTile(string sFilename);	//Load a tile piece from an XML file
 	bool move(direction dir);				//Move in the given direction (if possible)

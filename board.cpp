@@ -40,6 +40,43 @@ void Pony48Engine::resetBoard()
 	m_iScore = 0;	//Reset score also
 }
 
+#define PIECE_MOVE_SPEED 100.0
+
+void Pony48Engine::updateBoard(float32 dt)
+{
+	for(int i = 0; i < BOARD_HEIGHT; i++)
+	{
+		for(int j = 0; j < BOARD_WIDTH; j++)
+		{
+			if(m_Board[j][i] == NULL) continue;
+			if(m_Board[j][i]->drawSlide.y < 0)
+			{
+				m_Board[j][i]->drawSlide.y += dt * PIECE_MOVE_SPEED;
+				if(m_Board[j][i]->drawSlide.y > 0)
+					m_Board[j][i]->drawSlide.y = 0;
+			}
+			if(m_Board[j][i]->drawSlide.y > 0)
+			{
+				m_Board[j][i]->drawSlide.y -= dt * PIECE_MOVE_SPEED;
+				if(m_Board[j][i]->drawSlide.y < 0)
+					m_Board[j][i]->drawSlide.y = 0;
+			}
+			if(m_Board[j][i]->drawSlide.x < 0)
+			{
+				m_Board[j][i]->drawSlide.x += dt * PIECE_MOVE_SPEED;
+				if(m_Board[j][i]->drawSlide.x > 0)
+					m_Board[j][i]->drawSlide.x = 0;
+			}
+			if(m_Board[j][i]->drawSlide.x > 0)
+			{
+				m_Board[j][i]->drawSlide.x -= dt * PIECE_MOVE_SPEED;
+				if(m_Board[j][i]->drawSlide.x < 0)
+					m_Board[j][i]->drawSlide.x = 0;
+			}
+		}
+	}
+}
+
 void Pony48Engine::drawBoard()
 {
 	float fTotalWidth = BOARD_WIDTH * TILE_WIDTH + (BOARD_WIDTH + 1) * TILE_SPACING;
@@ -58,12 +95,21 @@ void Pony48Engine::drawBoard()
 							fTotalHeight/2.0 - TILE_SPACING - (TILE_SPACING + TILE_HEIGHT) * i);
 			fillRect(ptDrawPos, Point(ptDrawPos.x + TILE_WIDTH, ptDrawPos.y - TILE_HEIGHT), m_TileBg);
 			glPopMatrix();
-			
+		}
+	}
+	
+	//Draw tiles themselves (separate loop because alpha issues with animations)
+	for(int i = 0; i < BOARD_HEIGHT; i++)
+	{
+		for(int j = 0; j < BOARD_WIDTH; j++)
+		{
+			Point ptDrawPos(-fTotalWidth/2.0 + TILE_SPACING + (TILE_SPACING + TILE_WIDTH) * j,
+							fTotalHeight/2.0 - TILE_SPACING - (TILE_SPACING + TILE_HEIGHT) * i);
 			//Draw tile
 			if(m_Board[j][i] != NULL)
 			{
 				glPushMatrix();
-				glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0, ptDrawPos.y-TILE_HEIGHT/2.0, 0.5);
+				glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0+m_Board[j][i]->drawSlide.x, ptDrawPos.y-TILE_HEIGHT/2.0+m_Board[j][i]->drawSlide.y, 0.5);
 				m_Board[j][i]->draw();
 				glPopMatrix();
 			}
@@ -203,6 +249,7 @@ bool Pony48Engine::move(direction dir)
 							m_Board[j][i-1] = m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
+							m_Board[j][i-1]->drawSlide.y -= TILE_HEIGHT + TILE_SPACING;
 						}
 						else if(m_Board[j][i-1]->value == m_Board[j][i]->value)
 						{
@@ -232,6 +279,7 @@ bool Pony48Engine::move(direction dir)
 							m_Board[j][i+1] = m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
+							m_Board[j][i+1]->drawSlide.y += TILE_HEIGHT + TILE_SPACING;
 						}
 						else if(m_Board[j][i+1]->value == m_Board[j][i]->value)
 						{
@@ -261,6 +309,7 @@ bool Pony48Engine::move(direction dir)
 							m_Board[j-1][i] = m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
+							m_Board[j-1][i]->drawSlide.x += TILE_HEIGHT + TILE_SPACING;
 						}
 						else if(m_Board[j-1][i]->value == m_Board[j][i]->value)
 						{
@@ -290,6 +339,7 @@ bool Pony48Engine::move(direction dir)
 							m_Board[j+1][i] = m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
+							m_Board[j+1][i]->drawSlide.x -= TILE_HEIGHT + TILE_SPACING;
 						}
 						else if(m_Board[j+1][i]->value == m_Board[j][i]->value)
 						{

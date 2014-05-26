@@ -68,6 +68,7 @@ Pony48Engine::~Pony48Engine()
 void Pony48Engine::frame(float32 dt)
 {
 	soundUpdate(dt);
+	updateBoard(dt);
 	
 	//First half of camera bounce; move back a bit every frame in an attempt to get back to default position
 	if(CameraPos.z > m_fDefCameraZ)
@@ -518,59 +519,56 @@ obj* Pony48Engine::objFromXML(string sXMLFilename, Point ptOffset, Point ptVel)
 
 void Pony48Engine::handleKeys()
 {
-	if(m_iCurMode == PLAYING)
-	{
 #ifdef DEBUG
-		if(keyDown(SDL_SCANCODE_B))
-			setTimeScale(DEFAULT_TIMESCALE/3);
-		else
-			setTimeScale(DEFAULT_TIMESCALE);
+	if(keyDown(SDL_SCANCODE_B))
+		setTimeScale(DEFAULT_TIMESCALE/3);
+	else
+		setTimeScale(DEFAULT_TIMESCALE);
 #endif
-		if(keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP))
-		{
-			m_BoardRot.x = 1;
-			m_BoardRot.y = 0;
-			if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
-				m_BoardRotAngle -= BOARD_ROT_AMT;
-		}	
-		else if(keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN))
-		{
-			m_BoardRot.x = 1;
-			m_BoardRot.y = 0;
-			if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
-				m_BoardRotAngle += BOARD_ROT_AMT;
-		}
-		else if(keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT))
-		{
-			m_BoardRot.x = 0;
-			m_BoardRot.y = 1;
-			if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
-				m_BoardRotAngle -= BOARD_ROT_AMT;
-		}
-		else if(keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT))
-		{
-			m_BoardRot.x = 0;
-			m_BoardRot.y = 1;
-			if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
-				m_BoardRotAngle += BOARD_ROT_AMT;
-		}
-		else if(m_BoardRotAngle < 0)
-		{
-			m_BoardRotAngle += BOARD_ROT_AMT;
-			if(m_BoardRotAngle > 0)
-			{
-				m_BoardRotAngle = 0;
-				m_BoardRot.x = m_BoardRot.y = 0;
-			}
-		}
-		else if(m_BoardRotAngle > 0)
-		{
+	if(keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP))
+	{
+		m_BoardRot.x = 1;
+		m_BoardRot.y = 0;
+		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
 			m_BoardRotAngle -= BOARD_ROT_AMT;
-			if(m_BoardRotAngle < 0)
-			{
-				m_BoardRotAngle = 0;
-				m_BoardRot.x = m_BoardRot.y = 0;
-			}
+	}	
+	else if(keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN))
+	{
+		m_BoardRot.x = 1;
+		m_BoardRot.y = 0;
+		if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
+			m_BoardRotAngle += BOARD_ROT_AMT;
+	}
+	else if(keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT))
+	{
+		m_BoardRot.x = 0;
+		m_BoardRot.y = 1;
+		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
+			m_BoardRotAngle -= BOARD_ROT_AMT;
+	}
+	else if(keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT))
+	{
+		m_BoardRot.x = 0;
+		m_BoardRot.y = 1;
+		if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
+			m_BoardRotAngle += BOARD_ROT_AMT;
+	}
+	else if(m_BoardRotAngle < 0)
+	{
+		m_BoardRotAngle += BOARD_ROT_AMT;
+		if(m_BoardRotAngle > 0)
+		{
+			m_BoardRotAngle = 0;
+			m_BoardRot.x = m_BoardRot.y = 0;
+		}
+	}
+	else if(m_BoardRotAngle > 0)
+	{
+		m_BoardRotAngle -= BOARD_ROT_AMT;
+		if(m_BoardRotAngle < 0)
+		{
+			m_BoardRotAngle = 0;
+			m_BoardRot.x = m_BoardRot.y = 0;
 		}
 	}
 	
