@@ -42,6 +42,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	
 	//Game stuff!
 	m_iCurMode = PLAYING;
+	m_fGameoverKeyDelay = 0;
 	m_BoardBg.set(0.7,0.7,0.7,1);
 	m_TileBg.set(0.5,0.5,0.5,1);
 	m_BgCol.set(0,0,0,1.0);
@@ -95,6 +96,7 @@ void Pony48Engine::frame(float32 dt)
 		m_hud->setScene("gameover");
 		m_iCurMode = GAMEOVER;
 		scrubPause();
+		m_fGameoverKeyDelay = getSeconds();
 	}
 }
 
@@ -190,17 +192,11 @@ void Pony48Engine::handleEvent(SDL_Event event)
 		{
 			if(m_iCurMode == GAMEOVER)
 			{
-				if(!(event.key.keysym.scancode == SDL_SCANCODE_W || 
-					 event.key.keysym.scancode == SDL_SCANCODE_UP || 
-					 event.key.keysym.scancode == SDL_SCANCODE_S ||
-					 event.key.keysym.scancode == SDL_SCANCODE_DOWN ||
-					 event.key.keysym.scancode == SDL_SCANCODE_A ||
-					 event.key.keysym.scancode == SDL_SCANCODE_LEFT ||
-					 event.key.keysym.scancode == SDL_SCANCODE_D ||
+				if(!(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE
 #ifdef DEBUG
-					 event.key.keysym.scancode == SDL_SCANCODE_F5 ||
+					 || event.key.keysym.scancode == SDL_SCANCODE_F5
 #endif
-					 event.key.keysym.scancode == SDL_SCANCODE_RIGHT))
+					 ) && getSeconds() - m_fGameoverKeyDelay >= GAMEOVER_KEY_DELAY)	//Wait for a certain amount of time, in case they just mashed keys accidentally
 				{
 					m_iCurMode = PLAYING;
 					scrubResume();

@@ -25,6 +25,8 @@
 #define TILE_HEIGHT 2.0
 #define TILE_SPACING 0.25
 
+#define GAMEOVER_KEY_DELAY 0.5
+
 class ColorPhase
 {
 public:
@@ -85,6 +87,7 @@ private:
 	uint32_t m_iHighScore;
 	Background* m_bg;
 	gameMode m_iCurMode;
+	float m_fGameoverKeyDelay;
 
 protected:
 	void frame(float32 dt);
