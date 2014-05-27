@@ -8,12 +8,12 @@ BEGIN
 		BLOCK "040904E4"
 		BEGIN
 			VALUE "CompanyName", "RetiredSphinx game design"
-			VALUE "FileDescription", "Magic Hexagon"
+			VALUE "FileDescription", "Pony48"
 			VALUE "FileVersion", "1.0"
 			VALUE "InternalName", "Pony48"
 			VALUE "LegalCopyright", "RetiredSphinx"
 			VALUE "OriginalFilename", "Pony48.exe"
-			VALUE "ProductName", "Magic Hexagon"
+			VALUE "ProductName", "Pony48"
 			VALUE "ProductVersion", "1.0"
 		END
 	END
