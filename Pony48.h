@@ -82,6 +82,7 @@ private:
 	bool m_bMouseGrabOnWindowRegain;
 	float32 m_fDefCameraZ;	//Default position of camera on z axis
 	list<ColorPhase> m_ColorsChanging;
+	SDL_Joystick *m_joy;
 	
 	//Game stuff!
 	Color m_BoardBg;

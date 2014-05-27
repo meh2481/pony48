@@ -40,6 +40,8 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	
 	setTimeScale(DEFAULT_TIMESCALE);
 	
+	m_joy = NULL;
+	
 	//Game stuff!
 	m_iCurMode = PLAYING;
 	m_fGameoverKeyDelay = 0;
@@ -63,6 +65,9 @@ Pony48Engine::~Pony48Engine()
 		delete m_bg;
 	errlog << "delete hud" << endl;
 	delete m_hud;
+	if(SDL_JoystickGetAttached(m_joy))
+		SDL_JoystickClose(m_joy);
+		
 }
 
 void Pony48Engine::frame(float32 dt)
@@ -333,6 +338,38 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					grabMouse(m_bMouseGrabOnWindowRegain);	//Grab mouse on input regain, if we should
 					break;
 			}
+			break;
+			
+		//Gamepad stuff!
+		case SDL_JOYDEVICEADDED:
+			cout << "Controller " << (int)event.jdevice.which << " connected." << endl;
+			m_joy = SDL_JoystickOpen(event.jdevice.which);
+
+			if(m_joy) 
+			{
+				cout << "Opened Joystick " << event.jdevice.which << endl;
+				cout << "Name: " << SDL_JoystickNameForIndex(event.jdevice.which) << endl;
+				cout << "Number of Axes: " << SDL_JoystickNumAxes(m_joy) << endl;
+				cout << "Number of Buttons: " << SDL_JoystickNumButtons(m_joy) << endl;
+				cout << "Number of Balls: " << SDL_JoystickNumBalls(m_joy) << endl;
+			} 
+			else
+				cout << "Couldn't open Joystick " << (int)event.jdevice.which << endl;
+			break;
+			
+		case SDL_JOYDEVICEREMOVED:
+			cout << "Controller " << (int)event.jdevice.which << " disconnected." << endl;
+			break;
+			
+		case SDL_JOYBUTTONDOWN:
+			cout << "Controller " << (int)event.jbutton.which << " pressed button " << (int)event.jbutton.button << endl;
+			
+		case SDL_JOYBUTTONUP:
+			cout << "Controller " << (int)event.jbutton.which << " released button " << (int)event.jbutton.button << endl;
+			break;
+			
+		case SDL_JOYAXISMOTION:
+			cout << "Controller " << (int)event.jaxis.which << " axis " << (int)event.jaxis.axis << " changed value to " << event.jaxis.value << endl;
 			break;
 	}
 }

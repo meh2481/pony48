@@ -399,6 +399,9 @@ void Engine::setup_sdl()
 		errlog << "SDL_InitSubSystem Error: " << SDL_GetError() << std::endl;
 		exit(1);
 	}
+	
+	if(SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0)
+		errlog << "Unable to init SDL2 game controller subsystem." << endl;
 
 	errlog << "Loading OpenGL..." << std::endl;
 

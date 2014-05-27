@@ -7,3 +7,4 @@
 -Support mouse
 -Support keybard
 -new icon
+-If multiple controllers detected, press any button on either one to select it

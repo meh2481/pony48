@@ -31,8 +31,9 @@ void Pony48Engine::beatDetect()
 	float beatThresholdVolume = 0.75f;    // The threshold over which to recognize a beat
 	int beatThresholdBar = 0;            // The bar in the volume distribution to examine
 	
+#ifdef DEBUG
 	//Print out a sort of audio-level thing
-	printf("\033[2J\033[1;1H");
+	/*printf("\033[2J\033[1;1H");
 	for(int i = 0; i < 10; i++)
 	{
 		int num = spec[i] * 20;
@@ -41,7 +42,8 @@ void Pony48Engine::beatDetect()
 		for(int rest = num; rest < 20; rest++)
 			printf(" ");
 		printf("|\n");
-	}
+	}*/
+#endif
 
 
 	// Test for threshold volume being exceeded , and bounce camera
