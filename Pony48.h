@@ -27,6 +27,8 @@
 
 #define GAMEOVER_KEY_DELAY 0.5
 
+#define JOY_AXIS_TRIP 8000
+
 class ColorPhase
 {
 public:

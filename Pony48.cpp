@@ -67,7 +67,6 @@ Pony48Engine::~Pony48Engine()
 	delete m_hud;
 	if(SDL_JoystickGetAttached(m_joy))
 		SDL_JoystickClose(m_joy);
-		
 }
 
 void Pony48Engine::frame(float32 dt)
@@ -241,37 +240,25 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				case SDL_SCANCODE_W:
 				case SDL_SCANCODE_UP:
 					if(m_iCurMode == PLAYING)
-					{
-						clearBoardAnimations();
 						move(UP);
-					}
 					break;
 					
 				case SDL_SCANCODE_S:
 				case SDL_SCANCODE_DOWN:
 					if(m_iCurMode == PLAYING)
-					{
-						clearBoardAnimations();
 						move(DOWN);
-					}
 					break;
 					
 				case SDL_SCANCODE_A:
 				case SDL_SCANCODE_LEFT:
 					if(m_iCurMode == PLAYING)
-					{
-						clearBoardAnimations();
 						move(LEFT);
-					}
 					break;
 					
 				case SDL_SCANCODE_D:
 				case SDL_SCANCODE_RIGHT:
 					if(m_iCurMode == PLAYING)
-					{
-						clearBoardAnimations();
 						move(RIGHT);
-					}
 					break;
 			}
 			break;
@@ -342,34 +329,87 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			
 		//Gamepad stuff!
 		case SDL_JOYDEVICEADDED:
-			cout << "Controller " << (int)event.jdevice.which << " connected." << endl;
+			errlog << "Joystick " << (int)event.jdevice.which << " connected." << endl;
 			m_joy = SDL_JoystickOpen(event.jdevice.which);
 
 			if(m_joy) 
 			{
-				cout << "Opened Joystick " << event.jdevice.which << endl;
-				cout << "Name: " << SDL_JoystickNameForIndex(event.jdevice.which) << endl;
-				cout << "Number of Axes: " << SDL_JoystickNumAxes(m_joy) << endl;
-				cout << "Number of Buttons: " << SDL_JoystickNumButtons(m_joy) << endl;
-				cout << "Number of Balls: " << SDL_JoystickNumBalls(m_joy) << endl;
+				errlog << "Opened Joystick " << event.jdevice.which << endl;
+				errlog << "Name: " << SDL_JoystickNameForIndex(event.jdevice.which) << endl;
+				errlog << "Number of Axes: " << SDL_JoystickNumAxes(m_joy) << endl;
+				errlog << "Number of Buttons: " << SDL_JoystickNumButtons(m_joy) << endl;
+				errlog << "Number of Balls: " << SDL_JoystickNumBalls(m_joy) << endl;
 			} 
 			else
-				cout << "Couldn't open Joystick " << (int)event.jdevice.which << endl;
+				errlog << "Couldn't open Joystick " << (int)event.jdevice.which << endl;
+			
+			/*if (SDL_IsGameController(event.jdevice.which)) 
+			{
+				m_controller = SDL_GameControllerOpen(event.jdevice.which);
+				if (m_controller)
+				{
+					cout << "Opened Controller " << event.jdevice.which << endl;
+				}
+				else
+					cout << "Could not open gamecontroller: " << SDL_GetError() << endl;
+			}*/
+
 			break;
 			
 		case SDL_JOYDEVICEREMOVED:
-			cout << "Controller " << (int)event.jdevice.which << " disconnected." << endl;
+			errlog << "Joystick " << (int)event.jdevice.which << " disconnected." << endl;
 			break;
 			
 		case SDL_JOYBUTTONDOWN:
-			cout << "Controller " << (int)event.jbutton.which << " pressed button " << (int)event.jbutton.button << endl;
+			//cout << "Joystick " << (int)event.jbutton.which << " pressed button " << (int)event.jbutton.button << endl;
+			if(m_iCurMode == GAMEOVER)
+			{
+				m_iCurMode = PLAYING;
+				scrubResume();
+				resetBoard();
+				m_hud->setScene("playing");
+			}
+			break;
 			
 		case SDL_JOYBUTTONUP:
-			cout << "Controller " << (int)event.jbutton.which << " released button " << (int)event.jbutton.button << endl;
+			//cout << "Joystick " << (int)event.jbutton.which << " released button " << (int)event.jbutton.button << endl;
 			break;
 			
 		case SDL_JOYAXISMOTION:
-			cout << "Controller " << (int)event.jaxis.which << " axis " << (int)event.jaxis.axis << " changed value to " << event.jaxis.value << endl;
+			if(m_iCurMode == GAMEOVER && getSeconds() - m_fGameoverKeyDelay >= GAMEOVER_KEY_DELAY)
+			{
+				m_iCurMode = PLAYING;
+				scrubResume();
+				resetBoard();
+				m_hud->setScene("playing");
+				break;
+			}
+			if(event.jaxis.axis == 0)	//Horizontal axis
+			{
+				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Left
+				{
+					if(m_iCurMode == PLAYING)
+						move(LEFT);
+				}
+				else if(event.jaxis.value > JOY_AXIS_TRIP)	//Right
+				{
+					if(m_iCurMode == PLAYING)
+						move(RIGHT);
+				}
+			}
+			else if(event.jaxis.axis == 1)	//Vertical axis
+			{
+				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Up
+				{
+					if(m_iCurMode == PLAYING)
+						move(UP);
+				}
+				else if(event.jaxis.value > JOY_AXIS_TRIP)	//Down
+				{
+					if(m_iCurMode == PLAYING)
+						move(DOWN);
+				}
+			}
 			break;
 	}
 }
@@ -548,28 +588,36 @@ void Pony48Engine::handleKeys()
 	else
 		setTimeScale(DEFAULT_TIMESCALE);
 #endif
-	if(keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP))
+	Sint16 x_move = 0;
+	Sint16 y_move = 0;
+	if(SDL_JoystickGetAttached(m_joy))
+	{
+		x_move = SDL_JoystickGetAxis(m_joy, 0);
+		y_move = SDL_JoystickGetAxis(m_joy, 1);
+	}
+	
+	if(keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP) || y_move < -JOY_AXIS_TRIP)
 	{
 		m_BoardRot.x = 1;
 		m_BoardRot.y = 0;
 		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
 			m_BoardRotAngle -= BOARD_ROT_AMT;
 	}	
-	else if(keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN))
+	else if(keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN) || y_move > JOY_AXIS_TRIP)
 	{
 		m_BoardRot.x = 1;
 		m_BoardRot.y = 0;
 		if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
 			m_BoardRotAngle += BOARD_ROT_AMT;
 	}
-	else if(keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT))
+	else if(keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT) || x_move < -JOY_AXIS_TRIP)
 	{
 		m_BoardRot.x = 0;
 		m_BoardRot.y = 1;
 		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
 			m_BoardRotAngle -= BOARD_ROT_AMT;
 	}
-	else if(keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT))
+	else if(keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT) || x_move > JOY_AXIS_TRIP)
 	{
 		m_BoardRot.x = 0;
 		m_BoardRot.y = 1;

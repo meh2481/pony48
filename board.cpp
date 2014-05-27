@@ -394,6 +394,7 @@ bool Pony48Engine::movePossible(direction dir)
 
 void Pony48Engine::move(direction dir)
 {
+	clearBoardAnimations();	//Wipe out any movement animations that are still playing
 	bool moved = false;
 	while(slide(dir))	//Slide as far as we can
 		moved = true;
