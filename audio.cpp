@@ -30,6 +30,19 @@ void Pony48Engine::beatDetect()
 	
 	float beatThresholdVolume = 0.75f;    // The threshold over which to recognize a beat
 	int beatThresholdBar = 0;            // The bar in the volume distribution to examine
+	
+	//Print out a sort of audio-level thing
+	printf("\033[2J\033[1;1H");
+	for(int i = 0; i < 10; i++)
+	{
+		int num = spec[i] * 20;
+		for(int j = 0; j < num; j++)
+			printf("*");
+		for(int rest = num; rest < 20; rest++)
+			printf(" ");
+		printf("|\n");
+	}
+
 
 	// Test for threshold volume being exceeded , and bounce camera
 	if (spec[beatThresholdBar] >= beatThresholdVolume)
@@ -44,9 +57,110 @@ void Pony48Engine::beatDetect()
 	delete [] specRight;
 }
 
+void Pony48Engine::loadSongXML(string sFilename)
+{
+	XMLDocument* doc = new XMLDocument();
+    int iErr = doc->LoadFile(sFilename.c_str());
+	if(iErr != XML_NO_ERROR)
+	{
+		errlog << "Error parsing XML file " << sFilename << ": Error " << iErr << endl;
+		delete doc;
+		return;
+	}
+
+    XMLElement* root = doc->FirstChildElement("song");
+    if(root == NULL)
+	{
+		errlog << "Error: No toplevel \"song\" item in XML file " << sFilename << endl;
+		delete doc;
+		return;
+	}
+	
+	for(XMLElement* elem = root->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
+	{
+		//playMusic("res/mus/justfluttershy.mp3");
+		//musicLoop(23.259, 222.582);
+		const char* cName = elem->Name();
+		if(cName != NULL && strlen(cName))
+		{
+			string name = cName;
+			if(name == "sfx")
+			{
+				const char* cPath = elem->Attribute("path");
+				if(cPath != NULL && strlen(cPath))
+					playMusic(cPath);	//TODO: Save for a later date
+			}
+			else if(name == "loop")
+			{
+				float32 start = -1;
+				float32 end = -1;
+				elem->QueryFloatAttribute("start", &start);
+				elem->QueryFloatAttribute("end", &end);
+				if(start > 0 && end > 0)
+					musicLoop(start, end);	//TODO: Save for later
+			}
+			else if(name == "background")
+			{
+				const char* cBgType = elem->Attribute("type");
+				if(cBgType != NULL && strlen(cBgType))
+				{
+					string sBgType = cBgType;
+					if(sBgType == "pinwheel")
+					{
+						pinwheelBg* bg = new pinwheelBg();
+						if(m_bg != NULL)
+							delete m_bg;
+						m_bg = (Background*) bg;
+						list<Color> bgCols;
+						for(XMLElement* spoke = elem->FirstChildElement("spoke"); spoke != NULL; spoke = spoke->NextSiblingElement("spoke"))
+						{
+							const char* cCol = spoke->Attribute("col");
+							if(cCol != NULL && strlen(cCol))
+								bgCols.push_back(colorFromString(cCol));
+						}
+						if(bgCols.size())
+						{
+							bg->init(bgCols.size());
+							int cur = 0;
+							for(list<Color>::iterator i = bgCols.begin(); i != bgCols.end(); i++, cur++)
+								bg->setWheelCol(cur, *i);
+						}
+						elem->QueryFloatAttribute("speed", &bg->speed);
+					}
+				}
+			}
+		}
+	}
+}
+
 void Pony48Engine::loadSongs(string sFilename)
 {
+	XMLDocument* doc = new XMLDocument();
+    int iErr = doc->LoadFile(sFilename.c_str());
+	if(iErr != XML_NO_ERROR)
+	{
+		errlog << "Error parsing XML file " << sFilename << ": Error " << iErr << endl;
+		delete doc;
+		return;
+	}
+
+    XMLElement* root = doc->FirstChildElement("music");
+    if(root == NULL)
+	{
+		errlog << "Error: No toplevel \"music\" item in XML file " << sFilename << endl;
+		delete doc;
+		return;
+	}
 	
+	//TODO Play random one
+	for(XMLElement* song = root->FirstChildElement("song"); song != NULL; song = song->NextSiblingElement("song"))
+	{
+		const char* cPath = song->Attribute("path");
+		if(cPath != NULL && strlen(cPath))
+		{
+			loadSongXML(cPath);
+		}
+	}
 }
 
 static float startedDecay = 0;

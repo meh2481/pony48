@@ -132,6 +132,7 @@ public:
 	//audio.cpp functions
 	void beatDetect();					//Bounce to da beat
 	void loadSongs(string sFilename);	//Load songs to play into memory
+	void loadSongXML(string sFilename);	//Load a song + playback stuff from XML
 	void scrubPause();					//Pauses music with a decreasing-frequency effect
 	void scrubResume();					//Resumes music with an increasing-frequency effect
 	void soundUpdate(float32 dt);		//Updates audio fx

@@ -172,8 +172,6 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	
 	//Play music
 	loadSongs("res/mus/music.xml");
-	playMusic("res/mus/justfluttershy.mp3");
-	musicLoop(23.259, 222.582);
 	//pauseMusic();
 	hideCursor();
 }

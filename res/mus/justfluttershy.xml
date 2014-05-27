@@ -1,7 +1,17 @@
-<song artist="TIF WHITNEY" title="Just... Fluttershy">
+<song artist="TIF WHITNEY" title="Just... Fluttershy" genre="Dubstep">
 	<sfx path="res/mus/justfluttershy.mp3"/>
 	<loop start="23.259" end="222.582"/>
-	<background />
+	<background type="pinwheel" speed="50">
+		<spoke col="255,0,0,100"/>
+		<spoke col="0,255,0,100"/>
+		<spoke col="0,0,255,100"/>
+		<spoke col="255,0,0,100"/>
+		<spoke col="0,255,0,100"/>
+		<spoke col="0,0,255,100"/>
+		<spoke col="255,0,0,100"/>
+		<spoke col="0,255,0,100"/>
+		<spoke col="0,0,255,100"/>
+	</background>
 	<drop start="46.530" end="69.849" type="mid"/>
 	<drop start="141.097" end="164.394" type="mid"/>
 	<drop start="69.849" end="116.389" type="main"/>
