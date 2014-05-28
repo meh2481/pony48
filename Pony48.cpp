@@ -78,6 +78,7 @@ void Pony48Engine::frame(float32 dt)
 	switch(m_iCurMode)
 	{
 		case PLAYING:
+		case GAMEOVER:
 			soundUpdate(dt);
 			updateBoard(dt);
 			
@@ -152,7 +153,15 @@ void Pony48Engine::frame(float32 dt)
 				HUDItem* hIt = m_hud->getChild("nocam");
 				if(hIt != NULL)
 					hIt->hidden = true;
-			}				
+			}
+			
+			//Calculate the proper alpha value for the black cover-up-intro graphic for our fadein time
+			float alpha = (getSeconds()-INTRO_FADEIN_DELAY) / INTRO_FADEIN_TIME;
+			if(alpha < 0) alpha = 0;
+			if(alpha > 1) alpha = 1;
+			HUDItem* hIt = m_hud->getChild("coverintro");
+			if(hIt != NULL)
+				hIt->col.a = 1.0-alpha;
 			break;
 		}
 	}
@@ -168,6 +177,7 @@ void Pony48Engine::draw()
 	switch(m_iCurMode)
 	{
 		case PLAYING:
+		case GAMEOVER:
 		{
 			//Draw background behind everything else
 			if(m_bg != NULL)

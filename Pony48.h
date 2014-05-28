@@ -28,6 +28,9 @@
 
 #define JOY_AXIS_TRIP 8000
 
+#define INTRO_FADEIN_TIME	2.0	//How long the intro fadein takes
+#define INTRO_FADEIN_DELAY	2.0	//How long before the intro fadein starts
+
 class ColorPhase
 {
 public:
