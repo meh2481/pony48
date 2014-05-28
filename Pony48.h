@@ -70,7 +70,8 @@ typedef enum
 typedef enum
 {
 	PLAYING,
-	GAMEOVER
+	GAMEOVER,
+	INTRO,
 } gameMode;
 
 class Pony48Engine : public Engine

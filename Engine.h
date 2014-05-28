@@ -131,6 +131,7 @@ public:
 	void restartMusic();
 	void stopMusic();
 	void seekMusic(float32 fTime);
+	bool hasMic();																		//If we have some form of mic-like input
 	
 	//Keyboard functions
 	bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed

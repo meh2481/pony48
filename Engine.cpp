@@ -295,6 +295,14 @@ void Engine::fillRect(Point p1, Point p2, Color col)
 	glEnd();
 }
 
+bool Engine::hasMic()
+{
+	if(m_bSoundDied) return false;
+	int numDrivers = 0;
+	m_audioSystem->getRecordNumDrivers(&numDrivers);
+	return numDrivers;
+}
+
 void Engine::createSound(string sPath, string sName)
 {
 	if(m_bSoundDied) return;

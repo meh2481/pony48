@@ -36,7 +36,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	
 	m_hud = new HUD("hud");
 	m_hud->create("res/hud/hud.xml");
-	m_hud->setScene("playing");
+	m_hud->setScene("intro");
 	
 	setTimeScale(DEFAULT_TIMESCALE);
 	
@@ -46,7 +46,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 		errlog << "Unable to open webcam." << endl;
 	
 	//Game stuff!
-	m_iCurMode = PLAYING;
+	m_iCurMode = INTRO;//PLAYING;
 	m_fGameoverKeyDelay = 0;
 	m_BoardBg.set(0.7,0.7,0.7,1);
 	m_TileBg.set(0.5,0.5,0.5,1);
@@ -75,37 +75,86 @@ Pony48Engine::~Pony48Engine()
 
 void Pony48Engine::frame(float32 dt)
 {
-	soundUpdate(dt);
-	updateBoard(dt);
-	
-	//First half of camera bounce; move back a bit every frame in an attempt to get back to default position
-	if(CameraPos.z > m_fDefCameraZ)
-		CameraPos.z -= 0.3;
-	if(CameraPos.z < m_fDefCameraZ)
-		CameraPos.z = m_fDefCameraZ;
-	
-	//Second half of camera bounce; move forward on every bass kick
-	beatDetect();
-	
-	//Handle key presses
-	handleKeys();
-	
-	//Update background
-	if(m_bg != NULL)
-		m_bg->update(dt);
-	
-	//Check if game is now over
-	if(m_iCurMode == PLAYING && !movePossible())
+	switch(m_iCurMode)
 	{
-		//Update final score counter
-		ostringstream oss;
-		HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("finalscore");
-		oss << "FINAL SCORE: " << m_iScore;
-		txt->setText(oss.str());
-		m_hud->setScene("gameover");
-		m_iCurMode = GAMEOVER;
-		scrubPause();
-		m_fGameoverKeyDelay = getSeconds();
+		case PLAYING:
+			soundUpdate(dt);
+			updateBoard(dt);
+			
+			//First half of camera bounce; move back a bit every frame in an attempt to get back to default position
+			if(CameraPos.z > m_fDefCameraZ)
+				CameraPos.z -= 0.3;
+			if(CameraPos.z < m_fDefCameraZ)
+				CameraPos.z = m_fDefCameraZ;
+			
+			//Second half of camera bounce; move forward on every bass kick
+			beatDetect();
+			
+			//Handle key presses
+			handleKeys();
+			
+			//Update background
+			if(m_bg != NULL)
+				m_bg->update(dt);
+			
+			//Check if game is now over
+			if(m_iCurMode == PLAYING && !movePossible())
+			{
+				//Update final score counter
+				ostringstream oss;
+				HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("finalscore");
+				oss << "FINAL SCORE: " << m_iScore;
+				txt->setText(oss.str());
+				m_hud->setScene("gameover");
+				m_iCurMode = GAMEOVER;
+				scrubPause();
+				m_fGameoverKeyDelay = getSeconds();
+			}
+			break;
+		
+		case INTRO:
+		{
+			//Set icon if the user has/doesn't have mic
+			if(hasMic())
+			{
+				HUDItem* hIt = m_hud->getChild("nomic");
+				if(hIt != NULL)
+					hIt->hidden = true;
+			}
+			else
+			{
+				HUDItem* hIt = m_hud->getChild("yesmic");
+				if(hIt != NULL)
+					hIt->hidden = true;
+			}
+			//Set icon if user has/doesn't have gamepad
+			if(m_joy == NULL)
+			{
+				HUDItem* hIt = m_hud->getChild("yespad");
+				if(hIt != NULL)
+					hIt->hidden = true;
+			}
+			else
+			{
+				HUDItem* hIt = m_hud->getChild("nopad");
+				if(hIt != NULL)
+					hIt->hidden = true;
+			}
+			//Set icon if user has/doesn't have webcam
+			if(!m_VideoCap->isOpened())
+			{
+				HUDItem* hIt = m_hud->getChild("yescam");
+				if(hIt != NULL)
+					hIt->hidden = true;
+			}
+			else
+			{
+				HUDItem* hIt = m_hud->getChild("nocam");
+				if(hIt != NULL)
+					hIt->hidden = true;
+			}				
+			break;
+		}
 	}
 }
 
@@ -116,35 +165,42 @@ void Pony48Engine::draw()
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_LIGHTING);
 	
-	//Draw background behind everything else
-	if(m_bg != NULL)
+	switch(m_iCurMode)
 	{
-		glLoadIdentity();
-		glTranslatef(0, 0, m_fDefCameraZ);
-		Rect rcView = getCameraView();
-		m_bg->screenDiag = sqrt(rcView.width()*rcView.width()+rcView.height()*rcView.height());	//HACK: Update every frame to handle screen resize
-		m_bg->draw();
-		glClear(GL_DEPTH_BUFFER_BIT);
+		case PLAYING:
+		{
+			//Draw background behind everything else
+			if(m_bg != NULL)
+			{
+				glLoadIdentity();
+				glTranslatef(0, 0, m_fDefCameraZ);
+				Rect rcView = getCameraView();
+				m_bg->screenDiag = sqrt(rcView.width()*rcView.width()+rcView.height()*rcView.height());	//HACK: Update every frame to handle screen resize
+				m_bg->draw();
+				glClear(GL_DEPTH_BUFFER_BIT);
+			}
+			
+			//Set up OpenGL matrices
+			glLoadIdentity();
+			glTranslatef(CameraPos.x, CameraPos.y, CameraPos.z);
+			glRotatef(m_BoardRotAngle, m_BoardRot.x, m_BoardRot.y, m_BoardRot.z);
+			
+			//Draw our game info
+			drawBoard();
+			drawObjects();
+			
+			//Update HUD score
+			HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("scorebox");
+			ostringstream oss;
+			oss << "SCORE: " << m_iScore;
+			txt->setText(oss.str());
+			oss.str("");
+			txt = (HUDTextbox*)m_hud->getChild("hiscorebox");
+			oss << "BEST: " << m_iHighScore;
+			txt->setText(oss.str());
+		}
+		break;
 	}
-	
-	//Set up OpenGL matrices
-	glLoadIdentity();
-	glTranslatef(CameraPos.x, CameraPos.y, CameraPos.z);
-	glRotatef(m_BoardRotAngle, m_BoardRot.x, m_BoardRot.y, m_BoardRot.z);
-	
-	//Draw our game info
-	drawBoard();
-	drawObjects();
-	
-	//Update HUD score
-	HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("scorebox");
-	ostringstream oss;
-	oss << "SCORE: " << m_iScore;
-	txt->setText(oss.str());
-	oss.str("");
-	txt = (HUDTextbox*)m_hud->getChild("hiscorebox");
-	oss << "BEST: " << m_iHighScore;
-	txt->setText(oss.str());
 	
 	//Draw HUD always at this depth, on top of everything else
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -178,8 +234,6 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	//Create sounds up front
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items
 	
-	//Play music
-	loadSongs("res/mus/music.xml");
 	//pauseMusic();
 	hideCursor();
 }
@@ -212,60 +266,85 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					break;
 				}
 			}
-			switch(event.key.keysym.scancode)
+			else if(m_iCurMode == PLAYING)
 			{
-				case SDL_SCANCODE_ESCAPE:
-					quit();
-					break;
-				
-				case SDL_SCANCODE_F10:
-				case SDL_SCANCODE_G:
-					if(keyDown(SDL_SCANCODE_CTRL))
-					{
-						grabMouse(!isMouseGrabbed());	//Toggle grabbing/releasing the mouse
-					}
-					break;
+				switch(event.key.keysym.scancode)
+				{
+					case SDL_SCANCODE_ESCAPE:
+						quit();
+						break;
 					
-				case SDL_SCANCODE_F5:
+					case SDL_SCANCODE_F10:
+					case SDL_SCANCODE_G:
+						if(keyDown(SDL_SCANCODE_CTRL))
+						{
+							grabMouse(!isMouseGrabbed());	//Toggle grabbing/releasing the mouse
+						}
+						break;
+#ifdef DEBUG
+					case SDL_SCANCODE_F5:
+					{
+						string sScene = m_hud->getScene();
+						delete m_hud;
+						m_hud = new HUD("hud");
+						m_hud->create("res/hud/hud.xml");
+						m_hud->setScene(sScene);
+						break;
+					}
+#endif
+					case SDL_SCANCODE_RETURN:
+						if(keyDown(SDL_SCANCODE_ALT))
+							toggleFullscreen();
+						break;
+					
+					case SDL_SCANCODE_W:
+					case SDL_SCANCODE_UP:
+						if(m_iCurMode == PLAYING)
+							move(UP);
+						break;
+						
+					case SDL_SCANCODE_S:
+					case SDL_SCANCODE_DOWN:
+						if(m_iCurMode == PLAYING)
+							move(DOWN);
+						break;
+						
+					case SDL_SCANCODE_A:
+					case SDL_SCANCODE_LEFT:
+						if(m_iCurMode == PLAYING)
+							move(LEFT);
+						break;
+						
+					case SDL_SCANCODE_D:
+					case SDL_SCANCODE_RIGHT:
+						if(m_iCurMode == PLAYING)
+							move(RIGHT);
+						break;
+				}
+				break;
+			}
+			else if(m_iCurMode == INTRO)
+			{
+#ifdef DEBUG
+				if(event.key.keysym.scancode == SDL_SCANCODE_F5)
 				{
 					string sScene = m_hud->getScene();
 					delete m_hud;
 					m_hud = new HUD("hud");
 					m_hud->create("res/hud/hud.xml");
 					m_hud->setScene(sScene);
-					break;
 				}
-				
-				case SDL_SCANCODE_RETURN:
-                    if(keyDown(SDL_SCANCODE_ALT))
-						toggleFullscreen();
-					break;
-				
-				case SDL_SCANCODE_W:
-				case SDL_SCANCODE_UP:
-					if(m_iCurMode == PLAYING)
-						move(UP);
-					break;
-					
-				case SDL_SCANCODE_S:
-				case SDL_SCANCODE_DOWN:
-					if(m_iCurMode == PLAYING)
-						move(DOWN);
-					break;
-					
-				case SDL_SCANCODE_A:
-				case SDL_SCANCODE_LEFT:
-					if(m_iCurMode == PLAYING)
-						move(LEFT);
-					break;
-					
-				case SDL_SCANCODE_D:
-				case SDL_SCANCODE_RIGHT:
-					if(m_iCurMode == PLAYING)
-						move(RIGHT);
-					break;
+				else
+				{
+#endif
+					m_iCurMode = PLAYING;
+					m_hud->setScene("playing");
+					//Play music
+					loadSongs("res/mus/music.xml");
+#ifdef DEBUG
+				}
+#endif
 			}
-			break;
 		}
 		
 		//Key released
@@ -373,6 +452,12 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				resetBoard();
 				m_hud->setScene("playing");
 			}
+			else if(m_iCurMode == INTRO)
+			{
+				m_iCurMode = PLAYING;
+				m_hud->setScene("playing");
+				loadSongs("res/mus/music.xml");
+			}
 			break;
 			
 		case SDL_JOYBUTTONUP:
@@ -380,6 +465,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			break;
 			
 		case SDL_JOYAXISMOTION:
+			//TODO: Deal with range of axis movement; binary on/off doesn't work with analog sticks
 			if(m_iCurMode == GAMEOVER && getSeconds() - m_fGameoverKeyDelay >= GAMEOVER_KEY_DELAY)
 			{
 				m_iCurMode = PLAYING;
@@ -388,7 +474,13 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				m_hud->setScene("playing");
 				break;
 			}
-			if(event.jaxis.axis == 0)	//Horizontal axis
+			else if(m_iCurMode == INTRO)
+			{
+				m_iCurMode = PLAYING;
+				m_hud->setScene("playing");
+				loadSongs("res/mus/music.xml");
+			}
+			else if(event.jaxis.axis == 0)	//Horizontal axis
 			{
 				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Left
 				{

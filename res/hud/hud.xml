@@ -2,9 +2,14 @@
 	<fonts>
 		<font name="cmr" path="res/font/CelestiaMediumRedux.xml" />
 	</fonts>
-	<images />
-		<!--image name="mark" path="res/gfx/twilimark.png" />
-	</images-->
+	<images>
+		<image name="phones" path="res/intro/headphones.png" />
+		<image name="mic" path="res/intro/microphone.png" />
+		<image name="pad" path="res/intro/controller.png" />
+		<image name="cam" path="res/intro/webcam.png" />
+		<image name="yes" path="res/intro/yes.png" />
+		<image name="no" path="res/intro/no.png" />
+	</images>
 	
 	<!-- playing HUD -->
 	<scene name="playing">
@@ -20,5 +25,22 @@
 		<textbox name="gameover" font="cmr" text="GAME OVER" pos="0,2" pt="4" col="255,255,255,255" />
 		<textbox name="finalscore" font="cmr" text="FINAL SCORE: 0" pos="0,-1" pt="1.5" col="255,255,255,255" />
 		<textbox name="restart" font="cmr" text="Press any key to play again" pos="0,-4" pt="1.0" col="255,255,255,255" />
+	</scene>
+	<scene name="intro">
+		<textbox name="plugitallin" font="cmr" text="Plug in all the things!" pos="0,4.5" pt="1.5" col="255,255,255,255" />
+		<textbox name="requiresrestart" font="cmr" text="(Requires game restart)" pos="0,3.75" pt="0.4" col="255,255,255,255" />
+		<bgimage name="phones" img="phones" pos="-1.5,1.5" size="2,2" />
+		<bgimage name="mic" img="mic" pos="1.5,1.55" size="2,2" />
+		<bgimage name="pad" img="pad" pos="-1.5,-1.5" size="2,2" />
+		<bgimage name="cam" img="cam" pos="1.5,-1.5" size="2,2" />
+		<bgimage name="yesmic" img="yes" pos=".75,.7" size="0.8,0.8" />
+		<bgimage name="nomic" img="no" pos=".75,.75" size="0.8,0.8" />
+		<bgimage name="yespad" img="yes" pos="-2.25,-2.25" size="0.8,0.8" />
+		<bgimage name="nopad" img="no" pos="-2.25,-2.25" size="0.8,0.8" />
+		<bgimage name="yescam" img="yes" pos=".75,-2.25" size="0.8,0.8" />
+		<bgimage name="nocam" img="no" pos=".75,-2.25" size="0.8,0.8" />
+		<geom name="coverintro" col="0,0,0,0">
+			<quad p1="-8, 6, 0" p2="8, 6, 0" p3="8, -6, 0" p4="-8, -6, 0" />
+		</geom>
 	</scene>
 </hud>
