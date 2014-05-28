@@ -11,8 +11,6 @@
 #include <set>
 #include "opencv2/opencv.hpp"
 
-#define DEBUG	//Debug mode; cheat keys and such
-
 #define DEFAULT_WIDTH	800
 #define DEFAULT_HEIGHT	600
 
