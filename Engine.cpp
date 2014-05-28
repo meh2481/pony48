@@ -222,13 +222,27 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 	srand(SDL_GetTicks());	//Not as random as it could be... narf
 	m_fTimeScale = 1.0f;
 
+	errlog << "Initializing FMOD..." << endl;
 	if(FMOD::System_Create(&m_audioSystem) != FMOD_OK || m_audioSystem->init(32, FMOD_INIT_NORMAL, 0) != FMOD_OK)
 	{
 		errlog << "Failed to init FMOD." << std::endl;
 		m_bSoundDied = true;
 	}
 	else
+	{
 		m_bSoundDied = false;
+		//Figure out what sound drivers for input we have here
+		int numDrivers = 0;
+		m_audioSystem->getRecordNumDrivers(&numDrivers);
+		const int DRIVER_INFO_STR_SIZE = 512;
+		char driverInfoStr[DRIVER_INFO_STR_SIZE];
+		errlog << numDrivers << " recording drivers available." << endl;
+		for(int i = 0; i < numDrivers; i++)
+		{
+			m_audioSystem->getRecordDriverInfo(i, driverInfoStr, DRIVER_INFO_STR_SIZE, NULL);
+			errlog << "Driver " << i << ": " << driverInfoStr << endl;
+		}
+	}
 }
 
 Engine::~Engine()
