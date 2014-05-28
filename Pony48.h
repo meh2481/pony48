@@ -9,6 +9,7 @@
 #include "bg.h"
 #include <vector>
 #include <set>
+#include "opencv2/opencv.hpp"
 
 #define DEBUG	//Debug mode; cheat keys and such
 
@@ -85,6 +86,7 @@ private:
 	float32 m_fDefCameraZ;	//Default position of camera on z axis
 	list<ColorPhase> m_ColorsChanging;
 	SDL_Joystick *m_joy;
+	cv::VideoCapture* m_VideoCap;
 	
 	//Game stuff!
 	Color m_BoardBg;

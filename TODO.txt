@@ -5,6 +5,9 @@
 -Bop-It
 -Support controller
 -Support mouse
--Support keybard
+-Support keyboard
 -new icon
 -If multiple controllers detected, press any button on either one to select it
+-Support as many mouse buttons as SDL2 can handle
+-Controller rumble support
+-Touchscreen support?

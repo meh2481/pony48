@@ -400,8 +400,8 @@ void Engine::setup_sdl()
 		exit(1);
 	}
 	
-	if(SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0)
-		errlog << "Unable to init SDL2 game controller subsystem." << endl;
+	if(SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC) < 0)
+		errlog << "Unable to init SDL2 gamepad subsystem." << endl;
 
 	errlog << "Loading OpenGL..." << std::endl;
 

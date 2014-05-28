@@ -41,6 +41,9 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	setTimeScale(DEFAULT_TIMESCALE);
 	
 	m_joy = NULL;
+	m_VideoCap = new cv::VideoCapture(0);
+	if(!m_VideoCap->isOpened())
+		errlog << "Unable to open webcam." << endl;
 	
 	//Game stuff!
 	m_iCurMode = PLAYING;
@@ -67,6 +70,7 @@ Pony48Engine::~Pony48Engine()
 	delete m_hud;
 	if(SDL_JoystickGetAttached(m_joy))
 		SDL_JoystickClose(m_joy);
+	delete m_VideoCap;
 }
 
 void Pony48Engine::frame(float32 dt)
