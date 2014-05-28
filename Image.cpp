@@ -126,7 +126,7 @@ void Image::_load(string sFilename)
 Image::~Image()
 {
     //image cleanup
-    errlog << "Freeing image \"" << m_sFilename << "\"" << endl;
+    errlog << "Free " << m_sFilename << endl;
 	if(m_hTex)
 		glDeleteTextures(1, &m_hTex);	//Free OpenGL graphics memory
     _removeImgReload(this);
