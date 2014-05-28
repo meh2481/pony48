@@ -1,6 +1,6 @@
 <tile value="256" bgcolor="169,217,158"> 
-	<img path="res/gfx/aj/1.png" />
-	<img path="res/gfx/aj/2.png" />
-	<img path="res/gfx/aj/3.png" />
-	<img path="res/gfx/aj/4.png" />
+	<img path="res/tiles/aj/1.png" />
+	<img path="res/tiles/aj/2.png" />
+	<img path="res/tiles/aj/3.png" />
+	<img path="res/tiles/aj/4.png" />
 </tile>

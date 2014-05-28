@@ -1,6 +1,6 @@
 <tile value="64" bgcolor="236,184,213"> 
-	<img path="res/gfx/dash/1.png" />
-	<img path="res/gfx/dash/2.png" />
-	<img path="res/gfx/dash/3.png" />
-	<img path="res/gfx/dash/4.png" />
+	<img path="res/tiles/dash/1.png" />
+	<img path="res/tiles/dash/2.png" />
+	<img path="res/tiles/dash/3.png" />
+	<img path="res/tiles/dash/4.png" />
 </tile>

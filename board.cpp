@@ -312,7 +312,7 @@ TilePiece* Pony48Engine::loadTile(string sFilename)
 	ret->seg = tmpseg;
 	
 	tmpseg = new physSegment();
-	tmpseg->img = getImage("res/gfx/tilebg.png");
+	tmpseg->img = getImage("res/tiles/tilebg.png");
 	tmpseg->size = Point(TILE_WIDTH,TILE_HEIGHT);
 	const char* cBgColor = root->Attribute("bgcolor");
 	if(cBgColor != NULL)

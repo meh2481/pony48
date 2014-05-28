@@ -1,6 +1,6 @@
 <tile value="16" bgcolor="164,220,238"> 
-	<img path="res/gfx/pinkie/1.png" />
-	<img path="res/gfx/pinkie/2.png" />
-	<img path="res/gfx/pinkie/3.png" />
-	<img path="res/gfx/pinkie/4.png" />
+	<img path="res/tiles/pinkie/1.png" />
+	<img path="res/tiles/pinkie/2.png" />
+	<img path="res/tiles/pinkie/3.png" />
+	<img path="res/tiles/pinkie/4.png" />
 </tile>

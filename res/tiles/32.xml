@@ -1,6 +1,6 @@
 <tile value="32" bgcolor="199,252,255"> 
-	<img path="res/gfx/flutter/1.png" />
-	<img path="res/gfx/flutter/2.png" />
-	<img path="res/gfx/flutter/3.png" />
-	<img path="res/gfx/flutter/4.png" />
+	<img path="res/tiles/flutter/1.png" />
+	<img path="res/tiles/flutter/2.png" />
+	<img path="res/tiles/flutter/3.png" />
+	<img path="res/tiles/flutter/4.png" />
 </tile>

@@ -1,6 +1,6 @@
 <tile value="4" bgcolor="231,207,227"> 
-	<img path="res/gfx/scoots/1.png" />
-	<img path="res/gfx/scoots/2.png" />
-	<img path="res/gfx/scoots/3.png" />
-	<img path="res/gfx/scoots/4.png" />
+	<img path="res/tiles/scoots/1.png" />
+	<img path="res/tiles/scoots/2.png" />
+	<img path="res/tiles/scoots/3.png" />
+	<img path="res/tiles/scoots/4.png" />
 </tile>

@@ -1,6 +1,6 @@
 <tile value="128" bgcolor="175,202,231"> 
-	<img path="res/gfx/rarity/1.png" />
-	<img path="res/gfx/rarity/2.png" />
-	<img path="res/gfx/rarity/3.png" />
-	<img path="res/gfx/rarity/4.png" />
+	<img path="res/tiles/rarity/1.png" />
+	<img path="res/tiles/rarity/2.png" />
+	<img path="res/tiles/rarity/3.png" />
+	<img path="res/tiles/rarity/4.png" />
 </tile>

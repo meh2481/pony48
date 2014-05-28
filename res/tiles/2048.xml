@@ -1,3 +1,3 @@
 <tile value="2048" bgcolor="228,192,231"> 
-	<img path="res/gfx/celestia/1.png" />
+	<img path="res/tiles/celestia/1.png" />
 </tile>

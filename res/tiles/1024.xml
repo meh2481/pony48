@@ -1,6 +1,6 @@
 <tile value="1024" bgcolor="156,255,243"> 
-	<img path="res/gfx/luna/1.png" />
-	<img path="res/gfx/luna/2.png" />
-	<img path="res/gfx/luna/3.png" />
-	<img path="res/gfx/luna/4.png" />
+	<img path="res/tiles/luna/1.png" />
+	<img path="res/tiles/luna/2.png" />
+	<img path="res/tiles/luna/3.png" />
+	<img path="res/tiles/luna/4.png" />
 </tile>
