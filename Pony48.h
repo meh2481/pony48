@@ -130,8 +130,10 @@ public:
 	void loadConfig(string sFilename);
 	void saveConfig(string sFilename);
 	
+	//Other stuff in Pony48.cpp
 	obj* objFromXML(string sXMLFilename, Point ptOffset, Point ptVel = Point(0,0));
 	Rect getCameraView();		//Return the rectangle, in world position z=0, that the camera can see 
+	void changeMode(gameMode gm);	//Change to the specified game mode
 	
 	//color.cpp functions
 	void updateColors(float32 dt);

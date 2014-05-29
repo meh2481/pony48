@@ -100,17 +100,7 @@ void Pony48Engine::frame(float32 dt)
 			
 			//Check if game is now over
 			if(m_iCurMode == PLAYING && !movePossible())
-			{
-				//Update final score counter
-				ostringstream oss;
-				HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("finalscore");
-				oss << "FINAL SCORE: " << m_iScore;
-				txt->setText(oss.str());
-				m_hud->setScene("gameover");
-				m_iCurMode = GAMEOVER;
-				scrubPause();
-				m_fGameoverKeyDelay = getSeconds();
-			}
+				changeMode(GAMEOVER);
 			break;
 		
 		case INTRO:
@@ -245,10 +235,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #endif
 					 ) && getSeconds() - m_fGameoverKeyDelay >= GAMEOVER_KEY_DELAY)	//Wait for a certain amount of time, in case they just mashed keys accidentally
 				{
-					m_iCurMode = PLAYING;
-					scrubResume();
-					resetBoard();
-					m_hud->setScene("playing");
+					changeMode(PLAYING);
 					break;
 				}
 			}
@@ -314,6 +301,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				if(event.key.keysym.scancode == SDL_SCANCODE_SPACE)
 				{
 					//Re-test joystick
+					if(SDL_JoystickGetAttached(m_joy))
+						SDL_JoystickClose(m_joy);
 					SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
 					m_joy = NULL;
 					SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
@@ -332,12 +321,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				}
 #endif
 				else
-				{
-					m_iCurMode = PLAYING;
-					m_hud->setScene("playing");
-					//Play music
-					loadSongs("res/mus/music.xml");
-				}
+					changeMode(PLAYING);
 			}
 		}
 		
@@ -440,19 +424,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			
 		case SDL_JOYBUTTONDOWN:
 			//cout << "Joystick " << (int)event.jbutton.which << " pressed button " << (int)event.jbutton.button << endl;
-			if(m_iCurMode == GAMEOVER)
-			{
-				m_iCurMode = PLAYING;
-				scrubResume();
-				resetBoard();
-				m_hud->setScene("playing");
-			}
-			else if(m_iCurMode == INTRO)
-			{
-				m_iCurMode = PLAYING;
-				m_hud->setScene("playing");
-				loadSongs("res/mus/music.xml");
-			}
+			if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
+				changeMode(PLAYING);
 			break;
 			
 		case SDL_JOYBUTTONUP:
@@ -463,10 +436,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			//TODO: Deal with range of axis movement; binary on/off doesn't work with analog sticks
 			if(m_iCurMode == GAMEOVER && getSeconds() - m_fGameoverKeyDelay >= GAMEOVER_KEY_DELAY)
 			{
-				m_iCurMode = PLAYING;
-				scrubResume();
-				resetBoard();
-				m_hud->setScene("playing");
+				changeMode(PLAYING);
 				break;
 			}
 			else if(m_iCurMode == PLAYING && event.jaxis.axis == 0)	//Horizontal axis
@@ -724,7 +694,38 @@ void Pony48Engine::handleKeys()
 	
 }
 
-
+void Pony48Engine::changeMode(gameMode gm)
+{
+	switch(gm)
+	{
+		case PLAYING:
+			if(m_iCurMode == GAMEOVER)
+			{
+				resetBoard();
+				scrubResume();
+			}
+			else if(m_iCurMode == INTRO)
+				loadSongs("res/mus/music.xml");	//Play music
+			m_iCurMode = PLAYING;
+			m_hud->setScene("playing");
+			break;
+			
+		case GAMEOVER:
+		{
+			//Update final score counter
+			ostringstream oss;
+			HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("finalscore");
+			oss << "FINAL SCORE: " << m_iScore;
+			if(txt != NULL)
+				txt->setText(oss.str());
+			m_hud->setScene("gameover");
+			m_iCurMode = GAMEOVER;
+			scrubPause();
+			m_fGameoverKeyDelay = getSeconds();
+			break;
+		}
+	}
+}
 
 
 
