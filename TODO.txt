@@ -11,3 +11,5 @@
 	-Test more buttons to see if SDL2 can sneakily handle them
 -Controller rumble support
 -Touchscreen support?
+-Tilt board according to vector tangent of pressed direction(s) and amount(s), so can tilt more than one way at a time
+	-Detect analog sticks, and tilt board based on actual direction and amount those are being pressed

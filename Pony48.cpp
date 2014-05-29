@@ -115,51 +115,27 @@ void Pony48Engine::frame(float32 dt)
 		
 		case INTRO:
 		{
-			//Set icon if the user has/doesn't have mic
-			if(hasMic())
-			{
-				HUDItem* hIt = m_hud->getChild("nomic");
-				if(hIt != NULL)
-					hIt->hidden = true;
-			}
-			else
-			{
-				HUDItem* hIt = m_hud->getChild("yesmic");
-				if(hIt != NULL)
-					hIt->hidden = true;
-			}
 			//Set icon if user has/doesn't have gamepad
-			if(m_joy == NULL)
-			{
-				HUDItem* hIt = m_hud->getChild("yespad");
-				if(hIt != NULL)
-					hIt->hidden = true;
-			}
-			else
-			{
-				HUDItem* hIt = m_hud->getChild("nopad");
-				if(hIt != NULL)
-					hIt->hidden = true;
-			}
+			HUDItem* hIt = m_hud->getChild("yespad");
+			if(hIt != NULL)
+				hIt->hidden = (m_joy == NULL);
+			hIt = m_hud->getChild("nopad");
+			if(hIt != NULL)
+				hIt->hidden = (m_joy != NULL);
+				
 			//Set icon if user has/doesn't have webcam
-			if(!m_VideoCap->isOpened())
-			{
-				HUDItem* hIt = m_hud->getChild("yescam");
-				if(hIt != NULL)
-					hIt->hidden = true;
-			}
-			else
-			{
-				HUDItem* hIt = m_hud->getChild("nocam");
-				if(hIt != NULL)
-					hIt->hidden = true;
-			}
+			hIt = m_hud->getChild("yescam");
+			if(hIt != NULL)
+				hIt->hidden = !m_VideoCap->isOpened();
+			hIt = m_hud->getChild("nocam");
+			if(hIt != NULL)
+				hIt->hidden = m_VideoCap->isOpened();
 			
 			//Calculate the proper alpha value for the black cover-up-intro graphic for our fadein time
 			float alpha = (getSeconds()-INTRO_FADEIN_DELAY) / INTRO_FADEIN_TIME;
 			if(alpha < 0) alpha = 0;
 			if(alpha > 1) alpha = 1;
-			HUDItem* hIt = m_hud->getChild("coverintro");
+			hIt = m_hud->getChild("coverintro");
 			if(hIt != NULL)
 				hIt->col.a = 1.0-alpha;
 			break;
@@ -335,8 +311,18 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			}
 			else if(m_iCurMode == INTRO)
 			{
+				if(event.key.keysym.scancode == SDL_SCANCODE_SPACE)
+				{
+					//Re-test joystick
+					SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
+					m_joy = NULL;
+					SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
+					//Re-test webcam
+					delete m_VideoCap;
+					m_VideoCap = new cv::VideoCapture(0);
+				}
 #ifdef DEBUG
-				if(event.key.keysym.scancode == SDL_SCANCODE_F5)
+				else if(event.key.keysym.scancode == SDL_SCANCODE_F5)
 				{
 					string sScene = m_hud->getScene();
 					delete m_hud;
@@ -344,16 +330,14 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					m_hud->create("res/hud/hud.xml");
 					m_hud->setScene(sScene);
 				}
+#endif
 				else
 				{
-#endif
 					m_iCurMode = PLAYING;
 					m_hud->setScene("playing");
 					//Play music
 					loadSongs("res/mus/music.xml");
-#ifdef DEBUG
 				}
-#endif
 			}
 		}
 		
@@ -432,6 +416,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				errlog << "Number of Axes: " << SDL_JoystickNumAxes(m_joy) << endl;
 				errlog << "Number of Buttons: " << SDL_JoystickNumButtons(m_joy) << endl;
 				errlog << "Number of Balls: " << SDL_JoystickNumBalls(m_joy) << endl;
+				errlog << "Number of Hats: " << SDL_JoystickNumHats(m_joy) << endl;
 			} 
 			else
 				errlog << "Couldn't open Joystick " << (int)event.jdevice.which << endl;
@@ -484,13 +469,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				m_hud->setScene("playing");
 				break;
 			}
-			else if(m_iCurMode == INTRO)
-			{
-				m_iCurMode = PLAYING;
-				m_hud->setScene("playing");
-				loadSongs("res/mus/music.xml");
-			}
-			else if(event.jaxis.axis == 0)	//Horizontal axis
+			else if(m_iCurMode == PLAYING && event.jaxis.axis == 0)	//Horizontal axis
 			{
 				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Left
 				{
@@ -701,9 +680,11 @@ void Pony48Engine::handleKeys()
 		x_move = SDL_JoystickGetAxis(m_joy, 0);
 		y_move = SDL_JoystickGetAxis(m_joy, 1);
 	}
+	Point vecMove((float32)x_move/(float32)JOY_AXIS_MAX, (float32)y_move/(float32)JOY_AXIS_MAX);
 	
 	if(keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP) || y_move < -JOY_AXIS_TRIP)
 	{
+		vecMove.y += 1;
 		m_BoardRot.x = 1;
 		m_BoardRot.y = 0;
 		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
@@ -711,13 +692,15 @@ void Pony48Engine::handleKeys()
 	}	
 	else if(keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN) || y_move > JOY_AXIS_TRIP)
 	{
+		vecMove.y -= 1;
 		m_BoardRot.x = 1;
 		m_BoardRot.y = 0;
 		if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
 			m_BoardRotAngle += BOARD_ROT_AMT;
 	}
 	else if(keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT) || x_move < -JOY_AXIS_TRIP)
-	{
+	{		
+		vecMove.x -= 1;
 		m_BoardRot.x = 0;
 		m_BoardRot.y = 1;
 		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
@@ -725,6 +708,7 @@ void Pony48Engine::handleKeys()
 	}
 	else if(keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT) || x_move > JOY_AXIS_TRIP)
 	{
+		vecMove.x += 1;
 		m_BoardRot.x = 0;
 		m_BoardRot.y = 1;
 		if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
