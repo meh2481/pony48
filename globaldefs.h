@@ -62,6 +62,8 @@ public:
 
 class Rect {
 public:
+	Rect() {left=right=top=bottom=0;};
+	Rect(float32 l,float32 t,float32 r,float32 b) {left=l;right=r;top=t;bottom=b;};
     float32 left,top,right,bottom;
     float32 width() {return right-left;};
     float32 height() {return bottom-top;};

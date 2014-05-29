@@ -6,8 +6,8 @@
 -Support controller
 -Support mouse
 -Support keyboard
--new icon
 -If multiple controllers detected, press any button on either one to select it
 -Support as many mouse buttons as SDL2 can handle
+	-Test more buttons to see if SDL2 can sneakily handle them
 -Controller rumble support
 -Touchscreen support?

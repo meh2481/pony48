@@ -141,7 +141,7 @@ Image::~Image()
 
 void Image::render(Point size)
 {
-	Rect rc = {0,0,m_iWidth,m_iHeight};
+	Rect rc(0,0,m_iWidth,m_iHeight);
 	render(size, rc);
 }
 

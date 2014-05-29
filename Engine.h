@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "Text.h"
 #include "hud.h"
+#include "particles.h"
 #include <fmod.hpp>
 #include <map>
 #include <set>
@@ -103,7 +104,7 @@ public:
 	
 	//Drawing functions
 	void fillRect(Point p1, Point p2, Color col);
-	Rect getScreenRect()	{Rect rc = {0,0,getWidth(),getHeight()}; return rc;};
+	Rect getScreenRect()	{Rect rc(0,0,getWidth(),getHeight()); return rc;};
 	
 	//Window functions
 	void changeScreenResolution(float32 w, float32 h);  //Change resolution mid-game and reload OpenGL textures as needed
