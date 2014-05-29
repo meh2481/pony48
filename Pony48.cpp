@@ -662,8 +662,9 @@ obj* Pony48Engine::objFromXML(string sXMLFilename, Point ptOffset, Point ptVel)
 	return NULL;
 }
 
-#define BOARD_ROT_AMT	5
-#define MAX_BOARD_ROT_ANGLE	25
+#define BOARD_ROT_AMT		5.0
+#define MAX_BOARD_ROT_ANGLE	25.0
+#define SQRT_2				1.41421356237
 
 void Pony48Engine::handleKeys()
 {
@@ -680,57 +681,45 @@ void Pony48Engine::handleKeys()
 		x_move = SDL_JoystickGetAxis(m_joy, 0);
 		y_move = SDL_JoystickGetAxis(m_joy, 1);
 	}
-	Point vecMove((float32)x_move/(float32)JOY_AXIS_MAX, (float32)y_move/(float32)JOY_AXIS_MAX);
+	Point vecMove((float32)x_move/(float32)JOY_AXIS_MAX, (float32)-y_move/(float32)JOY_AXIS_MAX);
 	
-	if(keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP) || y_move < -JOY_AXIS_TRIP)
+	if(keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP))
+		vecMove.y += 1.0;
+	if(keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN))
+		vecMove.y -= 1.0;
+	if(keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT))
+		vecMove.x -= 1.0;
+	if(keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT))
+		vecMove.x += 1.0;
+	
+	//Cut length off to a maximum of 1.0
+	float32 normalizeFac = vecMove.Length();
+	if(normalizeFac > 1.0)
 	{
-		vecMove.y += 1;
-		m_BoardRot.x = 1;
-		m_BoardRot.y = 0;
-		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
-			m_BoardRotAngle -= BOARD_ROT_AMT;
-	}	
-	else if(keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN) || y_move > JOY_AXIS_TRIP)
-	{
-		vecMove.y -= 1;
-		m_BoardRot.x = 1;
-		m_BoardRot.y = 0;
-		if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
-			m_BoardRotAngle += BOARD_ROT_AMT;
+		vecMove *= 1.0/normalizeFac;
+		normalizeFac = 1.0;
 	}
-	else if(keyDown(SDL_SCANCODE_A) || keyDown(SDL_SCANCODE_LEFT) || x_move < -JOY_AXIS_TRIP)
-	{		
-		vecMove.x -= 1;
-		m_BoardRot.x = 0;
-		m_BoardRot.y = 1;
-		if(m_BoardRotAngle > -MAX_BOARD_ROT_ANGLE)
-			m_BoardRotAngle -= BOARD_ROT_AMT;
-	}
-	else if(keyDown(SDL_SCANCODE_D) || keyDown(SDL_SCANCODE_RIGHT) || x_move > JOY_AXIS_TRIP)
-	{
-		vecMove.x += 1;
-		m_BoardRot.x = 0;
-		m_BoardRot.y = 1;
-		if(m_BoardRotAngle < MAX_BOARD_ROT_ANGLE)
-			m_BoardRotAngle += BOARD_ROT_AMT;
-	}
-	else if(m_BoardRotAngle < 0)
+	
+	float32 destAngle = normalizeFac * MAX_BOARD_ROT_ANGLE;
+	//Rotate board towards destination rotate angle
+	if(m_BoardRotAngle < destAngle)
 	{
 		m_BoardRotAngle += BOARD_ROT_AMT;
-		if(m_BoardRotAngle > 0)
-		{
-			m_BoardRotAngle = 0;
-			m_BoardRot.x = m_BoardRot.y = 0;
-		}
+		if(m_BoardRotAngle > destAngle)
+			m_BoardRotAngle = destAngle;
 	}
-	else if(m_BoardRotAngle > 0)
+	else if(m_BoardRotAngle > destAngle)
 	{
 		m_BoardRotAngle -= BOARD_ROT_AMT;
-		if(m_BoardRotAngle < 0)
-		{
-			m_BoardRotAngle = 0;
-			m_BoardRot.x = m_BoardRot.y = 0;
-		}
+		if(m_BoardRotAngle < destAngle)
+			m_BoardRotAngle = destAngle;
+	}
+	
+	vecMove = rotateAroundOrigin(vecMove, 90.0);	//Our rotate angle is the angle perpendicular to the direction we're pressing
+	if(vecMove.x || vecMove.y)	//If this got reset to 0, let it gracefully rotate back around the last pressed vector
+	{
+		m_BoardRot.x = vecMove.x;
+		m_BoardRot.y = vecMove.y;
 	}
 	
 }
