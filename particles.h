@@ -37,6 +37,12 @@ protected:
 	float32*	m_created;			//When this particle was created/spawned
 	
 	uint32_t m_num;	//How many actual particles there are active (i.e. size of above arrays)
+	void _deleteAll();	//Delete all memory associated with particles
+	void _newParticle();	//Create a new particle
+	void _rmParticle(uint32_t idx);		//Delete an expired particle (i.e. copy particle at end of the list to where this one was)
+	
+	float32 curTime;
+	float32 spawnCounter;
 	
 public:
 	
@@ -74,12 +80,14 @@ public:
 	float32 			rate;				//How many particles to emit per second
 	Rect 				emitFrom;			//Where particles are created
 	particleBlendType 	blend;				//Blend type for how particles are drawn
-	float32 			emissionAngle;		//Angle particles are emitted at
+	float32 			emissionAngle;		//Angle particles are emitted at (degrees)
 	float32 			emissionAngleVar;	//Variation in emission angle
+	bool				firing;				//If we're creating new particles or not
 	
 	void update(float32 dt);
 	void draw();
 	void init();
+	void fromXML(string sXMLFilename);		//Load particle definitions from XML file
 };
 
 

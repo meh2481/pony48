@@ -57,6 +57,9 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_bg = (Background*) bg;
 	m_BoardBg.a = 0.2;
 	m_TileBg.a = 0.2;
+	pSys.img = getImage("res/tiles/celestia/1.png");
+	pSys.emissionAngleVar = 180;
+	pSys.init();
 }
 
 Pony48Engine::~Pony48Engine()
@@ -75,6 +78,7 @@ Pony48Engine::~Pony48Engine()
 
 void Pony48Engine::frame(float32 dt)
 {
+	pSys.update(dt);
 	switch(m_iCurMode)
 	{
 		case PLAYING:
@@ -183,6 +187,9 @@ void Pony48Engine::draw()
 	glLoadIdentity();
 	glTranslatef(0, 0, m_fDefCameraZ);
 	m_hud->draw(0);
+	
+	
+	pSys.draw();
 }
 
 void Pony48Engine::init(list<commandlineArg> sArgs)

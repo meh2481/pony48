@@ -105,6 +105,7 @@ private:
 	Background* m_bg;
 	gameMode m_iCurMode;
 	float m_fGameoverKeyDelay;
+	ParticleSystem pSys;
 
 protected:
 	void frame(float32 dt);
