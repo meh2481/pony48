@@ -57,9 +57,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_bg = (Background*) bg;
 	m_BoardBg.a = 0.2;
 	m_TileBg.a = 0.2;
-	pSys.img = getImage("res/tiles/celestia/1.png");
-	pSys.emissionAngleVar = 180;
-	pSys.init();
+	pSys.fromXML("res/particles/particletest.xml");
 }
 
 Pony48Engine::~Pony48Engine()
@@ -157,8 +155,12 @@ void Pony48Engine::draw()
 				Rect rcView = getCameraView();
 				m_bg->screenDiag = sqrt(rcView.width()*rcView.width()+rcView.height()*rcView.height());	//HACK: Update every frame to handle screen resize
 				m_bg->draw();
-				glClear(GL_DEPTH_BUFFER_BIT);
 			}
+			
+			//Draw particle system
+			pSys.draw();
+			
+			glClear(GL_DEPTH_BUFFER_BIT);
 			
 			//Set up OpenGL matrices
 			glLoadIdentity();
@@ -187,9 +189,6 @@ void Pony48Engine::draw()
 	glLoadIdentity();
 	glTranslatef(0, 0, m_fDefCameraZ);
 	m_hud->draw(0);
-	
-	
-	pSys.draw();
 }
 
 void Pony48Engine::init(list<commandlineArg> sArgs)
@@ -269,6 +268,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						m_hud = new HUD("hud");
 						m_hud->create("res/hud/hud.xml");
 						m_hud->setScene(sScene);
+						pSys.fromXML("res/particles/particletest.xml");	//Reload particles
 						break;
 					}
 #endif
@@ -692,7 +692,7 @@ void Pony48Engine::handleKeys()
 			m_BoardRotAngle = destAngle;
 	}
 	
-	vecMove = rotateAroundOrigin(vecMove, 90.0);	//Our rotate angle is the angle perpendicular to the direction we're pressing
+	vecMove = rotateAroundPoint(vecMove, 90.0);	//Our rotate angle is the angle perpendicular to the direction we're pressing
 	if(vecMove.x || vecMove.y)	//If this got reset to 0, let it gracefully rotate back around the last pressed vector
 	{
 		m_BoardRot.x = vecMove.x;

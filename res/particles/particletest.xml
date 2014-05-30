@@ -1,0 +1,21 @@
+<particlesystem emitfrom="-15,7,15,7" fireonstart="true" blend="normal" rate="15" max="150">
+	<img path="res/particles/mane6.png">
+		<rect val="0,0,256,256" />
+		<rect val="256,0,512,256" />
+		<rect val="512,0,768,256" />
+		<rect val="0,256,256,512" />
+		<rect val="256,256,512,512" />
+		<rect val="512,256,768,512" />
+	</img>
+	<emit angle="-90" var="0" />
+	<size start="1,1" end="0.5,0.5" var="0,0" />
+	<speed value="2" var=".5" />
+	<accel value="0,0" var="0,0" />
+	<rotstart value="0" var="0" />
+	<rotvel value="0" var="150" />
+	<rotaccel value="0" var="0" />
+	<col start="255,255,255,128" end="255,255,255,128" var="0,0,0,100" />
+	<tanaccel value="0" var="0" />
+	<normaccel value="0" var="0" />
+	<life value="10" var="0" />
+</particlesystem>

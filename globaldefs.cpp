@@ -152,6 +152,12 @@ int32_t randInt(int32_t min, int32_t max)
 {
 	if(min == max)
 		return min;
+	if(min > max)
+	{
+		int32_t temp = min;
+		min = max;
+		max = temp;
+	}
 	int32_t diff = max-min+1;
 	return(rand()%diff + min);
 }
@@ -160,6 +166,12 @@ float32 randFloat(float32 min, float32 max)
 {
 	if(min == max)
 		return min;
+	if(min > max)
+	{
+		float32 temp = min;
+		min = max;
+		max = temp;
+	}
 	float32 scale = rand() % 1001;
 	return((scale/1000.0)*(max-min) + min);
 }
@@ -238,13 +250,15 @@ Vec3 rotateAroundVector(Vec3 vecToRot, Vec3 rotVec, float32 fAngleDeg)
 	return result;
 }
 
-Point rotateAroundOrigin(Point vecToRot, float32 fAngleDeg)
+Point rotateAroundPoint(Point vecToRot, float32 fAngleDeg, Point ptRot)
 {
 	Point ret;
 	float32 s = sin(DEG2RAD*fAngleDeg);
 	float32 c = cos(DEG2RAD*fAngleDeg);
+	vecToRot -= ptRot;
 	ret.x = vecToRot.x * c - vecToRot.y * s;
 	ret.y = vecToRot.x * s + vecToRot.y * c;
+	ret += ptRot;
 	return ret;
 }
 

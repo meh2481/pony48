@@ -36,10 +36,11 @@ protected:
 	float32*	m_lifetime;			//How long this particle is alive for
 	float32*	m_created;			//When this particle was created/spawned
 	
-	uint32_t m_num;	//How many actual particles there are active (i.e. size of above arrays)
-	void _deleteAll();	//Delete all memory associated with particles
-	void _newParticle();	//Create a new particle
-	void _rmParticle(uint32_t idx);		//Delete an expired particle (i.e. copy particle at end of the list to where this one was)
+	uint32_t m_num;					//How many actual particles there are active (i.e. size of above arrays)
+	void _deleteAll();				//Delete all memory associated with particles
+	void _newParticle();			//Create a new particle
+	void _rmParticle(uint32_t idx);	//Delete an expired particle (i.e. copy particle at end of the list to where this one was)
+	void _initValues();				//Initialize particle system variables
 	
 	float32 curTime;
 	float32 spawnCounter;

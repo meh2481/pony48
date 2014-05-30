@@ -24,37 +24,7 @@ ParticleSystem::ParticleSystem()
 	m_created = NULL;
 	m_num = 0;
 	
-	sizeStart = Point(1,1);
-	sizeEnd = Point(1,1);
-	sizeVar = Point(0,0);
-	speed = 1.0;
-	speedVar = 0.0;
-	accel = Point(0,0);
-	accelVar = Point(0,0);
-	rotStart = 0.0;
-	rotStartVar = 0.0;
-	rotVel = 0.0;
-	rotVelVar = 0.0;
-	rotAccel = 0.0;
-	rotAccelVar = 0.0;
-	colStart = Color(1,1,1,1);
-	colEnd = Color(1,1,1,1);
-	colVar = Color(0,0,0,0);
-	tangentialAccel = 0;
-	tangentialAccelVar = 0;
-	normalAccel = 0;
-	normalAccelVar = 0;
-	lifetime = 4;
-	lifetimeVar = 0;
-	
-	img = NULL;
-	max = 100;
-	rate = 25;
-	emitFrom = Rect(0,0,0,0);
-	blend = ADDITIVE;
-	emissionAngle = 0;
-	emissionAngleVar = 0;
-	firing = true;
+	_initValues();
 	
 	curTime = 0;
 	spawnCounter = 0;
@@ -130,8 +100,8 @@ void ParticleSystem::_newParticle()
 	}
 	else
 		m_imgRect[m_num] = imgRect[randInt(0, imgRect.size()-1)];
-	m_pos[m_num] = Point(randFloat(-emitFrom.center().x-emitFrom.width()/2.0,emitFrom.center().x+emitFrom.width()/2.0)+emitFrom.center().x, 
-						 randFloat(-emitFrom.center().y-emitFrom.height()/2.0,emitFrom.center().y+emitFrom.height()/2.0)+emitFrom.center().y);
+	m_pos[m_num] = Point(randFloat(emitFrom.left, emitFrom.right),
+						 randFloat(emitFrom.top, emitFrom.bottom));
 	m_sizeStart[m_num].x = sizeStart.x + randFloat(-sizeVar.x,sizeVar.x);
 	m_sizeStart[m_num].y = sizeStart.y + randFloat(-sizeVar.y,sizeVar.y);
 	m_sizeEnd[m_num].x = sizeEnd.x + randFloat(-sizeVar.x,sizeVar.x);
@@ -146,13 +116,45 @@ void ParticleSystem::_newParticle()
 	m_rotVel[m_num] = rotVel + randFloat(-rotVelVar,rotVelVar);
 	m_rotAccel[m_num] = rotAccel + randFloat(-rotAccelVar,rotAccelVar);
 	m_colStart[m_num].r = colStart.r + randFloat(-colVar.r,colVar.r);
+	if(m_colStart[m_num].r > 1)
+		m_colStart[m_num].r = 1;
+	if(m_colStart[m_num].r < 0)
+		m_colStart[m_num].r = 0;
 	m_colStart[m_num].g = colStart.g + randFloat(-colVar.g,colVar.g);
+	if(m_colStart[m_num].g > 1)
+		m_colStart[m_num].g = 1;
+	if(m_colStart[m_num].g < 0)
+		m_colStart[m_num].g = 0;
 	m_colStart[m_num].b = colStart.b + randFloat(-colVar.b,colVar.b);
+	if(m_colStart[m_num].b > 1)
+		m_colStart[m_num].b = 1;
+	if(m_colStart[m_num].b < 0)
+		m_colStart[m_num].b = 0;
 	m_colStart[m_num].a = colStart.a + randFloat(-colVar.a,colVar.a);
+	if(m_colStart[m_num].a > 1)
+		m_colStart[m_num].a = 1;
+	if(m_colStart[m_num].a < 0)
+		m_colStart[m_num].a = 0;
 	m_colEnd[m_num].r = colEnd.r + randFloat(-colVar.r,colVar.r);
+	if(m_colEnd[m_num].r > 1)
+		m_colEnd[m_num].r = 1;
+	if(m_colEnd[m_num].r < 0)
+		m_colEnd[m_num].r = 0;
 	m_colEnd[m_num].g = colEnd.g + randFloat(-colVar.g,colVar.g);
+	if(m_colEnd[m_num].g > 1)
+		m_colEnd[m_num].g = 1;
+	if(m_colEnd[m_num].g < 0)
+		m_colEnd[m_num].g = 0;
 	m_colEnd[m_num].b = colEnd.b + randFloat(-colVar.b,colVar.b);
+	if(m_colEnd[m_num].b > 1)
+		m_colEnd[m_num].b = 1;
+	if(m_colEnd[m_num].b < 0)
+		m_colEnd[m_num].b = 0;
 	m_colEnd[m_num].a = colEnd.a + randFloat(-colVar.a,colVar.a);
+	if(m_colEnd[m_num].a > 1)
+		m_colEnd[m_num].a = 1;
+	if(m_colEnd[m_num].a < 0)
+		m_colEnd[m_num].a = 0;
 	m_tangentialAccel[m_num] = tangentialAccel + randFloat(-tangentialAccelVar,tangentialAccelVar);
 	m_normalAccel[m_num] = normalAccel + randFloat(-normalAccelVar,normalAccelVar);
 	m_lifetime[m_num] = lifetime + randFloat(-lifetimeVar,lifetimeVar);
@@ -181,6 +183,41 @@ void ParticleSystem::_rmParticle(uint32_t idx)
 	m_created[idx] = m_created[m_num-1];
 	
 	m_num--;
+}
+
+void ParticleSystem::_initValues()
+{
+	sizeStart = Point(1,1);
+	sizeEnd = Point(1,1);
+	sizeVar = Point(0,0);
+	speed = 1.0;
+	speedVar = 0.0;
+	accel = Point(0,0);
+	accelVar = Point(0,0);
+	rotStart = 0.0;
+	rotStartVar = 0.0;
+	rotVel = 0.0;
+	rotVelVar = 0.0;
+	rotAccel = 0.0;
+	rotAccelVar = 0.0;
+	colStart = Color(1,1,1,1);
+	colEnd = Color(1,1,1,1);
+	colVar = Color(0,0,0,0);
+	tangentialAccel = 0;
+	tangentialAccelVar = 0;
+	normalAccel = 0;
+	normalAccelVar = 0;
+	lifetime = 4;
+	lifetimeVar = 0;
+	
+	img = NULL;
+	max = 100;
+	rate = 25;
+	emitFrom = Rect(0,0,0,0);
+	blend = ADDITIVE;
+	emissionAngle = 0;
+	emissionAngleVar = 0;
+	firing = true;
 }
 
 void ParticleSystem::update(float32 dt)
@@ -295,7 +332,145 @@ void ParticleSystem::init()
 
 void ParticleSystem::fromXML(string sXMLFilename)
 {
+	_initValues();
 	
+	XMLDocument* doc = new XMLDocument();
+    int iErr = doc->LoadFile(sXMLFilename.c_str());
+	if(iErr != XML_NO_ERROR)
+	{
+		errlog << "Error parsing XML file " << sXMLFilename << ": Error " << iErr << endl;
+		delete doc;
+		return;
+	}
+
+    XMLElement* root = doc->FirstChildElement("particlesystem");
+    if(root == NULL)
+	{
+		errlog << "Error: No toplevel \"particlesystem\" item in XML file " << sXMLFilename << endl;
+		delete doc;
+		return;
+	}
+	
+	const char* emfrom = root->Attribute("emitfrom");
+	if(emfrom != NULL)
+		emitFrom = rectFromString(emfrom);
+	
+	root->QueryBoolAttribute("fireonstart", &firing);
+	
+	const char* blendmode = root->Attribute("blend");
+	if(blendmode != NULL)
+	{
+		string sMode = blendmode;
+		if(sMode == "additive")
+			blend = ADDITIVE;
+		else if(sMode == "normal")
+			blend = NORMAL;
+		if(sMode == "subtractive")
+			blend = SUBTRACTIVE;
+	}
+	
+	root->QueryUnsignedAttribute("max", &max);
+	root->QueryFloatAttribute("rate", &rate);
+	
+	for(XMLElement* elem = root->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
+	{
+		string sName = elem->Name();
+		if(sName == "img")
+		{
+			const char* cPath = elem->Attribute("path");
+			if(cPath != NULL)
+			{
+				img = getImage(cPath);
+				for(XMLElement* rect = elem->FirstChildElement("rect"); rect != NULL; rect = rect->NextSiblingElement("rect"))
+				{
+					const char* cVal = rect->Attribute("val");
+					if(cVal != NULL)
+					{
+						Rect rc = rectFromString(cVal);
+						imgRect.push_back(rc);
+					}
+				}
+			}
+		}
+		else if(sName == "emit")
+		{
+			elem->QueryFloatAttribute("angle", &emissionAngle);
+			elem->QueryFloatAttribute("var", &emissionAngleVar);
+		}
+		else if(sName == "size")
+		{
+			const char* cStart = elem->Attribute("start");
+			if(cStart != NULL)
+				sizeStart = pointFromString(cStart);
+			const char* cEnd = elem->Attribute("end");
+			if(cEnd != NULL)
+				sizeEnd = pointFromString(cEnd);
+			const char* cVar = elem->Attribute("var");
+			if(cVar != NULL)
+				sizeVar = pointFromString(cVar);
+		}
+		else if(sName == "speed")
+		{
+			elem->QueryFloatAttribute("value", &speed);
+			elem->QueryFloatAttribute("var", &speedVar);
+		}
+		else if(sName == "accel")
+		{
+			const char* cAccel = elem->Attribute("value");
+			if(cAccel != NULL)
+				accel = pointFromString(cAccel);
+			const char* cAccelVar = elem->Attribute("var");
+			if(cAccelVar != NULL)
+				accelVar = pointFromString(cAccelVar);
+		}
+		else if(sName == "rotstart")
+		{
+			elem->QueryFloatAttribute("value", &rotStart);
+			elem->QueryFloatAttribute("var", &rotStartVar);
+		}
+		else if(sName == "rotvel")
+		{
+			elem->QueryFloatAttribute("value", &rotVel);
+			elem->QueryFloatAttribute("var", &rotVelVar);
+		}
+		else if(sName == "rotaccel")
+		{
+			elem->QueryFloatAttribute("value", &rotAccel);
+			elem->QueryFloatAttribute("var", &rotAccelVar);
+		}
+		else if(sName == "col")
+		{
+			const char* cStartCol = elem->Attribute("start");
+			if(cStartCol != NULL)
+				colStart = colorFromString(cStartCol);
+			const char* cEndCol = elem->Attribute("end");
+			if(cEndCol != NULL)
+				colEnd = colorFromString(cEndCol);
+			const char* cColVar = elem->Attribute("var");
+			if(cColVar != NULL)
+				colVar = colorFromString(cColVar);
+		}
+		else if(sName == "tanaccel")
+		{
+			elem->QueryFloatAttribute("value", &tangentialAccel);
+			elem->QueryFloatAttribute("var", &tangentialAccelVar);
+		}
+		else if(sName == "normaccel")
+		{
+			elem->QueryFloatAttribute("value", &normalAccel);
+			elem->QueryFloatAttribute("var", &normalAccelVar);
+		}
+		else if(sName == "life")
+		{
+			elem->QueryFloatAttribute("value", &lifetime);
+			elem->QueryFloatAttribute("var", &lifetimeVar);
+		}
+		else
+			errlog << "Warning: Unknown element type \"" << sName << "\" found in XML file " << sXMLFilename << ". Ignoring..." << endl;
+	}
+	
+	delete doc;
+	init();
 }
 
 
