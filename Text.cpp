@@ -38,7 +38,6 @@ Text::Text(string sXMLFilename)
 			const char* cPath = elem->Attribute("path");
 			if(cPath == NULL) return;
 			m_imgFont = new Image(cPath);   //Create image
-			m_imgFont->blur = false;
 
 		}
 		else if(sName == "char")	//Character

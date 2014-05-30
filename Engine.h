@@ -62,6 +62,7 @@ private:
 	bool m_bPaused;			//If the game is paused due to not being focused
 	bool m_bPauseOnKeyboardFocus;	//If the game pauses when keyboard focus is lost
 	bool m_bSoundDied;  //If tyrsound fails to load, don't try to use it
+	int m_iMSAA;		//Antialiasing (0x, 2x, 4x, 8x, etc)
 	
 	map<string, FMOD::Channel*> m_channels;
 	map<string, FMOD::Sound*> m_sounds;
@@ -173,8 +174,10 @@ public:
 	bool getDoubleBuffered()	{int val = 1; SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &val); return val;};
 	void setVsync(int iVsync)	{SDL_GL_SetSwapInterval(iVsync);};
 	int getVsync()				{return SDL_GL_GetSwapInterval();};
-	int getMSAA()				{int MSAA = 0; SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &MSAA); return MSAA;};
-	void setMSAA(int iMSAA);	
+	int getMSAA()				{return m_iMSAA;};
+	void setMSAA(int iMSAA);
+	bool getImgBlur()			{return g_imageBlur;};
+	void setImgBlur(bool b)		{g_imageBlur = b;};
 	void setGamma(float32 fGamma)	{m_fGamma = fGamma;};
 	float32 getGamma()				{return m_fGamma;};
 

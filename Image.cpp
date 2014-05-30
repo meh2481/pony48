@@ -6,13 +6,13 @@
 #include "Image.h"
 #include <set>
 
+bool g_imageBlur = true;
+
 Image::Image(string sFilename)
 {
-  //m_ptHotSpot.SetZero();
-  m_sFilename = sFilename;
-	blur = true;
-  _load(sFilename);
-  _addImgReload(this);
+	m_sFilename = sFilename;
+	_load(sFilename);
+	_addImgReload(this);
 }
 
 #ifdef __BIG_ENDIAN__
@@ -20,9 +20,8 @@ Image::Image(string sFilename)
 int power_of_two(int input)
 {
 	int value = 1;
-	while ( value < input ) {
+	while (value < input)
 		value <<= 1;
-	}
 	return value;
 }
 #endif
@@ -72,23 +71,22 @@ void Image::_load(string sFilename)
 	if(FreeImage_GetBPP(dib) == 24) // RGB 24bit
 	{
 #ifdef __BIG_ENDIAN__
-      mode = GL_RGB;
-		  modeflip = GL_RGB;
+		mode = GL_RGB;
+		modeflip = GL_RGB;
 #else
-      mode = GL_RGB;
-		  modeflip = GL_BGR;
+		mode = GL_RGB;
+		modeflip = GL_BGR;
 #endif
 	}
 	else if(FreeImage_GetBPP(dib) == 32)  // RGBA 32bit
 	{
 #ifdef __BIG_ENDIAN__
-      mode = GL_RGBA;
-		  modeflip = GL_RGBA;
+		mode = GL_RGBA;
+		modeflip = GL_RGBA;
 #else
-      mode = GL_RGBA;
-		  modeflip = GL_BGRA;
+		mode = GL_RGBA;
+		modeflip = GL_BGRA;
 #endif
-    
 	}
   
 	bits = FreeImage_GetBits(dib);	//if this somehow one of these failed (they shouldn't), return failure
@@ -106,35 +104,45 @@ void Image::_load(string sFilename)
 	glBindTexture(GL_TEXTURE_2D, m_hTex);
 	//store the texture data for OpenGL use
 #ifdef __BIG_ENDIAN__
-  m_iRealWidth = power_of_two(width);
+	m_iRealWidth = power_of_two(width);
 	m_iRealHeight = power_of_two(height);
-  FIBITMAP *bitmap2 = FreeImage_Allocate(m_iRealWidth, m_iRealHeight, FreeImage_GetBPP(dib));
-  FreeImage_FlipVertical(dib);
+	FIBITMAP *bitmap2 = FreeImage_Allocate(m_iRealWidth, m_iRealHeight, FreeImage_GetBPP(dib));
+	FreeImage_FlipVertical(dib);
 	FreeImage_Paste(bitmap2, dib, 0, 0, 255);
-  FreeImage_FlipVertical(bitmap2);
+	FreeImage_FlipVertical(bitmap2);
 	bits = FreeImage_GetBits(bitmap2);
 	glTexImage2D(GL_TEXTURE_2D, 0, mode, m_iRealWidth, m_iRealHeight, 0, modeflip, GL_UNSIGNED_BYTE, bits);
-  FreeImage_Unload(bitmap2);
+	FreeImage_Unload(bitmap2);
 #else
 	glTexImage2D(GL_TEXTURE_2D, 0, mode, width, height, 0, modeflip, GL_UNSIGNED_BYTE, bits);
 #endif
   
+	if(g_imageBlur)
+	{
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	}
+	else //If you want things pixellated
+	{
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	}
+	
 	//Free FreeImage's copy of the data
 	FreeImage_Unload(dib);
 }
 
 Image::~Image()
 {
-    //image cleanup
-    errlog << "Free " << m_sFilename << endl;
+	//image cleanup
+	errlog << "Free " << m_sFilename << endl;
 	if(m_hTex)
 		glDeleteTextures(1, &m_hTex);	//Free OpenGL graphics memory
-    _removeImgReload(this);
+	_removeImgReload(this);
 }
 
-  /* TODO: Intelligent drawing
-  
-  <fgenesis> i recommend using glViewport and related functions so you don't have to scale stuff into [-1 .. 1] anymore
+/* TODO: Intelligent drawing
+<fgenesis> i recommend using glViewport and related functions so you don't have to scale stuff into [-1 .. 1] anymore
 <fgenesis> let your gfx card do the heavy lifting, not the CPU
 <fgenesis> also have a look at glOrtho() and glMatrixMode(), you'll need those
 */
@@ -150,24 +158,38 @@ void Image::render(Point size)
 // (move left side up) and subtract from the right side (move right side down) by the same amount. 
 void Image::render(Point size, Point shear)
 {
-  float maxx, maxy;
+	float maxx, maxy;
 #ifdef __BIG_ENDIAN__
-  maxx = (float)m_iWidth/(float)m_iRealWidth;
-  maxy = (float)m_iHeight/(float)m_iRealHeight;
+	maxx = (float)m_iWidth/(float)m_iRealWidth;
+	maxy = (float)m_iHeight/(float)m_iRealHeight;
 #else
-  maxx = maxy = 1.0;
+	maxx = maxy = 1.0;
 #endif
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	// tell opengl to use the generated texture
 	glBindTexture(GL_TEXTURE_2D, m_hTex);
-  
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-	if(blur)
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	else //If you want things pixellated
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	
+	const GLfloat vertexData[] =
+    {
+        -size.x/2.0 - shear.x, size.y/2.0 + shear.y, // upper left
+        size.x/2.0 - shear.x, size.y/2.0 - shear.y, // upper right
+        -size.x/2.0 + shear.x, -size.y/2.0 + shear.y, // lower left
+        size.x/2.0 + shear.x, -size.y/2.0 - shear.y, // lower right
+    };
+    const GLfloat texCoords[] =
+    {
+        0.0, maxy, // upper left
+        maxx, maxy, // upper right
+        0.0, 0.0, // lower left
+        maxx, 0.0, // lower right
+    };
+    glVertexPointer(2, GL_FLOAT, 0, &vertexData);
+    glTexCoordPointer(2, GL_FLOAT, 0, &texCoords);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
   
 	// make a rectangle
-	glBegin(GL_QUADS);
+	/*glBegin(GL_QUADS);
 	// top left
 	glTexCoord2f(0.0, maxy);	//Our real image is in the upper-left corner of memory, flipped vertically. Compensate.
 	glVertex3f(-size.x/2.0 - shear.x, size.y/2.0 + shear.y, 0.0);
@@ -181,7 +203,7 @@ void Image::render(Point size, Point shear)
 	glTexCoord2f(maxx, maxy);
 	glVertex3f(size.x/2.0 - shear.x, size.y/2.0 - shear.y, 0.0);
 
-	glEnd();
+	glEnd();*/
   
 }
 
@@ -201,15 +223,27 @@ void Image::render(Point size, Rect rcImg)
 	
 	// tell opengl to use the generated texture
 	glBindTexture(GL_TEXTURE_2D, m_hTex);
-  
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-	if(blur)
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	else //If you want things pixellated
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	
+	const GLfloat vertexData[] =
+    {
+        -size.x/2.0, size.y/2.0, // upper left
+        size.x/2.0, size.y/2.0, // upper right
+        -size.x/2.0, -size.y/2.0, // lower left
+        size.x/2.0, -size.y/2.0, // lower right
+    };
+    const GLfloat texCoords[] =
+    {
+        rcImg.left, rcImg.top, // upper left
+        rcImg.right, rcImg.top, // upper right
+        rcImg.left, rcImg.bottom, // lower left
+        rcImg.right, rcImg.bottom, // lower right
+    };
+    glVertexPointer(2, GL_FLOAT, 0, &vertexData);
+    glTexCoordPointer(2, GL_FLOAT, 0, &texCoords);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
   
 	// make a rectangle
-	glBegin(GL_QUADS);
+	/*glBegin(GL_QUADS);
 	// top left
 	glTexCoord2f(rcImg.left, rcImg.top);
 	glVertex3f(-size.x/2.0, size.y/2.0, 0.0);
@@ -223,33 +257,31 @@ void Image::render(Point size, Rect rcImg)
 	glTexCoord2f(rcImg.right, rcImg.top);
 	glVertex3f(size.x/2.0, size.y/2.0, 0.0);
 
-	glEnd();
+	glEnd();*/
   
 }
 
 void Image::_reload()
 {
-  _load(m_sFilename);
+	_load(m_sFilename);
 }
 
 static set<Image*> sg_images;
 
 void reloadImages()
 {
-  for(set<Image*>::iterator i = sg_images.begin(); i != sg_images.end(); i++)
-  {
-    (*i)->_reload();
-  }
+	for(set<Image*>::iterator i = sg_images.begin(); i != sg_images.end(); i++)
+		(*i)->_reload();
 }
 
 void _addImgReload(Image* img)
 {
-  sg_images.insert(img);
+	sg_images.insert(img);
 }
 
 void _removeImgReload(Image* img)
 {
-  sg_images.erase(img);
+	sg_images.erase(img);
 }
 
 static map<string, Image*> g_mImages;  //Image handler
@@ -257,21 +289,21 @@ Image* getImage(string sFilename)
 {
 	if(sFilename == "image_none") return NULL;
 	
-    map<string, Image*>::iterator i = g_mImages.find(sFilename);
-    if(i == g_mImages.end())   //This image isn't here; load it
-    {
-        Image* img = new Image(sFilename);   //Create this image
-        g_mImages[sFilename] = img; //Add to the map
-        return img;
-    }
-    return i->second; //Return this image
+	map<string, Image*>::iterator i = g_mImages.find(sFilename);
+	if(i == g_mImages.end())   //This image isn't here; load it
+	{
+		Image* img = new Image(sFilename);   //Create this image
+		g_mImages[sFilename] = img; //Add to the map
+		return img;
+	}
+	return i->second; //Return this image
 }
 
 void clearImages()
 {
-    for(map<string, Image*>::iterator i = g_mImages.begin(); i != g_mImages.end(); i++)
-        delete (i->second);    //Delete each image
-    g_mImages.clear();
+	for(map<string, Image*>::iterator i = g_mImages.begin(); i != g_mImages.end(); i++)
+		delete (i->second);    //Delete each image
+	g_mImages.clear();
 }
 
 

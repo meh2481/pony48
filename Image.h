@@ -10,32 +10,31 @@
 class Image
 {
 private:
-    Image(){};  //Default constructor is uncallable
+	Image(){};  //Default constructor is uncallable
 
-    GLuint   	m_hTex;
-    string     	m_sFilename;
-    uint32_t 	m_iWidth, m_iHeight;			// width and height of original image
+	GLuint   	m_hTex;
+	string     	m_sFilename;
+	uint32_t 	m_iWidth, m_iHeight;			// width and height of original image
 #ifdef BIG_ENDIAN
-    uint32_t m_iRealWidth, m_iRealHeight;
+	uint32_t m_iRealWidth, m_iRealHeight;
 #endif
 
-    void _load(string sFilename);
+	void _load(string sFilename);
 
-public:    
-	bool blur;
+public:
 	
-    //Constructor/destructor
-    Image(string sFilename);
-    ~Image();
+	//Constructor/destructor
+	Image(string sFilename);
+	~Image();
     
 	//Engine use functions
-    void _reload();  //Reload memory associated with this image
+	void _reload();  //Reload memory associated with this image
 	void _setFilename(string s) {m_sFilename = s;};	//Potentially dangerous; use with caution
 
-    //Accessor methods
-    uint32_t getWidth()     {return m_iWidth;};
-    uint32_t getHeight()    {return m_iHeight;};
-    string getFilename()    {return m_sFilename;};
+	//Accessor methods
+	uint32_t getWidth()     {return m_iWidth;};
+	uint32_t getHeight()    {return m_iHeight;};
+	string getFilename()    {return m_sFilename;};
 	
 	//Drawing methods for texel-based coordinates
 	void render(Point size);				//Render at 0,0 with specified texel size
@@ -52,7 +51,7 @@ void _removeImgReload(Image* img);
 Image* getImage(string sFilename);  //Retrieves an image from the filename, creating it if necessary
 void clearImages();
 
-
+extern bool g_imageBlur;
 
 #endif
 

@@ -565,6 +565,7 @@ void Pony48Engine::loadConfig(string sFilename)
 		bool bPausesOnFocus = pausesOnFocusLost();
 		int iVsync = getVsync();
 		int iMSAA = getMSAA();
+		bool bTexAntialias = getImgBlur();
 		float32 fGamma = getGamma();
 		
 		window->QueryUnsignedAttribute("width", &width);
@@ -575,6 +576,7 @@ void Pony48Engine::loadConfig(string sFilename)
 		window->QueryBoolAttribute("doublebuf", &bDoubleBuf);
 		window->QueryIntAttribute("vsync", &iVsync);
 		window->QueryIntAttribute("MSAA", &iMSAA);
+		window->QueryBoolAttribute("textureantialias", &bTexAntialias);
 		window->QueryFloatAttribute("brightness", &fGamma);
 		window->QueryBoolAttribute("pauseminimized", &bPausesOnFocus);
 		
@@ -592,6 +594,7 @@ void Pony48Engine::loadConfig(string sFilename)
 		setVsync(iVsync);
 		setDoubleBuffered(bDoubleBuf);
 		setMSAA(iMSAA);
+		setImgBlur(bTexAntialias);
 		setGamma(fGamma);
 		pauseOnKeyboard(bPausesOnFocus);
 	}
@@ -621,6 +624,7 @@ void Pony48Engine::saveConfig(string sFilename)
 	window->SetAttribute("vsync", getVsync());
 	window->SetAttribute("doublebuf", getDoubleBuffered());
 	window->SetAttribute("MSAA", getMSAA());
+	window->SetAttribute("textureantialias", getImgBlur());
 	window->SetAttribute("brightness", getGamma());
 	window->SetAttribute("pauseminimized", pausesOnFocusLost());
 	root->InsertEndChild(window);

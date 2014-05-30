@@ -205,6 +205,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 	m_physicsWorld->SetAllowSleeping(true);
 	m_iWidth = iWidth;
 	m_iHeight = iHeight;
+	m_iMSAA = 0;	//Default: MSAA off
 	m_iKeystates = NULL;
 	m_bShowCursor = true;
 	setFramerate(60);	 //60 fps default
@@ -447,10 +448,6 @@ void Engine::setup_sdl()
 	//Vsync and stuff	//TODO: Toggle? Figure out what it's actually doing? My pathetic gfx card doesn't do anything with any of these values
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	//Apparently double-buffering or something
 	
-	//Apparently MSAA or something (disable by default; my Linux gfx drivers seem to not like)
-	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-	
 	// Create SDL window
 	Uint32 flags = SDL_WINDOW_OPENGL;
 	if(m_bResizable)
@@ -460,13 +457,13 @@ void Engine::setup_sdl()
 							 SDL_WINDOWPOS_UNDEFINED,
 							 SDL_WINDOWPOS_UNDEFINED,
 							 m_iWidth, 
-							 							 m_iHeight,
+							 m_iHeight,
 							 flags);
 
 	if(m_Window == NULL)
 	{
 		errlog << "Couldn't set video mode: " << SDL_GetError() << endl;
-	exit(1);
+		exit(1);
 	}
 	SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1); //Share objects between OpenGL contexts
 	SDL_GL_CreateContext(m_Window);
@@ -511,12 +508,12 @@ void Engine::setup_opengl()
 	// set the clear color to black
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClearDepth( 1.0f );
-	glEnable( GL_DEPTH_TEST );
-	glDepthFunc( GL_LEQUAL );
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 
 	glEnable(GL_TEXTURE_2D);
 
-	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	
 	//Enable image transparency
 	glEnable(GL_BLEND);
@@ -534,32 +531,38 @@ void Engine::setup_opengl()
 	
 	//Set up lighting
 	glShadeModel(GL_SMOOTH);
-	glEnable( GL_LIGHT0 );
-	glEnable( GL_LIGHT1 );
-	glEnable( GL_COLOR_MATERIAL );
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+	glEnable(GL_COLOR_MATERIAL);
 
 	// Setup The Ambient Light
-	glLightfv( GL_LIGHT1, GL_AMBIENT, LightAmbient );
+	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);
 
 	// Setup The Diffuse Light
-	glLightfv( GL_LIGHT1, GL_DIFFUSE, LightDiffuse );
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);
 
 	// Position The Light
-	glLightfv( GL_LIGHT1, GL_POSITION, LightPosition );
+	glLightfv(GL_LIGHT1, GL_POSITION, LightPosition);
 
 	// Enable Light One
-	glEnable( GL_LIGHT1 );
+	glEnable(GL_LIGHT1);
+	
+	setMSAA(m_iMSAA);
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void Engine::setMSAA(int iMSAA)
 {
+	m_iMSAA = iMSAA;
 	if(iMSAA)
 	{
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, iMSAA);
+		glEnable(GL_MULTISAMPLE);
 		
 		// Enable OpenGL antialiasing stuff
-		glEnable(GL_MULTISAMPLE);
 		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 		glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 		glEnable(GL_LINE_SMOOTH);
@@ -569,9 +572,9 @@ void Engine::setMSAA(int iMSAA)
 	{
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+		glDisable(GL_MULTISAMPLE);
 		
 		// Disable OpenGL antialiasing stuff
-		glDisable(GL_MULTISAMPLE);
 		glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 		glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
 		glDisable(GL_LINE_SMOOTH);
