@@ -89,6 +89,7 @@ public:
 	void draw();
 	void init();
 	void fromXML(string sXMLFilename);		//Load particle definitions from XML file
+	uint32_t count() {return m_num;};		//How many particles are currently alive (read-only because reasons)
 };
 
 
