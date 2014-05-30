@@ -165,8 +165,6 @@ void Image::render(Point size, Point shear)
 #else
 	maxx = maxy = 1.0;
 #endif
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	// tell opengl to use the generated texture
 	glBindTexture(GL_TEXTURE_2D, m_hTex);
 	

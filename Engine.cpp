@@ -12,12 +12,6 @@
 #include "opengl-api.h"
 ofstream errlog;
 
-GLfloat LightAmbient[]	= { 0.1f, 0.1f, 0.1f, 1.0f };
-// Diffuse Light Values
-GLfloat LightDiffuse[]	= { 1.0f, 1.0f, 1.0f, 1.0f };
-// Light Position 
-GLfloat LightPosition[] = { 0.0f, 0.0f, 2.0f, 1.0f };
-
 void PrintEvent(const SDL_Event * event)
 {
 	if (event->type == SDL_WINDOWEVENT) {
@@ -531,21 +525,6 @@ void Engine::setup_opengl()
 	
 	//Set up lighting
 	glShadeModel(GL_SMOOTH);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHT1);
-	glEnable(GL_COLOR_MATERIAL);
-
-	// Setup The Ambient Light
-	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);
-
-	// Setup The Diffuse Light
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);
-
-	// Position The Light
-	glLightfv(GL_LIGHT1, GL_POSITION, LightPosition);
-
-	// Enable Light One
-	glEnable(GL_LIGHT1);
 	
 	setMSAA(m_iMSAA);
 	
