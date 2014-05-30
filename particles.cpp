@@ -241,9 +241,23 @@ void ParticleSystem::update(float32 dt)
 	{
 		m_vel[i].x += m_accel[i].x * dt;
 		m_vel[i].y += m_accel[i].y * dt;
-		//TODO Deal with these later
-		//m_tangentialAccel
-		//m_normalAccel
+		
+		if(m_normalAccel[i])
+		{
+			Point ptNorm = m_pos[i] - emitFrom.center();
+			ptNorm.Normalize();
+			ptNorm *= m_normalAccel[i] * dt;
+			m_vel[i] += ptNorm;
+		}
+		
+		if(m_tangentialAccel[i])
+		{
+			Point ptTan = m_pos[i] - emitFrom.center();
+			ptTan.Normalize();
+			ptTan = rotateAroundPoint(ptTan, 90);
+			ptTan *= m_tangentialAccel[i] * dt;
+			m_vel[i] += ptTan;
+		}
 	}
 	
 	for(int i = 0; i < m_num; i++)
