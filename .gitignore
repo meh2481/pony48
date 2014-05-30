@@ -10,3 +10,4 @@ _gfxbase/*
 *.mp3
 *.flac
 *.kate-swp
+gmon.out

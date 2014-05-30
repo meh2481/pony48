@@ -231,47 +231,60 @@ void ParticleSystem::update(float32 dt)
 		_newParticle();
 	
 	//Update particle fields (In separate for loops to cut down on cache thrashing)
-	for(int i = 0; i < m_num; i++)
+	Point* ptPos = m_pos;
+	Point* ptVel = m_vel;
+	for(int i = 0; i < m_num; i++, ptPos++, ptVel++)
 	{
-		m_pos[i].x += m_vel[i].x * dt;
-		m_pos[i].y += m_vel[i].y * dt;
+		ptPos->x += ptVel->x * dt;
+		ptPos->y += ptVel->y * dt;
 	}
 	
-	for(int i = 0; i < m_num; i++)
+	ptVel = m_vel;
+	Point* ptAccel = m_accel;
+	float32* normAccel = m_normalAccel;
+	float32* tanAccel = m_tangentialAccel;
+	for(int i = 0; i < m_num; i++, ptVel++, ptAccel++, normAccel++, tanAccel++)
 	{
-		m_vel[i].x += m_accel[i].x * dt;
-		m_vel[i].y += m_accel[i].y * dt;
+		ptVel->x += ptAccel->x * dt;
+		ptVel->y += ptAccel->y * dt;
 		
-		if(m_normalAccel[i])
+		if(*normAccel)
 		{
 			Point ptNorm = m_pos[i] - emitFrom.center();
 			ptNorm.Normalize();
-			ptNorm *= m_normalAccel[i] * dt;
-			m_vel[i] += ptNorm;
+			ptNorm *= *normAccel * dt;
+			*ptVel += ptNorm;
 		}
-		
-		if(m_tangentialAccel[i])
+		if(*tanAccel)
 		{
 			Point ptTan = m_pos[i] - emitFrom.center();
 			ptTan.Normalize();
 			ptTan = rotateAroundPoint(ptTan, 90);
-			ptTan *= m_tangentialAccel[i] * dt;
-			m_vel[i] += ptTan;
+			ptTan *= *tanAccel * dt;
+			*ptVel += ptTan;
 		}
 	}
 	
-	for(int i = 0; i < m_num; i++)
-		m_rot[i] += m_rotVel[i] * dt;
+	float32* fRot = m_rot;
+	float32* fRotVel = m_rotVel;
+	for(int i = 0; i < m_num; i++, fRot++, fRotVel++)
+		*fRot += *fRotVel * dt;
 	
-	for(int i = 0; i < m_num; i++)
-		m_rotVel[i] += m_rotAccel[i] * dt;
+	fRotVel = m_rotVel;
+	float32* fRotAccel = m_rotAccel;
+	for(int i = 0; i < m_num; i++, fRotAccel++, fRotVel++)
+		*fRotVel += *fRotAccel * dt;
 	
-	for(int i = 0; i < m_num; i++)
+	float32* created = m_created;
+	float32* life = m_lifetime;
+	for(int i = 0; i < m_num; i++, created++, life++)
 	{
-		if(curTime - m_created[i] > m_lifetime[i])	//time for this particle go bye-bye
+		if(curTime - *created > *life)	//time for this particle go bye-bye
 		{
 			_rmParticle(i);
 			i--;	//Go back a particle so we don't skip anything
+			created--;
+			life--;
 		}
 	}
 }
