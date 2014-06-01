@@ -19,7 +19,11 @@ int main(int argc, char** argv)
 {
 	FreeImage_Initialise();
 	
+	LuaInterface Lua("res/lua/init.lua", argc, argv);
+	Lua.Init();
+	
 	Pony48Engine* eng = new Pony48Engine(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Pony48", "Pony48", ICONNAME, true); //Create our engine
+	eng->setLua(&Lua);
 	list<string> lCommandLine;
 	
 	for(int i = 1; i < argc; i++)

@@ -102,10 +102,11 @@ void ParticleSystem::_newParticle()
 		m_imgRect[m_num] = imgRect[randInt(0, imgRect.size()-1)];
 	m_pos[m_num] = Point(randFloat(emitFrom.left, emitFrom.right),
 						 randFloat(emitFrom.top, emitFrom.bottom));
-	m_sizeStart[m_num].x = sizeStart.x + randFloat(-sizeVar.x,sizeVar.x);
-	m_sizeStart[m_num].y = sizeStart.y + randFloat(-sizeVar.y,sizeVar.y);
-	m_sizeEnd[m_num].x = sizeEnd.x + randFloat(-sizeVar.x,sizeVar.x);
-	m_sizeEnd[m_num].y = sizeEnd.y + randFloat(-sizeVar.y,sizeVar.y);
+	float32 sizediff = randFloat(-sizeVar,sizeVar);
+	m_sizeStart[m_num].x = sizeStart.x + sizediff;
+	m_sizeStart[m_num].y = sizeStart.y + sizediff;
+	m_sizeEnd[m_num].x = sizeEnd.x + sizediff;
+	m_sizeEnd[m_num].y = sizeEnd.y + sizediff;
 	float32 angle = emissionAngle + randFloat(-emissionAngleVar,emissionAngleVar);
 	float32 amt = speed + randFloat(-speedVar,speedVar);
 	m_vel[m_num].x = amt*cos(DEG2RAD*angle);
@@ -189,7 +190,7 @@ void ParticleSystem::_initValues()
 {
 	sizeStart = Point(1,1);
 	sizeEnd = Point(1,1);
-	sizeVar = Point(0,0);
+	sizeVar = 0;
 	speed = 1.0;
 	speedVar = 0.0;
 	accel = Point(0,0);
@@ -218,10 +219,12 @@ void ParticleSystem::_initValues()
 	emissionAngle = 0;
 	emissionAngleVar = 0;
 	firing = true;
+	show = true;
 }
 
 void ParticleSystem::update(float32 dt)
 {
+	if(!show) return;
 	curTime += dt;
 	
 	spawnCounter += dt * rate;
@@ -292,6 +295,7 @@ void ParticleSystem::update(float32 dt)
 void ParticleSystem::draw()
 {
 	if(img == NULL) return;
+	if(!show) return;
 	
 	switch(blend)
 	{
@@ -432,9 +436,7 @@ void ParticleSystem::fromXML(string sXMLFilename)
 			const char* cEnd = elem->Attribute("end");
 			if(cEnd != NULL)
 				sizeEnd = pointFromString(cEnd);
-			const char* cVar = elem->Attribute("var");
-			if(cVar != NULL)
-				sizeVar = pointFromString(cVar);
+			elem->QueryFloatAttribute("var", &sizeVar);
 		}
 		else if(sName == "speed")
 		{

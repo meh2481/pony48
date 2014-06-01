@@ -501,7 +501,7 @@ void Engine::setup_opengl()
 
 	// set the clear color to black
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClearDepth( 1.0f );
+	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
@@ -517,7 +517,7 @@ void Engine::setup_opengl()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	gluPerspective( 45.0f, (GLfloat)m_iWidth/(GLfloat)m_iHeight, 0.1f, 500.0f );
+	gluPerspective(45.0f, (GLfloat)m_iWidth/(GLfloat)m_iHeight, 0.1f, 500.0f);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();

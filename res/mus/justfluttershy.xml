@@ -1,6 +1,7 @@
 <song artist="TIF WHITNEY" title="Just... Fluttershy" genre="Dubstep">
 	<sfx path="res/mus/justfluttershy.mp3"/>
 	<loop start="23.259" end="222.582"/>
+	<particle effect="res/particles/particletest.xml" name="test" autofire="false"/>
 	<background type="pinwheel" speed="50">
 		<spoke col="255,0,0,100"/>
 		<spoke col="0,255,0,100"/>
@@ -12,28 +13,6 @@
 		<spoke col="0,255,0,100"/>
 		<spoke col="0,0,255,100"/>
 	</background>
-	<drop start="46.530" end="69.849" type="mid"/>
-	<drop start="141.097" end="164.394" type="mid"/>
-	<drop start="69.849" end="116.389" type="main"/>
-	<drop start="164.394" end="210.923" type="main"/>
-	<drop start="167.292" end="168.727" type="stutter"/>
-	<drop start="173.846" end="174.533" type="stutter"/>
-	<drop start="178.942" end="180.362" type="stutter"/>
-	<drop start="185.476" end="186.195" type="stutter"/>
-	<drop start="0" end="-1" type="bounce"/>
-	<main />
-	<mid>
-		<colorize tiles="0,1,2,3" color="255,0,0,255" time="0.725"/>
-		<colorize tiles="0,1,2,3" color="255,255,255,255" time="0"/>
-		<colorize tiles="4,5,6,7" color="0,255,0,255" time="0.725"/>
-		<colorize tiles="4,5,6,7" color="255,255,255,255" time="0"/>
-		<colorize tiles="8,9,10,11" color="0,0,255,255" time="0.725"/>
-		<colorize tiles="8,9,10,11" color="255,255,255,255" time="0"/>
-		<colorize tiles="12,13,14,15" color="0,255,255,255" time="0.725"/>
-		<colorize tiles="12,13,14,15" color="255,255,255,255" time="0"/>
-	</mid>
-	<stutter />
-	<bounce>
-		<beat threshold="0.75" bar="0" mul="0.75" max="4" affect="cameraz"/>
-	</bounce>
+	<bounce threshold="0.75" bar="0" mul="0.75" max="4" />
+	<lua file="res/lua/justfluttershy.lua" update="jf_update" init="jf_init"/>
 </song>

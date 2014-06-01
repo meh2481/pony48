@@ -58,6 +58,11 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_BoardBg.a = 0.2;
 	m_TileBg.a = 0.2;
 	pSys.fromXML("res/particles/particletest.xml");
+	
+	beatThresholdVolume = 0.75;
+	beatThresholdBar = 0;
+	beatMul = 0.75;
+	maxCamz = 4;
 }
 
 Pony48Engine::~Pony48Engine()

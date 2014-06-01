@@ -13,6 +13,7 @@ pinwheelBg::pinwheelBg()
 	m_iNumSpokes = 0;
 	acceleration = speed = rot = 0;
 	m_lWheel = NULL;
+	type = PINWHEEL;
 }
 
 pinwheelBg::~pinwheelBg()
@@ -82,6 +83,7 @@ starfieldBg::starfieldBg()
 	num = 500;
 	fieldSize.set(40,40,75);
 	starSize.Set(0.1, 0.1);
+	type = STARFIELD;
 }
 
 void starfieldBg::init()

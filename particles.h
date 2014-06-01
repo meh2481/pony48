@@ -53,7 +53,7 @@ public:
 	//Variables used to determine starting values for each particle
 	Point			sizeStart;			//Drawing size on particle spawn
 	Point			sizeEnd;			//Drawing size at end of particle life
-	Point			sizeVar;			//Random variation in particle size
+	float32			sizeVar;			//Random variation in particle size
 	float32			speed;				//Speed at which particles are initially launched along emissionAngle
 	float32			speedVar;
 	Point			accel;				//Linear acceleration
@@ -84,12 +84,14 @@ public:
 	float32 			emissionAngle;		//Angle particles are emitted at (degrees)
 	float32 			emissionAngleVar;	//Variation in emission angle
 	bool				firing;				//If we're creating new particles or not
+	bool				show;				//If this should draw or not
 	
 	void update(float32 dt);
 	void draw();
 	void init();
 	void fromXML(string sXMLFilename);		//Load particle definitions from XML file
 	uint32_t count() {return m_num;};		//How many particles are currently alive (read-only because reasons)
+	void killParticles()	{m_num=0;};		//Kill all active particles
 };
 
 

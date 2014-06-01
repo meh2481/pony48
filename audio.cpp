@@ -4,6 +4,7 @@
 */
 
 #include "Pony48.h"
+
 const int sampleSize = 64;
 
 void Pony48Engine::beatDetect()
@@ -25,11 +26,9 @@ void Pony48Engine::beatDetect()
 	channel->getSpectrum(specLeft, sampleSize, 0, FMOD_DSP_FFT_WINDOW_RECT);
 	channel->getSpectrum(specRight, sampleSize, 1, FMOD_DSP_FFT_WINDOW_RECT);
 
-	for (int i = 0; i < sampleSize; i++)
+	//Center for a mono sound
+	for(int i = 0; i < sampleSize; i++)
 		spec[i] = (specLeft[i] + specRight[i]) / 2.0;
-	
-	float beatThresholdVolume = 0.75f;    // The threshold over which to recognize a beat
-	int beatThresholdBar = 0;            // The bar in the volume distribution to examine
 	
 #ifdef DEBUG
 	//Print out a sort of audio-level thing
@@ -46,12 +45,12 @@ void Pony48Engine::beatDetect()
 #endif
 
 
-	// Test for threshold volume being exceeded , and bounce camera
-	if (spec[beatThresholdBar] >= beatThresholdVolume)
+	//Test for threshold volume being exceeded and bounce camera
+	if(spec[beatThresholdBar] >= beatThresholdVolume)
 	{
-		CameraPos.z += 0.75 * spec[beatThresholdBar];
-		if(CameraPos.z > m_fDefCameraZ + 4)
-			CameraPos.z = m_fDefCameraZ + 4;
+		CameraPos.z += beatMul * spec[beatThresholdBar];
+		if(CameraPos.z > m_fDefCameraZ + maxCamz)
+			CameraPos.z = m_fDefCameraZ + maxCamz;
 	}
 	
 	delete [] spec;
@@ -80,8 +79,6 @@ void Pony48Engine::loadSongXML(string sFilename)
 	
 	for(XMLElement* elem = root->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
 	{
-		//playMusic("res/mus/justfluttershy.mp3");
-		//musicLoop(23.259, 222.582);
 		const char* cName = elem->Name();
 		if(cName != NULL && strlen(cName))
 		{
@@ -90,7 +87,7 @@ void Pony48Engine::loadSongXML(string sFilename)
 			{
 				const char* cPath = elem->Attribute("path");
 				if(cPath != NULL && strlen(cPath))
-					playMusic(cPath);	//TODO: Save for a later date
+					playMusic(cPath);
 			}
 			else if(name == "loop")
 			{
@@ -99,7 +96,7 @@ void Pony48Engine::loadSongXML(string sFilename)
 				elem->QueryFloatAttribute("start", &start);
 				elem->QueryFloatAttribute("end", &end);
 				if(start > 0 && end > 0)
-					musicLoop(start, end);	//TODO: Save for later
+					musicLoop(start, end);
 			}
 			else if(name == "background")
 			{
@@ -131,6 +128,27 @@ void Pony48Engine::loadSongXML(string sFilename)
 					}
 				}
 			}
+			else if(name == "bounce")
+			{
+				elem->QueryFloatAttribute("threshold", &beatThresholdVolume);
+				elem->QueryUnsignedAttribute("bar", &beatThresholdBar);
+				elem->QueryFloatAttribute("mul", &beatMul);
+				elem->QueryFloatAttribute("max", &maxCamz);
+			}
+			else if(name == "lua")
+			{
+				const char* cLuaFile = elem->Attribute("file");
+				if(cLuaFile)
+				{
+					Lua->call("dofile", cLuaFile);
+					const char* cLuaInitFunc = elem->Attribute("init");
+					if(cLuaInitFunc)
+						Lua->call(cLuaInitFunc);
+					const char* cLuaUpdateFunc = elem->Attribute("update");
+					if(cLuaUpdateFunc)
+						sLuaUpdateFunc = cLuaUpdateFunc;
+				}
+			}
 		}
 	}
 }
@@ -154,7 +172,7 @@ void Pony48Engine::loadSongs(string sFilename)
 		return;
 	}
 	
-	//TODO Play random one
+	//TODO Song select
 	for(XMLElement* song = root->FirstChildElement("song"); song != NULL; song = song->NextSiblingElement("song"))
 	{
 		const char* cPath = song->Attribute("path");
@@ -169,13 +187,11 @@ static float startedDecay = 0;
 
 void Pony48Engine::scrubPause()
 {
-	//pauseMusic();
 	startedDecay = getSeconds();
 }
 
 void Pony48Engine::scrubResume()
 {
-	//resumeMusic();
 	startedDecay = -getSeconds();
 }
 
@@ -184,10 +200,10 @@ const float timeToDecay = 0.5f;
 
 void Pony48Engine::soundUpdate(float32 dt)
 {
-	if(startedDecay < 0)	//Resuming
+	FMOD::Channel* channel = getChannel("music");
+	if(channel != NULL)
 	{
-		FMOD::Channel* channel = getChannel("music");
-		if(channel != NULL)
+		if(startedDecay < 0)	//Resuming
 		{
 			float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
 			float freq;
@@ -200,12 +216,7 @@ void Pony48Engine::soundUpdate(float32 dt)
 			}
 			channel->setFrequency(freq);
 		}
-	}
-	else if(startedDecay > 0)	//Pausing
-	{
-		FMOD::Channel* channel = getChannel("music");
-		
-		if(channel != NULL)
+		else if(startedDecay > 0)	//Pausing
 		{
 			float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
 			float freq;
@@ -217,6 +228,12 @@ void Pony48Engine::soundUpdate(float32 dt)
 				startedDecay = 0;
 			}
 			channel->setFrequency(freq);
+		}
+		if(sLuaUpdateFunc.size())
+		{
+			unsigned int ms;
+			channel->getPosition(&ms, FMOD_TIMEUNIT_MS);
+			Lua->call(sLuaUpdateFunc.c_str(), (float)ms/1000.0);
 		}
 	}
 }

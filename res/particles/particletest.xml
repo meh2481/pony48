@@ -8,7 +8,7 @@
 		<rect val="512,256,768,512" />
 	</img>
 	<emit angle="-90" var="0" />
-	<size start="1,1" end="0.5,0.5" var="0,0" />
+	<size start="1,1" end="0.5,0.5" var="0" />
 	<speed value="2" var=".5" />
 	<accel value="0,0" var="0,0" />
 	<rotstart value="0" var="0" />

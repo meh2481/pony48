@@ -5,14 +5,23 @@
 */
 #include "globaldefs.h"
 
+typedef enum
+{
+	NONE,
+	PINWHEEL,
+	STARFIELD,
+	GRADIENT,
+} bgType;
+
 //Background base class
 class Background
 {
 public:
-	Background(){screenDiag = 1;};
+	Background(){screenDiag = 1;type=NONE;};
 	~Background(){};
 	
 	float32 screenDiag;
+	bgType type;
 	
 	virtual void draw() = 0;
 	virtual void update(float32 dt) = 0;
@@ -73,7 +82,7 @@ protected:
 class gradientBg : public Background
 {
 public:
-	gradientBg(){};
+	gradientBg(){type=GRADIENT;};
 	~gradientBg(){};
 	
 	void draw();

@@ -10,6 +10,7 @@
 #include <vector>
 #include <set>
 #include "opencv2/opencv.hpp"
+#include "luainterface.h"
 
 #define DEFAULT_WIDTH	800
 #define DEFAULT_HEIGHT	600
@@ -93,6 +94,7 @@ private:
 	cv::VideoCapture* m_VideoCap;
 	
 	//Game stuff!
+	LuaInterface* Lua;
 	Color m_BoardBg;
 	Color m_TileBg;
 	Color m_BgCol;
@@ -106,6 +108,13 @@ private:
 	gameMode m_iCurMode;
 	float m_fGameoverKeyDelay;
 	ParticleSystem pSys;
+	
+	//audio.cpp stuff!
+	string sLuaUpdateFunc;
+	float32 beatThresholdVolume;	//The threshold over which to recognize a beat
+	uint32_t beatThresholdBar;		//The bar in the volume distribution to examine
+	float32 beatMul;				//The multiplication factor to move the camera
+	float32 maxCamz;				//The maximum value for the camera's z axis
 
 protected:
 	void frame(float32 dt);
@@ -119,6 +128,8 @@ public:
 	//Pony48.cpp functions - fairly generic 
 	Pony48Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName, string sIcon, bool bResizable = false);
 	~Pony48Engine();
+	
+	void setLua(LuaInterface* l)	{Lua = l;};
 	
 	bool _shouldSelect(b2Fixture* fix);
 
