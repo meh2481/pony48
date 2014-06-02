@@ -7,58 +7,83 @@ local function jf_init()
 end
 setglobal("jf_init", jf_init)
 
-local function start(curtime)
+local function start(first)
+	if first == true then
+		pinwheelspeed(50)
+	end
+end
+
+local function mid1(first)
+	if first == true then
+		resetparticles("bgponies")
+		showparticles("bgponies", true)
+		fireparticles("bgponies", true)
+		pinwheelspeed(100)
+	end
+end
+
+local function mid2(first)
+	if first == true then
+		pinwheelspeed(-100)
+	end
+end
+
+local function mid3(first)
+	if first == true then
+		resetparticles("bgponies")
+		showparticles("bgponies", true)
+		fireparticles("bgponies", true)
+		pinwheelspeed(-100)
+	end
+end
+
+local function drop(first)
+	if first == true then
+		showparticles("bgponies", false)
+		pinwheelspeed(0)
+	end
+end
+
+local function main(first)
+	if first == true then
+		pinwheelspeed(200)
+	end
 	
 end
 
-local function mid1(curtime)
-	fireparticles("test", true)
-	pinwheelspeed(100);
-end
-
-local function mid2(curtime)
-	pinwheelspeed(-100);
-end
-
-local function drop(curtime)
-	showparticles("test", false)
-	pinwheelspeed(0);
-end
-
-local function main(curtime)
-	pinwheelspeed(200);
+local function stutter(first)
 	
 end
 
-local function stutter()
-	
-end
+local lasttime = -0.001
+local timetab = {
+	[0]={func = start, endat = 34.9},
+	[34.9]={func = mid1, endat = 46.4},
+	[46.4]={func = mid2, endat = 69.2},
+	[69.2]={func = drop, endat = 69.848},
+	[69.848]={func = main, endat = 116.08},
+	[116.308]={func = start, endat = 140.895},
+	[140.895]={func = mid3, endat = 163.863},
+	[163.863]={func = drop, endat = 164.395},
+	[164.395]={func = main, endat = 210.936},
+	[167.306]={func = stutter, endat = 168.714},
+	[173.847]={func = stutter, endat = 174.565},
+	[178.943]={func = stutter, endat = 180.356},
+	[185.485]={func = stutter, endat = 186.180},
+	[210.936]={func = start, endat = 224},
+}
 
 local function jf_update(curtime)
-	if curtime > 34.9 and curtime < 46.4 then
-		mid1(curtime)
-	elseif curtime > 46.4 and curtime < 69.2 then
-		mid2(curtime)
-	elseif curtime > 69.2 and curtime < 69.848 then
-		drop(curtime)
-	elseif curtime > 69.848 then
-		main(curtime)
+	for key,val in pairs(timetab) do
+		if curtime > key and curtime < val.endat then
+			val.func(lasttime < key or lasttime > val.endat)
+		end
 	end
+	lasttime = curtime
 end
 setglobal("jf_update", jf_update)
 
 --[[
-	<drop start="46.530" end="69.849" type="mid"/>
-	<drop start="141.097" end="164.394" type="mid"/>
-	<drop start="69.849" end="116.389" type="main"/>
-	<drop start="164.394" end="210.923" type="main"/>
-	<drop start="167.292" end="168.727" type="stutter"/>
-	<drop start="173.846" end="174.533" type="stutter"/>
-	<drop start="178.942" end="180.362" type="stutter"/>
-	<drop start="185.476" end="186.195" type="stutter"/>
-	<main>
-		<halt particles="test"/>
-	</main>
 	<mid>
 		<fire particle="test"/>
 		<seg time="0.725">
@@ -86,5 +111,4 @@ setglobal("jf_update", jf_update)
 			<colorize tiles="12" color="0,255,0,255"/>
 		</seg>
 	</mid>
-	<stutter />
 --]]

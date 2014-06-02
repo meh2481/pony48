@@ -1,7 +1,7 @@
 <song artist="TIF WHITNEY" title="Just... Fluttershy" genre="Dubstep">
 	<sfx path="res/mus/justfluttershy.mp3"/>
 	<loop start="23.259" end="222.582"/>
-	<particles effect="res/particles/particletest.xml" name="test" autofire="false"/>
+	<particles effect="res/particles/bgponies.xml" name="bgponies" autofire="false"/>
 	<background type="pinwheel" speed="50">
 		<spoke col="255,0,0,100"/>
 		<spoke col="0,255,0,100"/>

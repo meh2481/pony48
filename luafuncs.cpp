@@ -3,34 +3,32 @@
 #include "Pony48.h"
 
 extern Pony48Engine* g_pGlobalEngine;
-static PonyLua pL;
 
-void PonyLua::fireParticles(string sSys, bool bActive)
+//Class for interfacing between Pony48Engine and Lua
+//(defined here because of weird cross-inclusion stuff)
+class PonyLua
 {
-	if(g_pGlobalEngine->songParticles.count(sSys))
-		g_pGlobalEngine->songParticles[sSys]->firing = bActive;
-}
-
-void PonyLua::showParticles(string sSys, bool bShow)
-{
-	if(g_pGlobalEngine->songParticles.count(sSys))
-		g_pGlobalEngine->songParticles[sSys]->show = bShow;
-}
-
-void PonyLua::pinwheelbg_rotspeed(float speed)
-{
-	if(g_pGlobalEngine->m_bg != NULL && g_pGlobalEngine->m_bg->type == PINWHEEL)
+public:
+	static ParticleSystem* getParticleSys(string sName)
 	{
-		pinwheelBg* pBg = (pinwheelBg*) g_pGlobalEngine->m_bg;
-		pBg->speed = speed;
+		if(g_pGlobalEngine->songParticles.count(sName))
+			return g_pGlobalEngine->songParticles[sName];
+		return NULL;
 	}
-}
+	
+	static Background* getBg()
+	{
+		return g_pGlobalEngine->m_bg;
+	}
+};
 
 luaFunc(fireparticles)
 {
 	string s = getStr(L, 1);
 	bool b = getBool(L, 2);
-	pL.fireParticles(s,b);
+	ParticleSystem* sys = PonyLua::getParticleSys(s);
+	if(sys)
+		sys->firing = b;
 	luaReturnNil();
 }
 
@@ -38,14 +36,27 @@ luaFunc(showparticles)
 {
 	string s = getStr(L, 1);
 	bool b = getBool(L, 2);
-	pL.showParticles(s,b);
+	ParticleSystem* sys = PonyLua::getParticleSys(s);
+	if(sys)
+		sys->show = b;
+	luaReturnNil();
+}
+
+luaFunc(resetparticles)
+{
+	string s = getStr(L, 1);
+	ParticleSystem* sys = PonyLua::getParticleSys(s);
+	if(sys)
+		sys->killParticles();
 	luaReturnNil();
 }
 
 luaFunc(pinwheelspeed)
 {
 	float32 f = lua_tonumber(L, 1);
-	pL.pinwheelbg_rotspeed(f);
+	pinwheelBg* bg = (pinwheelBg*)PonyLua::getBg();
+	if(bg)
+		bg->speed = f;
 	luaReturnNil();
 }
 
@@ -53,6 +64,7 @@ static LuaFunctions s_functab[] =
 {
 	luaRegister(fireparticles),
 	luaRegister(showparticles),
+	luaRegister(resetparticles),
 	luaRegister(pinwheelspeed),
 	{NULL, NULL}
 };

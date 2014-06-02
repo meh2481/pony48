@@ -5,6 +5,9 @@
 */
 #include "globaldefs.h"
 
+#ifndef BG_H
+#define BG_H
+
 typedef enum
 {
 	NONE,
@@ -91,7 +94,7 @@ public:
 	Color ul, ur, bl, br;
 };
 
-
+#endif
 
 
 

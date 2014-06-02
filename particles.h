@@ -9,6 +9,9 @@
 #include "globaldefs.h"
 #include "Image.h"
 
+#ifndef PARTICLES_H
+#define PARICLES_H
+
 typedef enum 
 {
 	ADDITIVE,
@@ -94,7 +97,7 @@ public:
 	void killParticles()	{m_num=0;};		//Kill all active particles
 };
 
-
+#endif
 
 
 

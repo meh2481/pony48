@@ -125,7 +125,10 @@ void Pony48Engine::loadSongXML(string sFilename)
 								bg->setWheelCol(cur, *i);
 						}
 						elem->QueryFloatAttribute("speed", &bg->speed);
+						elem->QueryFloatAttribute("rot", &bg->rot);
+						elem->QueryFloatAttribute("acceleration", &bg->acceleration);
 					}
+					//TODO
 				}
 			}
 			else if(name == "bounce")
@@ -263,8 +266,8 @@ void Pony48Engine::soundUpdate(float32 dt)
 		else if(keyDown(SDL_SCANCODE_0))
 			channel->setFrequency(soundFreqDefault*-5);
 	#endif
-		else
-			channel->setFrequency(soundFreqDefault);
+		else if(m_iCurMode != GAMEOVER)
+			channel->setFrequency(soundFreqDefault);	//Reset to playing normally
 #endif
 		if(sLuaUpdateFunc.size())
 		{
