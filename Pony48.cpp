@@ -10,7 +10,7 @@
 #include <iomanip>
 
 //For our engine functions to be able to call our Engine class functions
-static Pony48Engine* g_pGlobalEngine;
+Pony48Engine* g_pGlobalEngine;
 
 void signalHandler(string sSignal)
 {
@@ -57,7 +57,6 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_bg = (Background*) bg;
 	m_BoardBg.a = 0.2;
 	m_TileBg.a = 0.2;
-	pSys.fromXML("res/particles/particletest.xml");
 	
 	beatThresholdVolume = 0.75;
 	beatThresholdBar = 0;
@@ -81,7 +80,6 @@ Pony48Engine::~Pony48Engine()
 
 void Pony48Engine::frame(float32 dt)
 {
-	pSys.update(dt);
 	switch(m_iCurMode)
 	{
 		case PLAYING:
@@ -163,7 +161,8 @@ void Pony48Engine::draw()
 			}
 			
 			//Draw particle system
-			pSys.draw();
+			for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
+				i->second->draw();
 			
 			glClear(GL_DEPTH_BUFFER_BIT);
 			
@@ -273,7 +272,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						m_hud = new HUD("hud");
 						m_hud->create("res/hud/hud.xml");
 						m_hud->setScene(sScene);
-						pSys.fromXML("res/particles/particletest.xml");	//Reload particles
+						//pSys.fromXML("res/particles/particletest.xml");	//Reload particles
 						break;
 					}
 #endif

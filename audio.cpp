@@ -149,6 +149,19 @@ void Pony48Engine::loadSongXML(string sFilename)
 						sLuaUpdateFunc = cLuaUpdateFunc;
 				}
 			}
+			else if(name == "particles")
+			{
+				const char* cParticleFilename = elem->Attribute("effect");
+				const char* cParticleName = elem->Attribute("name");
+				if(cParticleFilename && cParticleName)
+				{
+					ParticleSystem* pSys = new ParticleSystem();
+					pSys->fromXML(cParticleFilename);
+					pSys->init();
+					songParticles[cParticleName] = pSys;
+					elem->QueryBoolAttribute("autofire", &pSys->firing);
+				}
+			}
 		}
 	}
 }
@@ -229,6 +242,30 @@ void Pony48Engine::soundUpdate(float32 dt)
 			}
 			channel->setFrequency(freq);
 		}
+#ifdef DEBUG
+		else if(keyDown(SDL_SCANCODE_2))
+			channel->setFrequency(soundFreqDefault*2);
+		else if(keyDown(SDL_SCANCODE_3))
+			channel->setFrequency(soundFreqDefault*3);
+		else if(keyDown(SDL_SCANCODE_4))
+			channel->setFrequency(soundFreqDefault*4);
+		else if(keyDown(SDL_SCANCODE_5))
+			channel->setFrequency(soundFreqDefault*5);
+	#ifdef DEBUG_REVSOUND
+		else if(keyDown(SDL_SCANCODE_6))
+			channel->setFrequency(soundFreqDefault*-1);
+		else if(keyDown(SDL_SCANCODE_7))
+			channel->setFrequency(soundFreqDefault*-2);
+		else if(keyDown(SDL_SCANCODE_8))
+			channel->setFrequency(soundFreqDefault*-3);
+		else if(keyDown(SDL_SCANCODE_9))
+			channel->setFrequency(soundFreqDefault*-4);
+		else if(keyDown(SDL_SCANCODE_0))
+			channel->setFrequency(soundFreqDefault*-5);
+	#endif
+		else
+			channel->setFrequency(soundFreqDefault);
+#endif
 		if(sLuaUpdateFunc.size())
 		{
 			unsigned int ms;
@@ -236,6 +273,8 @@ void Pony48Engine::soundUpdate(float32 dt)
 			Lua->call(sLuaUpdateFunc.c_str(), (float)ms/1000.0);
 		}
 	}
+	for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
+		i->second->update(dt);
 }
 
 

@@ -82,6 +82,7 @@ typedef enum
 
 class Pony48Engine : public Engine
 {
+	friend class PonyLua;
 private:
 	//Important general-purpose game variables
 	ttvfs::VFSHelper vfs;
@@ -107,7 +108,6 @@ private:
 	Background* m_bg;
 	gameMode m_iCurMode;
 	float m_fGameoverKeyDelay;
-	ParticleSystem pSys;
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;
@@ -115,6 +115,7 @@ private:
 	uint32_t beatThresholdBar;		//The bar in the volume distribution to examine
 	float32 beatMul;				//The multiplication factor to move the camera
 	float32 maxCamz;				//The maximum value for the camera's z axis
+	map<string, ParticleSystem*> songParticles;
 
 protected:
 	void frame(float32 dt);

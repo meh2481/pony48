@@ -13,6 +13,14 @@ struct LuaFunctions
 
 void lua_register_enginefuncs(lua_State *);
 
+//Class for interfacing between Pony48Engine and Lua
+class PonyLua
+{
+public:
+	void fireParticles(string sSys, bool bActive);
+	void showParticles(string sSys, bool bShow);
+};
+
 
 #endif
 

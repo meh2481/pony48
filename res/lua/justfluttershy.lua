@@ -7,12 +7,20 @@ local function jf_init()
 end
 setglobal("jf_init", jf_init) 
 
+local midstart = 46.530
+local midend = 69.311
+
 local function jf_update(curtime)
-	--print("currently at "..curtime.." seconds")
+	if curtime > midstart and curtime < midend then
+		fireparticles("test", true)
+	elseif curtime > midend then
+		showparticles("test", false)
+	end
 end
-setglobal("jf_update", jf_update) 
+setglobal("jf_update", jf_update)
+
 --[[
-<drop start="46.530" end="69.849" type="mid"/>
+	<drop start="46.530" end="69.849" type="mid"/>
 	<drop start="141.097" end="164.394" type="mid"/>
 	<drop start="69.849" end="116.389" type="main"/>
 	<drop start="164.394" end="210.923" type="main"/>

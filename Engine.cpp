@@ -302,7 +302,11 @@ void Engine::createSound(string sPath, string sName)
 {
 	if(m_bSoundDied) return;
 	FMOD::Sound* handle;
+#ifdef DEBUG
+	if(m_audioSystem->createSound(sPath.c_str(), FMOD_CREATESAMPLE, 0, &handle) == FMOD_OK)
+#else
 	if(m_audioSystem->createSound(sPath.c_str(), FMOD_CREATESTREAM, 0, &handle) == FMOD_OK)
+#endif
 		m_sounds[sName] = handle;
 }
 

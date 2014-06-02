@@ -15,7 +15,11 @@ static int the_panic (lua_State *L) {
 LuaInterface::LuaInterface(const char *script, int argc, const char * const *argv)
  : script(script), argc(argc), argv(argv), _lua(NULL)
 {
+#ifdef DEBUG
 	puts("LuaInterface: Using " LUA_RELEASE);
+#else
+	errlog << "LuaInterface: Using " << LUA_RELEASE << endl;
+#endif
 }
 
 LuaInterface::~LuaInterface()
@@ -99,7 +103,11 @@ static void printCallstack(lua_State *L, const char *errmsg = "<unspecified erro
 		os << luaFormatStackInfo(L, level) << "\n";
 		++level;
 	}
+#ifdef DEBUG
 	printf("%s\n", os.str().c_str());
+#else
+	errlog << os.str() << endl;
+#endif
 }
 
 void LuaInterface::lookupFunc(const char *f)
