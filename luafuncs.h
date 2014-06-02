@@ -19,6 +19,7 @@ class PonyLua
 public:
 	void fireParticles(string sSys, bool bActive);
 	void showParticles(string sSys, bool bShow);
+	void pinwheelbg_rotspeed(float speed);
 };
 
 

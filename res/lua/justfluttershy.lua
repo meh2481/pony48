@@ -3,18 +3,46 @@
 --Copyright (c) 2014 Mark Hutcheson
 
 local function jf_init()
-	print("init")
+	--print("init")
 end
-setglobal("jf_init", jf_init) 
+setglobal("jf_init", jf_init)
 
-local midstart = 46.530
-local midend = 69.311
+local function start(curtime)
+	
+end
+
+local function mid1(curtime)
+	fireparticles("test", true)
+	pinwheelspeed(100);
+end
+
+local function mid2(curtime)
+	pinwheelspeed(-100);
+end
+
+local function drop(curtime)
+	showparticles("test", false)
+	pinwheelspeed(0);
+end
+
+local function main(curtime)
+	pinwheelspeed(200);
+	
+end
+
+local function stutter()
+	
+end
 
 local function jf_update(curtime)
-	if curtime > midstart and curtime < midend then
-		fireparticles("test", true)
-	elseif curtime > midend then
-		showparticles("test", false)
+	if curtime > 34.9 and curtime < 46.4 then
+		mid1(curtime)
+	elseif curtime > 46.4 and curtime < 69.2 then
+		mid2(curtime)
+	elseif curtime > 69.2 and curtime < 69.848 then
+		drop(curtime)
+	elseif curtime > 69.848 then
+		main(curtime)
 	end
 end
 setglobal("jf_update", jf_update)

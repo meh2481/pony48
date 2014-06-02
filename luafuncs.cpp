@@ -17,6 +17,15 @@ void PonyLua::showParticles(string sSys, bool bShow)
 		g_pGlobalEngine->songParticles[sSys]->show = bShow;
 }
 
+void PonyLua::pinwheelbg_rotspeed(float speed)
+{
+	if(g_pGlobalEngine->m_bg != NULL && g_pGlobalEngine->m_bg->type == PINWHEEL)
+	{
+		pinwheelBg* pBg = (pinwheelBg*) g_pGlobalEngine->m_bg;
+		pBg->speed = speed;
+	}
+}
+
 luaFunc(fireparticles)
 {
 	string s = getStr(L, 1);
@@ -33,10 +42,18 @@ luaFunc(showparticles)
 	luaReturnNil();
 }
 
+luaFunc(pinwheelspeed)
+{
+	float32 f = lua_tonumber(L, 1);
+	pL.pinwheelbg_rotspeed(f);
+	luaReturnNil();
+}
+
 static LuaFunctions s_functab[] =
 {
 	luaRegister(fireparticles),
 	luaRegister(showparticles),
+	luaRegister(pinwheelspeed),
 	{NULL, NULL}
 };
 
