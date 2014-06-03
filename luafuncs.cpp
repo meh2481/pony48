@@ -20,6 +20,11 @@ public:
 	{
 		return g_pGlobalEngine->m_bg;
 	}
+	
+	static Vec3* getCamera()
+	{
+		return &g_pGlobalEngine->CameraPos;
+	}
 };
 
 luaFunc(fireparticles)
@@ -60,12 +65,23 @@ luaFunc(pinwheelspeed)
 	luaReturnNil();
 }
 
+luaFunc(setcameraxy)
+{
+	float32 x = lua_tonumber(L, 1);
+	float32 y = lua_tonumber(L, 2);
+	Vec3* cam = PonyLua::getCamera();
+	cam->x = x;
+	cam->y = y;
+	luaReturnNil();
+}
+
 static LuaFunctions s_functab[] =
 {
 	luaRegister(fireparticles),
 	luaRegister(showparticles),
 	luaRegister(resetparticles),
 	luaRegister(pinwheelspeed),
+	luaRegister(setcameraxy),
 	{NULL, NULL}
 };
 

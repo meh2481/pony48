@@ -48,6 +48,8 @@ protected:
 	float32 curTime;
 	float32 spawnCounter;
 	
+	string m_sXMLFrom;	//So we know what XML file we should reload from
+	
 public:
 	
 	ParticleSystem();
@@ -95,6 +97,7 @@ public:
 	void fromXML(string sXMLFilename);		//Load particle definitions from XML file
 	uint32_t count() {return m_num;};		//How many particles are currently alive (read-only because reasons)
 	void killParticles()	{m_num=0;};		//Kill all active particles
+	void reload()			{fromXML(m_sXMLFrom);};	//Reload 
 };
 
 #endif

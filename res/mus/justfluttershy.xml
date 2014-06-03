@@ -2,16 +2,20 @@
 	<sfx path="res/mus/justfluttershy.mp3"/>
 	<loop start="23.259" end="222.582"/>
 	<particles effect="res/particles/bgponies.xml" name="bgponies" autofire="false"/>
+	<particles effect="res/particles/bgflash.xml" name="bgflash" autofire="false"/>
 	<background type="pinwheel" speed="50">
-		<spoke col="255,0,0,100"/>
-		<spoke col="0,255,0,100"/>
-		<spoke col="0,0,255,100"/>
-		<spoke col="255,0,0,100"/>
-		<spoke col="0,255,0,100"/>
-		<spoke col="0,0,255,100"/>
-		<spoke col="255,0,0,100"/>
-		<spoke col="0,255,0,100"/>
-		<spoke col="0,0,255,100"/>
+		<spoke col="252,186,100,200"/>
+		<spoke col="246,183,210,200"/>
+		<spoke col="158,219,248,200"/>
+		<spoke col="235,239,242,200"/>
+		<spoke col="209,159,228,200"/>
+		<spoke col="255,248,173,200"/>
+		<spoke col="252,186,100,200"/>
+		<spoke col="246,183,210,200"/>
+		<spoke col="158,219,248,200"/>
+		<spoke col="235,239,242,200"/>
+		<spoke col="209,159,228,200"/>
+		<spoke col="255,248,173,200"/>
 	</background>
 	<bounce threshold="0.75" bar="0" mul="0.75" max="4" />
 	<lua file="res/lua/justfluttershy.lua" update="jf_update" init="jf_init"/>

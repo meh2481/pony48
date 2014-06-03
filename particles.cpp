@@ -191,7 +191,7 @@ void ParticleSystem::_initValues()
 	sizeStart = Point(1,1);
 	sizeEnd = Point(1,1);
 	sizeVar = 0;
-	speed = 1.0;
+	speed = 0.0;
 	speedVar = 0.0;
 	accel = Point(0,0);
 	accelVar = Point(0,0);
@@ -373,6 +373,8 @@ void ParticleSystem::fromXML(string sXMLFilename)
 		delete doc;
 		return;
 	}
+	
+	m_sXMLFrom = sXMLFilename;
 
     XMLElement* root = doc->FirstChildElement("particlesystem");
     if(root == NULL)

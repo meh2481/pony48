@@ -134,7 +134,7 @@ bool Engine::_frame()
 void Engine::_render()
 {
 	// Begin rendering by clearing the screen
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	// Game-specific drawing
 	draw();

@@ -9,7 +9,8 @@ setglobal("jf_init", jf_init)
 
 local function start(first)
 	if first == true then
-		pinwheelspeed(50)
+		showparticles("bgflash", false)
+		pinwheelspeed(40)
 	end
 end
 
@@ -18,13 +19,13 @@ local function mid1(first)
 		resetparticles("bgponies")
 		showparticles("bgponies", true)
 		fireparticles("bgponies", true)
-		pinwheelspeed(100)
+		pinwheelspeed(120)
 	end
 end
 
 local function mid2(first)
 	if first == true then
-		pinwheelspeed(-100)
+		pinwheelspeed(-120)
 	end
 end
 
@@ -33,7 +34,7 @@ local function mid3(first)
 		resetparticles("bgponies")
 		showparticles("bgponies", true)
 		fireparticles("bgponies", true)
-		pinwheelspeed(-100)
+		pinwheelspeed(-120)
 	end
 end
 
@@ -46,37 +47,39 @@ end
 
 local function main(first)
 	if first == true then
-		pinwheelspeed(200)
+		pinwheelspeed(240)
+		showparticles("bgflash", true)
+		fireparticles("bgflash", true)
 	end
-	
+	setcameraxy(0,0)	--Cause this is called before stutter, it all works out
 end
 
 local function stutter(first)
-	
+	setcameraxy(math.random(-2,2), math.random(-2,2))
 end
 
 local lasttime = -0.001
 local timetab = {
-	[0]={func = start, endat = 34.9},
-	[34.9]={func = mid1, endat = 46.4},
-	[46.4]={func = mid2, endat = 69.2},
-	[69.2]={func = drop, endat = 69.848},
-	[69.848]={func = main, endat = 116.08},
-	[116.308]={func = start, endat = 140.895},
-	[140.895]={func = mid3, endat = 163.863},
-	[163.863]={func = drop, endat = 164.395},
-	[164.395]={func = main, endat = 210.936},
-	[167.306]={func = stutter, endat = 168.714},
-	[173.847]={func = stutter, endat = 174.565},
-	[178.943]={func = stutter, endat = 180.356},
-	[185.485]={func = stutter, endat = 186.180},
-	[210.936]={func = start, endat = 224},
+	{func = start, startat = 0, endat = 34.9},
+	{func = mid1, startat = 34.9, endat = 46.4},
+	{func = mid2, startat = 46.4, endat = 69.2},
+	{func = drop, startat = 69.2, endat = 69.848},
+	{func = main, startat = 69.848, endat = 116.08},
+	{func = start, startat = 116.308, endat = 140.895},
+	{func = mid3, startat = 140.895, endat = 163.863},
+	{func = drop, startat = 163.863, endat = 164.395},
+	{func = main, startat = 164.395, endat = 210.936},
+	{func = stutter, startat = 167.306, endat = 168.714},
+	{func = stutter, startat = 173.847, endat = 174.565},
+	{func = stutter, startat = 178.943, endat = 180.356},
+	{func = stutter, startat = 185.485, endat = 186.180},
+	{func = start, startat = 210.936, endat = 224},
 }
 
 local function jf_update(curtime)
-	for key,val in pairs(timetab) do
-		if curtime > key and curtime < val.endat then
-			val.func(lasttime < key or lasttime > val.endat)
+	for key,val in ipairs(timetab) do
+		if curtime > val.startat and curtime < val.endat then
+			val.func(lasttime < val.startat or lasttime > val.endat)
 		end
 	end
 	lasttime = curtime

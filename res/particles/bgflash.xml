@@ -1,0 +1,7 @@
+<particlesystem emitfrom="-15,7,15,-7" fireonstart="true" blend="normal" rate="15" max="15">
+	<img path="res/particles/flash1.png"/>
+	<size start="10,10" end="15,15" var="4" />
+	<col start="255,255,255,0" end="255,255,255,255" var="0,0,0,100" />
+	<life value="0.06" var="0.04" />
+	<rotstart value="0" var="180" />
+</particlesystem>

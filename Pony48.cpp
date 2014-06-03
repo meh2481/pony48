@@ -48,15 +48,13 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	//Game stuff!
 	m_iCurMode = INTRO;//PLAYING;
 	m_fGameoverKeyDelay = 0;
-	m_BoardBg.set(0.7,0.7,0.7,1);
-	m_TileBg.set(0.5,0.5,0.5,1);
+	m_BoardBg.set(0.7,0.7,0.7,.5);
+	m_TileBg.set(0.5,0.5,0.5,.5);
 	m_BgCol.set(0,0,0,1.0);
 	m_iHighScore = 0;
 	starfieldBg* bg = new starfieldBg();
 	bg->init();
 	m_bg = (Background*) bg;
-	m_BoardBg.a = 0.2;
-	m_TileBg.a = 0.2;
 	
 	beatThresholdVolume = 0.75;
 	beatThresholdBar = 0;
@@ -272,7 +270,16 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						m_hud = new HUD("hud");
 						m_hud->create("res/hud/hud.xml");
 						m_hud->setScene(sScene);
-						//pSys.fromXML("res/particles/particletest.xml");	//Reload particles
+						//Reload particles
+						for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
+						{
+							bool f = i->second->firing;
+							bool s = i->second->show;
+							i->second->reload();
+							i->second->firing = f;
+							i->second->show = s;
+							i->second->init();
+						}
 						break;
 					}
 #endif
