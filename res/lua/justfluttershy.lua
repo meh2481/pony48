@@ -55,7 +55,7 @@ local function main(first)
 end
 
 local function stutter(first)
-	setcameraxy(math.random(-2,2), math.random(-2,2))
+	setcameraxy(math.random(-1,1), math.random(-1,1))
 end
 
 local lasttime = -0.001

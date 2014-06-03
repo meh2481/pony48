@@ -138,10 +138,27 @@ void Pony48Engine::frame(float32 dt)
 
 void Pony48Engine::draw()
 {
+	//Clear bg TODO: Support more than one bg at a time, and then add black bgs as needed
 	glClearColor(m_BgCol.r, m_BgCol.g, m_BgCol.b, m_BgCol.a);
-	//Set up camera and OpenGL flags
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_LIGHTING);
+	glColor3f(m_BgCol.r, m_BgCol.g, m_BgCol.b);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glBegin(GL_QUADS);
+	glVertex3i(-1, -1, -1);
+	glVertex3i(1, -1, -1);
+	glVertex3i(1, 1, -1);
+	glVertex3i(-1, 1, -1);
+	glEnd();
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+	glColor3f(1,1,1);
+	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	switch(m_iCurMode)
 	{
