@@ -318,6 +318,7 @@ TilePiece* Pony48Engine::loadTile(string sFilename)
 	if(cBgColor != NULL)
 		tmpseg->col = colorFromString(cBgColor);
 	ret->bg = tmpseg;
+	ret->origCol = tmpseg->col;
 	
 	delete doc;
 	return ret;

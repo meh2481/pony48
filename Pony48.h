@@ -27,7 +27,7 @@
 
 #define GAMEOVER_KEY_DELAY 0.5
 
-#define JOY_AXIS_TRIP	8000
+#define JOY_AXIS_TRIP	20000
 #define JOY_AXIS_MIN	-32768
 #define JOY_AXIS_MAX	32767
 
@@ -56,6 +56,7 @@ public:
 	Point	drawSlide;	//Used for the slide animation
 	Point	drawSize;	//Used for appearing-tile animation
 	int destx, desty;	//Destination piece we're trying to slide into
+	Color origCol;
 	int iAnimDir;
 	
 	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();drawSize.SetZero();destx=desty=-1;iAnimDir=1;};
@@ -108,6 +109,7 @@ private:
 	Background* m_bg;
 	gameMode m_iCurMode;
 	float m_fGameoverKeyDelay;
+	bool bJoyVerticalMove, bJoyHorizontalMove;
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;

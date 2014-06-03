@@ -55,6 +55,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	starfieldBg* bg = new starfieldBg();
 	bg->init();
 	m_bg = (Background*) bg;
+	bJoyVerticalMove = bJoyHorizontalMove = false;
 	
 	beatThresholdVolume = 0.75;
 	beatThresholdBar = 0;
@@ -350,6 +351,9 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			break;
 		
 		case SDL_MOUSEBUTTONDOWN:
+#ifdef DEBUG_INPUT
+			cout << "Mouse button " << (int)event.button.button << " pressed." << endl;
+#endif
 			if(event.button.button == SDL_BUTTON_LEFT)
 			{
 			}
@@ -357,6 +361,12 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			{
 			}
 			else if(event.button.button == SDL_BUTTON_MIDDLE)
+			{
+			}
+			else if(event.button.button == SDL_BUTTON_X1)
+			{
+			}
+			else if(event.button.button == SDL_BUTTON_X2)
 			{
 			}
 			break;
@@ -374,6 +384,9 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			break;
 
 		case SDL_MOUSEBUTTONUP:
+#ifdef DEBUG_INPUT
+			cout << "Mouse button " << (int)event.button.button << " released." << endl;
+#endif
 			if(event.button.button == SDL_BUTTON_LEFT)
 			{
 				
@@ -440,48 +453,73 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			break;
 			
 		case SDL_JOYBUTTONDOWN:
-			//cout << "Joystick " << (int)event.jbutton.which << " pressed button " << (int)event.jbutton.button << endl;
+#ifdef DEBUG_INPUT
+			cout << "Joystick " << (int)event.jbutton.which << " pressed button " << (int)event.jbutton.button << endl;
+#endif
 			if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
 				changeMode(PLAYING);
 			break;
 			
 		case SDL_JOYBUTTONUP:
-			//cout << "Joystick " << (int)event.jbutton.which << " released button " << (int)event.jbutton.button << endl;
+#ifdef DEBUG_INPUT
+			cout << "Joystick " << (int)event.jbutton.which << " released button " << (int)event.jbutton.button << endl;
+#endif
 			break;
 			
 		case SDL_JOYAXISMOTION:
-			//TODO: Deal with range of axis movement; binary on/off doesn't work with analog sticks
-			if(m_iCurMode == GAMEOVER && getSeconds() - m_fGameoverKeyDelay >= GAMEOVER_KEY_DELAY)
-			{
-				changeMode(PLAYING);
-				break;
-			}
-			else if(m_iCurMode == PLAYING && event.jaxis.axis == 0)	//Horizontal axis
+#ifdef DEBUG_INPUT
+			if(abs(event.jaxis.value) > 8000)
+				cout << "Joystick " << (int)event.jaxis.which << " moved axis " << (int)event.jaxis.axis << " to " << event.jaxis.value << endl;
+#endif
+			if(m_iCurMode == PLAYING && event.jaxis.axis == 0)	//Horizontal axis
 			{
 				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Left
 				{
-					if(m_iCurMode == PLAYING)
+					if(m_iCurMode == PLAYING && !bJoyHorizontalMove)
 						move(LEFT);
+					bJoyHorizontalMove = true;
 				}
 				else if(event.jaxis.value > JOY_AXIS_TRIP)	//Right
 				{
-					if(m_iCurMode == PLAYING)
+					if(m_iCurMode == PLAYING && !bJoyHorizontalMove)
 						move(RIGHT);
+					bJoyHorizontalMove = true;
 				}
+				else
+					bJoyHorizontalMove = false;
 			}
 			else if(event.jaxis.axis == 1)	//Vertical axis
 			{
 				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Up
 				{
-					if(m_iCurMode == PLAYING)
+					if(m_iCurMode == PLAYING && !bJoyVerticalMove)
 						move(UP);
+					bJoyVerticalMove = true;
 				}
 				else if(event.jaxis.value > JOY_AXIS_TRIP)	//Down
 				{
-					if(m_iCurMode == PLAYING)
+					if(m_iCurMode == PLAYING && !bJoyVerticalMove)
 						move(DOWN);
+					bJoyVerticalMove = true;
 				}
+				else
+					bJoyVerticalMove = false;
 			}
+			//Second stick pans view around because why not
+			else if(event.jaxis.axis == 3)
+			{
+				CameraPos.x = (float32)event.jaxis.value / (float32)JOY_AXIS_MAX * 2.0;
+			}
+			else if(event.jaxis.axis == 4)
+			{
+				CameraPos.y = (float32)event.jaxis.value / (float32)JOY_AXIS_MIN * 2.0;
+			}
+			break;
+			
+		case SDL_JOYHATMOTION:
+#ifdef DEBUG_INPUT
+			cout << "Joystick " << (int)event.jhat.which << " moved hat " << (int)event.jhat.hat << " to " << (int)event.jhat.value << endl;
+#endif
 			break;
 	}
 }
