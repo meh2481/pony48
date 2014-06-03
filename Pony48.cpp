@@ -138,26 +138,8 @@ void Pony48Engine::frame(float32 dt)
 
 void Pony48Engine::draw()
 {
-	//Clear bg TODO: Support more than one bg at a time, and then add black bgs as needed
-	glClearColor(m_BgCol.r, m_BgCol.g, m_BgCol.b, m_BgCol.a);
-	glColor3f(m_BgCol.r, m_BgCol.g, m_BgCol.b);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glBegin(GL_QUADS);
-	glVertex3i(-1, -1, -1);
-	glVertex3i(1, -1, -1);
-	glVertex3i(1, 1, -1);
-	glVertex3i(-1, 1, -1);
-	glEnd();
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-	glColor3f(1,1,1);
+	//Clear bg (not done with OpenGL funcs, cause of weird black frame glitch when loading stuff)
+	fillScreen(m_BgCol);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	switch(m_iCurMode)
@@ -671,8 +653,8 @@ obj* Pony48Engine::objFromXML(string sXMLFilename, Point ptOffset, Point ptVel)
 	return NULL;
 }
 
-#define BOARD_ROT_AMT		5.0
-#define MAX_BOARD_ROT_ANGLE	25.0
+#define BOARD_ROT_AMT		6.0
+#define MAX_BOARD_ROT_ANGLE	30.0
 #define SQRT_2				1.41421356237
 
 void Pony48Engine::handleKeys()

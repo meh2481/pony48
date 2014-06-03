@@ -105,6 +105,7 @@ public:
 	
 	//Drawing functions
 	void fillRect(Point p1, Point p2, Color col);
+	void fillScreen(Color col);		//Fill entire screen rect with color
 	Rect getScreenRect()	{Rect rc(0,0,getWidth(),getHeight()); return rc;};
 	
 	//Window functions

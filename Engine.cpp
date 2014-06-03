@@ -140,38 +140,23 @@ void Engine::_render()
 	draw();
 	
 	//Draw gamma/brightness overlay on top of everything else
+	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_BLEND);
+	Color fillCol;
 	if(m_fGamma > 1.0f)
 	{
 		glBlendFunc(GL_DST_COLOR, GL_ONE);
-		glColor3f(m_fGamma - 1.0, m_fGamma - 1.0, m_fGamma - 1.0);
+		fillCol.set(m_fGamma - 1.0, m_fGamma - 1.0, m_fGamma - 1.0, 1);
 	}
 	else
 	{
 		glBlendFunc( GL_ZERO, GL_SRC_COLOR );
-		glColor3f(m_fGamma, m_fGamma, m_fGamma);
+		fillCol.set(m_fGamma, m_fGamma, m_fGamma, 1);
 	}
-	//Fill whole screen with rect (Example taken from http://yuhasapoint.blogspot.com/2012/07/draw-quad-that-fills-entire-opengl.html on 11/20/13)
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glBegin(GL_QUADS);
-	glVertex3i(-1, -1, -1);
-	glVertex3i(1, -1, -1);
-	glVertex3i(1, 1, -1);
-	glVertex3i(-1, 1, -1);
-	glEnd();
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+	fillScreen(fillCol);
 	
-	//Reset blend func & color
+	//Reset blend func
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor3f(1.0, 1.0, 1.0);
 	
 	//Draw cursor at absolute location
 	//glPushMatrix();
@@ -288,6 +273,29 @@ void Engine::fillRect(Point p1, Point p2, Color col)
 	glVertex3f(p2.x, p2.y, 0.0);
 	glVertex3f(p1.x, p2.y, 0.0);
 	glEnd();
+}
+
+void Engine::fillScreen(Color col)
+{
+	//Fill whole screen with rect (Example taken from http://yuhasapoint.blogspot.com/2012/07/draw-quad-that-fills-entire-opengl.html on 11/20/13)
+	glColor4f(col.r, col.g, col.b, col.a);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glBegin(GL_QUADS);
+	glVertex3i(-1, -1, -1);
+	glVertex3i(1, -1, -1);
+	glVertex3i(1, 1, -1);
+	glVertex3i(-1, 1, -1);
+	glEnd();
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+	glColor4f(1.0, 1.0, 1.0, 1.0);
 }
 
 bool Engine::hasMic()
