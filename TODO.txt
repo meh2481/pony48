@@ -1,12 +1,9 @@
 -OpenCV camera madness
 -FMOD mic madness
--Different effects that happen at different points in a song
--Nukes
--Bop-It
+-Nukes?
+-Bop-It?
 -Support mouse
--If multiple controllers detected, press any button on either one to select it
+-Joystick list in case multiple controllers connected - most recent one used for board-tilt-testing
 -Support as many mouse buttons as SDL2 can handle
-	-Test more buttons to see if SDL2 can sneakily handle them
--Controller rumble support (for what though?)
 -Touchscreen support?
--Detect analog sticks, and tilt board based on actual direction and amount those are being pressed
+-Rebindable controller - rebind axes, buttons, etc

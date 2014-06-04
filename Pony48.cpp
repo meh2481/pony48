@@ -62,6 +62,16 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	beatThresholdBar = 0;
 	beatMul = 0.75;
 	maxCamz = 4;
+	
+	//Keybinding stuff!
+	JOY_BUTTON_BACK = 6;
+	JOY_AXIS_HORIZ = 0;
+	JOY_AXIS_VERT = 1;
+	JOY_AXIS2_HORIZ = 3;
+	JOY_AXIS2_VERT = 4;
+	JOY_AXIS_LT = 2;
+	JOY_AXIS_RT = 5;
+	JOY_AXIS_TRIP = 20000;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -249,6 +259,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					changeMode(PLAYING);
 					break;
 				}
+				else if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+					quit();
 			}
 			else if(m_iCurMode == PLAYING)
 			{
@@ -314,58 +326,6 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						if(m_iCurMode == PLAYING)
 							move(RIGHT);
 						break;
-						
-#ifdef DEBUG
-					case SDL_SCANCODE_1:
-						if(m_rumble != NULL)
-							SDL_HapticRumblePlay(m_rumble, 0.1, 1000);
-						break;
-						
-					case SDL_SCANCODE_2:
-						if(m_rumble != NULL)
-							SDL_HapticRumblePlay(m_rumble, 0.2, 1000);
-						break;
-						
-					case SDL_SCANCODE_3:
-						if(m_rumble != NULL)
-							SDL_HapticRumblePlay(m_rumble, 0.3, 1000);
-						break;
-						
-					case SDL_SCANCODE_4:
-						if(m_rumble != NULL)
-							SDL_HapticRumblePlay(m_rumble, 0.4, 1000);
-						break;
-						
-					case SDL_SCANCODE_5:
-						if(m_rumble != NULL)
-							SDL_HapticRumblePlay(m_rumble, 0.5, 1000);
-						break;
-						
-					case SDL_SCANCODE_6:
-						if(m_rumble != NULL)
-							SDL_HapticRumblePlay(m_rumble, 0.6, 1000);
-						break;
-						
-					case SDL_SCANCODE_7:
-						if(m_rumble != NULL)
-							SDL_HapticRumblePlay(m_rumble, 0.7, 1000);
-						break;
-						
-					case SDL_SCANCODE_8:
-						if(m_rumble != NULL)
-							SDL_HapticRumblePlay(m_rumble, 0.8, 1000);
-						break;
-						
-					case SDL_SCANCODE_9:
-						if(m_rumble != NULL)
-							SDL_HapticRumblePlay(m_rumble, 0.9, 1000);
-						break;
-						
-					case SDL_SCANCODE_0:
-						if(m_rumble != NULL)
-							SDL_HapticRumblePlay(m_rumble, 1, 1000);
-						break;
-#endif
 				}
 				break;
 			}
@@ -531,6 +491,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #endif
 			if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
 				changeMode(PLAYING);
+			if(event.jbutton.button == JOY_BUTTON_BACK)
+				quit();
 			break;
 			
 		case SDL_JOYBUTTONUP:
@@ -544,7 +506,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			if(abs(event.jaxis.value) > 8000)
 				cout << "Joystick " << (int)event.jaxis.which << " moved axis " << (int)event.jaxis.axis << " to " << event.jaxis.value << endl;
 #endif
-			if(event.jaxis.axis == 0)	//Horizontal axis
+			if(event.jaxis.axis == JOY_AXIS_HORIZ)	//Horizontal axis
 			{
 				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Left
 				{
@@ -561,7 +523,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				else
 					bJoyHorizontalMove = false;
 			}
-			else if(event.jaxis.axis == 1)	//Vertical axis
+			else if(event.jaxis.axis == JOY_AXIS_VERT)	//Vertical axis
 			{
 				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Up
 				{
@@ -579,16 +541,16 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					bJoyVerticalMove = false;
 			}
 			//Second stick pans view around because why not
-			else if(event.jaxis.axis == 3)
+			else if(event.jaxis.axis == JOY_AXIS2_HORIZ)
 			{
 				CameraPos.x = (float32)event.jaxis.value / (float32)JOY_AXIS_MAX * 2.0;
 			}
-			else if(event.jaxis.axis == 4)
+			else if(event.jaxis.axis == JOY_AXIS2_VERT)
 			{
 				CameraPos.y = (float32)event.jaxis.value / (float32)JOY_AXIS_MIN * 2.0;
 			}
 #ifdef DEBUG
-			else if(event.jaxis.axis == 5)	//DEBUG: right trigger fast-forwards music
+			else if(event.jaxis.axis == JOY_AXIS_RT)	//DEBUG: right trigger fast-forwards music
 			{
 				FMOD::Channel* channel = getChannel("music");
 				float curval = event.jaxis.value;
@@ -598,7 +560,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				channel->setFrequency(soundFreqDefault+soundFreqDefault*curval);
 			}
 	#ifdef DEBUG_REVSOUND
-			else if(event.jaxis.axis == 2)	//DEBUG: left trigger rewinds music
+			else if(event.jaxis.axis == JOY_AXIS_LT)	//DEBUG: left trigger rewinds music
 			{
 				FMOD::Channel* channel = getChannel("music");
 				float curval = event.jaxis.value;
@@ -748,6 +710,19 @@ void Pony48Engine::loadConfig(string sFilename)
 		pony48->QueryUnsignedAttribute("highscore", &m_iHighScore);
 	}
 	
+	XMLElement* joystick = root->FirstChildElement("joystick");
+	if(joystick != NULL)
+	{
+		joystick->QueryIntAttribute("axistripthreshold", &JOY_AXIS_TRIP);
+		joystick->QueryUnsignedAttribute("backbutton", &JOY_BUTTON_BACK);
+		joystick->QueryUnsignedAttribute("horizontalaxis1", &JOY_AXIS_HORIZ);
+		joystick->QueryUnsignedAttribute("verticalaxis1", &JOY_AXIS_VERT);
+		joystick->QueryUnsignedAttribute("horizontalaxis2", &JOY_AXIS2_HORIZ);
+		joystick->QueryUnsignedAttribute("verticalaxis2", &JOY_AXIS2_VERT);
+		joystick->QueryUnsignedAttribute("ltaxis", &JOY_AXIS_LT);
+		joystick->QueryUnsignedAttribute("rtaxis", &JOY_AXIS_RT);
+	}
+	
 	delete doc;
 }
 
@@ -776,6 +751,17 @@ void Pony48Engine::saveConfig(string sFilename)
 	pony48->SetAttribute("highscore", m_iHighScore);
 	root->InsertEndChild(pony48);
 	
+	XMLElement* joystick = doc->NewElement("joystick");
+	joystick->SetAttribute("axistripthreshold", JOY_AXIS_TRIP);
+	joystick->SetAttribute("backbutton", JOY_BUTTON_BACK);
+	joystick->SetAttribute("horizontalaxis1", JOY_AXIS_HORIZ);
+	joystick->SetAttribute("verticalaxis1", JOY_AXIS_VERT);
+	joystick->SetAttribute("horizontalaxis2", JOY_AXIS2_HORIZ);
+	joystick->SetAttribute("verticalaxis2", JOY_AXIS2_VERT);
+	joystick->SetAttribute("ltaxis", JOY_AXIS_LT);
+	joystick->SetAttribute("rtaxis", JOY_AXIS_RT);
+	root->InsertEndChild(joystick);
+	
 	doc->InsertFirstChild(root);
 	doc->SaveFile(sFilename.c_str());
 	delete doc;
@@ -802,8 +788,8 @@ void Pony48Engine::handleKeys()
 	Sint16 y_move = 0;
 	if(SDL_JoystickGetAttached(m_joy))
 	{
-		x_move = SDL_JoystickGetAxis(m_joy, 0);
-		y_move = SDL_JoystickGetAxis(m_joy, 1);
+		x_move = SDL_JoystickGetAxis(m_joy, JOY_AXIS_HORIZ);
+		y_move = SDL_JoystickGetAxis(m_joy, JOY_AXIS_VERT);
 	}
 	Point vecMove((float32)x_move/(float32)JOY_AXIS_MAX, (float32)-y_move/(float32)JOY_AXIS_MAX);
 	

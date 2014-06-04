@@ -27,7 +27,7 @@
 
 #define GAMEOVER_KEY_DELAY 0.5
 
-#define JOY_AXIS_TRIP	20000
+//Defined by SDL
 #define JOY_AXIS_MIN	-32768
 #define JOY_AXIS_MAX	32767
 
@@ -122,6 +122,16 @@ private:
 	float32 beatMul;				//The multiplication factor to move the camera
 	float32 maxCamz;				//The maximum value for the camera's z axis
 	map<string, ParticleSystem*> songParticles;
+	
+	//Keybinding stuff!
+	uint32_t JOY_BUTTON_BACK;
+	uint32_t JOY_AXIS_HORIZ;
+	uint32_t JOY_AXIS_VERT;
+	uint32_t JOY_AXIS2_HORIZ;
+	uint32_t JOY_AXIS2_VERT;
+	uint32_t JOY_AXIS_LT;
+	uint32_t JOY_AXIS_RT;
+	int32_t JOY_AXIS_TRIP;
 
 protected:
 	void frame(float32 dt);
