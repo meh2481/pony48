@@ -47,7 +47,7 @@ local function mid2(first, curtime)
 		end
 		--Change color of one row at a time
 		for i = 0, 3 do
-			settilecol(i + mid2currow, math.random(), math.random(), math.random(), 1)
+			settilecol(i + mid2currow, 0, 0, 0, 0.5)
 		end
 	end
 end
@@ -58,6 +58,24 @@ local function mid3(first, curtime)
 		showparticles("bgponies", true)
 		fireparticles("bgponies", true)
 		pinwheelspeed(-120)
+		mid2startcounter = curtime - mid2humtime
+		mid2currow = -1
+	end
+	if curtime - mid2startcounter >= mid2humtime then
+		mid2startcounter = mid2startcounter + mid2humtime
+		mid2currow = mid2currow + 1
+		if mid2currow > 3 then
+			mid2currow = 0
+		end
+		
+		--Reset color of all tiles
+		for i = 0, 15 do
+			settilecol(i, 1, 1, 1, 1)
+		end
+		--Change color of one row at a time
+		for i = 0,12,4 do
+			settilecol(i + mid2currow, 0, 0, 0, 0.5)
+		end
 	end
 end
 
@@ -79,14 +97,14 @@ local function main(first, curtime)
 		showparticles("bgflash", true)
 		fireparticles("bgflash", true)
 	end
-	if stuttering == true then
+	if stuttering == true then	--Camera can be panned with a secondary gamepad stick, so deal with that possibility
 		setcameraxy(0,0)	--Cause this is called before stutter, it all works out
 	end
 	stuttering = false
 end
 
 local function stutter(first, curtime)
-	setcameraxy(math.random()*3.0 - 1.5, math.random()*3.0 - 1.5)
+	setcameraxy(math.random()*3.0 - 1.5, math.random()*3.0 - 1.5)	--Random float between -1.5 and +1.5
 	stuttering = true
 end
 
@@ -117,32 +135,32 @@ local function jf_update(curtime)
 end
 setglobal("jf_update", jf_update)
 
---[[
-	<mid>
-		<fire particle="test"/>
-		<seg time="0.725">
-			<colorize tiles="0" color="255,0,0,255"/>
-			<colorize tiles="1" color="255,128,0,255"/>
-			<colorize tiles="2" color="255,255,0,255"/>
-			<colorize tiles="3" color="0,255,0,255"/>
-		</seg>
-		<seg time="0.725">
-			<colorize tiles="4" color="0,255,255,255"/>
-			<colorize tiles="5" color="0,0,255,255"/>
-			<colorize tiles="6" color="128,0,255,255"/>
-			<colorize tiles="7" color="255,0,255,255"/>
-		</seg>
-		<seg time="0.725">
-			<colorize tiles="11" color="0,255,255,255"/>
-			<colorize tiles="10" color="0,0,255,255"/>
-			<colorize tiles="9" color="128,0,255,255"/>
-			<colorize tiles="8" color="255,0,255,255"/>
-		</seg>
-		<seg time="0.725">
-			<colorize tiles="15" color="255,0,0,255"/>
-			<colorize tiles="14" color="255,128,0,255"/>
-			<colorize tiles="13" color="255,255,0,255"/>
-			<colorize tiles="12" color="0,255,0,255"/>
-		</seg>
-	</mid>
---]]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

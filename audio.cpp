@@ -211,7 +211,6 @@ void Pony48Engine::scrubResume()
 	startedDecay = -getSeconds();
 }
 
-const float soundFreqDefault = 44100.0;
 const float timeToDecay = 0.5f;
 
 void Pony48Engine::soundUpdate(float32 dt)
@@ -266,8 +265,8 @@ void Pony48Engine::soundUpdate(float32 dt)
 		else if(keyDown(SDL_SCANCODE_0))
 			channel->setFrequency(soundFreqDefault*-5);
 	#endif
-		else if(m_iCurMode != GAMEOVER)
-			channel->setFrequency(soundFreqDefault);	//Reset to playing normally
+		//else if(m_iCurMode != GAMEOVER)
+		//	channel->setFrequency(soundFreqDefault);	//Reset to playing normally
 #endif
 		if(sLuaUpdateFunc.size())
 		{

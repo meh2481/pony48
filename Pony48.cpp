@@ -471,7 +471,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			if(abs(event.jaxis.value) > 8000)
 				cout << "Joystick " << (int)event.jaxis.which << " moved axis " << (int)event.jaxis.axis << " to " << event.jaxis.value << endl;
 #endif
-			if(m_iCurMode == PLAYING && event.jaxis.axis == 0)	//Horizontal axis
+			if(event.jaxis.axis == 0)	//Horizontal axis
 			{
 				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Left
 				{
@@ -514,6 +514,28 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			{
 				CameraPos.y = (float32)event.jaxis.value / (float32)JOY_AXIS_MIN * 2.0;
 			}
+#ifdef DEBUG
+			else if(event.jaxis.axis == 5)	//DEBUG: right trigger fast-forwards music
+			{
+				FMOD::Channel* channel = getChannel("music");
+				float curval = event.jaxis.value;
+				curval -= JOY_AXIS_MIN;	//Get absolute value of axis, from 0 to 65,535
+				curval /= (float)(JOY_AXIS_MAX-JOY_AXIS_MIN);
+				curval *= 12;	//Max speed
+				channel->setFrequency(soundFreqDefault+soundFreqDefault*curval);
+			}
+	#ifdef DEBUG_REVSOUND
+			else if(event.jaxis.axis == 2)	//DEBUG: left trigger rewinds music
+			{
+				FMOD::Channel* channel = getChannel("music");
+				float curval = event.jaxis.value;
+				curval -= JOY_AXIS_MIN;	//Get absolute value of axis, from 0 to 65,535
+				curval /= (float)(JOY_AXIS_MAX-JOY_AXIS_MIN);
+				curval *= -5;
+				channel->setFrequency(soundFreqDefault+soundFreqDefault*curval);
+			}
+	#endif
+#endif
 			break;
 			
 		case SDL_JOYHATMOTION:

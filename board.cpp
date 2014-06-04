@@ -226,6 +226,9 @@ void Pony48Engine::clearBoardAnimations()
 	}
 }
 
+#define TILEBG_DRAWZ 	0.3
+#define JOINANIM_DRAWZ 	0.5
+#define TILE_DRAWZ		0.7
 void Pony48Engine::drawBoard()
 {
 	float fTotalWidth = BOARD_WIDTH * TILE_WIDTH + (BOARD_WIDTH + 1) * TILE_SPACING;
@@ -239,7 +242,7 @@ void Pony48Engine::drawBoard()
 		{
 			//Draw tile bg
 			glPushMatrix();
-			glTranslatef(0, 0, 0.2);	//Draw at z = 0.2
+			glTranslatef(0, 0, TILEBG_DRAWZ);
 			Point ptDrawPos(-fTotalWidth/2.0 + TILE_SPACING + (TILE_SPACING + TILE_WIDTH) * j,
 							fTotalHeight/2.0 - TILE_SPACING - (TILE_SPACING + TILE_HEIGHT) * i);
 			fillRect(ptDrawPos, Point(ptDrawPos.x + TILE_WIDTH, ptDrawPos.y - TILE_HEIGHT), m_TileBg);
@@ -253,7 +256,7 @@ void Pony48Engine::drawBoard()
 		Point ptDrawPos(-fTotalWidth/2.0 + TILE_SPACING + (TILE_SPACING + TILE_WIDTH) * (*i)->destx,
 						fTotalHeight/2.0 - TILE_SPACING - (TILE_SPACING + TILE_HEIGHT) * (*i)->desty);
 		glPushMatrix();
-		glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0+(*i)->drawSlide.x, ptDrawPos.y-TILE_HEIGHT/2.0+(*i)->drawSlide.y, 0.4);	//Draw at z = 0.4
+		glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0+(*i)->drawSlide.x, ptDrawPos.y-TILE_HEIGHT/2.0+(*i)->drawSlide.y, JOINANIM_DRAWZ);
 		(*i)->draw();
 		glPopMatrix();
 	}
@@ -269,7 +272,7 @@ void Pony48Engine::drawBoard()
 			if(m_Board[j][i] != NULL)
 			{
 				glPushMatrix();
-				glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0+m_Board[j][i]->drawSlide.x, ptDrawPos.y-TILE_HEIGHT/2.0+m_Board[j][i]->drawSlide.y, 0.5);	//Draw at z = 0.5
+				glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0+m_Board[j][i]->drawSlide.x, ptDrawPos.y-TILE_HEIGHT/2.0+m_Board[j][i]->drawSlide.y, TILE_DRAWZ);
 				m_Board[j][i]->draw();
 				glPopMatrix();
 			}

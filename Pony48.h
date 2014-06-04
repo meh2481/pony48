@@ -31,6 +31,8 @@
 #define JOY_AXIS_MIN	-32768
 #define JOY_AXIS_MAX	32767
 
+const float soundFreqDefault = 44100.0;
+
 #define INTRO_FADEIN_TIME	2.0	//How long the intro fadein takes
 #define INTRO_FADEIN_DELAY	2.0	//How long before the intro fadein starts
 
