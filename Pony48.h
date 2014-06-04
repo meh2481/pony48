@@ -95,6 +95,8 @@ private:
 	float32 m_fDefCameraZ;	//Default position of camera on z axis
 	list<ColorPhase> m_ColorsChanging;
 	SDL_Joystick *m_joy;
+	SDL_Haptic* m_rumble;
+
 	cv::VideoCapture* m_VideoCap;
 	
 	//Game stuff!

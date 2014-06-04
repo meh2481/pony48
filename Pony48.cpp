@@ -41,6 +41,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	setTimeScale(DEFAULT_TIMESCALE);
 	
 	m_joy = NULL;
+	m_rumble = NULL;
 	m_VideoCap = new cv::VideoCapture(0);
 	if(!m_VideoCap->isOpened())
 		errlog << "Unable to open webcam." << endl;
@@ -72,6 +73,8 @@ Pony48Engine::~Pony48Engine()
 		delete m_bg;
 	errlog << "delete hud" << endl;
 	delete m_hud;
+	if(m_rumble != NULL)
+		SDL_HapticClose(m_rumble);
 	if(SDL_JoystickGetAttached(m_joy))
 		SDL_JoystickClose(m_joy);
 	delete m_VideoCap;
@@ -311,6 +314,58 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						if(m_iCurMode == PLAYING)
 							move(RIGHT);
 						break;
+						
+#ifdef DEBUG
+					case SDL_SCANCODE_1:
+						if(m_rumble != NULL)
+							SDL_HapticRumblePlay(m_rumble, 0.1, 1000);
+						break;
+						
+					case SDL_SCANCODE_2:
+						if(m_rumble != NULL)
+							SDL_HapticRumblePlay(m_rumble, 0.2, 1000);
+						break;
+						
+					case SDL_SCANCODE_3:
+						if(m_rumble != NULL)
+							SDL_HapticRumblePlay(m_rumble, 0.3, 1000);
+						break;
+						
+					case SDL_SCANCODE_4:
+						if(m_rumble != NULL)
+							SDL_HapticRumblePlay(m_rumble, 0.4, 1000);
+						break;
+						
+					case SDL_SCANCODE_5:
+						if(m_rumble != NULL)
+							SDL_HapticRumblePlay(m_rumble, 0.5, 1000);
+						break;
+						
+					case SDL_SCANCODE_6:
+						if(m_rumble != NULL)
+							SDL_HapticRumblePlay(m_rumble, 0.6, 1000);
+						break;
+						
+					case SDL_SCANCODE_7:
+						if(m_rumble != NULL)
+							SDL_HapticRumblePlay(m_rumble, 0.7, 1000);
+						break;
+						
+					case SDL_SCANCODE_8:
+						if(m_rumble != NULL)
+							SDL_HapticRumblePlay(m_rumble, 0.8, 1000);
+						break;
+						
+					case SDL_SCANCODE_9:
+						if(m_rumble != NULL)
+							SDL_HapticRumblePlay(m_rumble, 0.9, 1000);
+						break;
+						
+					case SDL_SCANCODE_0:
+						if(m_rumble != NULL)
+							SDL_HapticRumblePlay(m_rumble, 1, 1000);
+						break;
+#endif
 				}
 				break;
 			}
@@ -431,6 +486,24 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				errlog << "Number of Buttons: " << SDL_JoystickNumButtons(m_joy) << endl;
 				errlog << "Number of Balls: " << SDL_JoystickNumBalls(m_joy) << endl;
 				errlog << "Number of Hats: " << SDL_JoystickNumHats(m_joy) << endl;
+				
+				//On Linux, "xboxdrv" is the driver I had the most success with when it came to rumble (default driver said it rumbled, but didn't)
+				m_rumble = SDL_HapticOpenFromJoystick(m_joy);
+				if(m_rumble)
+				{
+					if(SDL_HapticRumbleInit(m_rumble) != 0)
+					{
+						errlog << "Error initializing joystick " << (int)event.jdevice.which << " as rumble." << endl;
+						SDL_HapticClose(m_rumble);
+						m_rumble = NULL;
+					}
+					else 
+					{
+						errlog << "Initialized joystick " << (int)event.jdevice.which << " as rumble." << endl;
+					}
+				}
+				else
+					errlog << "Joystick " << (int)event.jdevice.which << " has no rumble support." << endl;
 			} 
 			else
 				errlog << "Couldn't open Joystick " << (int)event.jdevice.which << endl;
@@ -444,7 +517,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				}
 				else
 					cout << "Could not open gamecontroller: " << SDL_GetError() << endl;
-			}*/
+			}*/			
 
 			break;
 			
@@ -793,6 +866,9 @@ void Pony48Engine::changeMode(gameMode gm)
 			
 		case GAMEOVER:
 		{
+			//Play gameover rumble if ded
+			if(m_rumble != NULL)
+				SDL_HapticRumblePlay(m_rumble, 1.0, 800);
 			//Update final score counter
 			ostringstream oss;
 			HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("finalscore");

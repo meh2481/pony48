@@ -47,7 +47,7 @@ local function mid2(first, curtime)
 		end
 		--Change color of one row at a time
 		for i = 0, 3 do
-			settilecol(i + mid2currow, 0, 0, 0, 0.5)
+			settilecol(i + mid2currow, 0, 0, 0, 0.4)
 		end
 	end
 end
@@ -74,7 +74,7 @@ local function mid3(first, curtime)
 		end
 		--Change color of one row at a time
 		for i = 0,12,4 do
-			settilecol(i + mid2currow, 0, 0, 0, 0.5)
+			settilecol(i + mid2currow, 0, 0, 0, 0.4)
 		end
 	end
 end
@@ -103,15 +103,18 @@ local function main(first, curtime)
 	stuttering = false
 end
 
-local function stutter(first, curtime)
-	setcameraxy(math.random()*3.0 - 1.5, math.random()*3.0 - 1.5)	--Random float between -1.5 and +1.5
+local function stutter(first, curtime, starttime, endtime)
+	if first == true then
+		rumblecontroller(0.5, endtime-starttime)
+	end
+	setcameraxy(math.random()*0.5 - 0.25, math.random()*0.5 - 0.25)	--Random float between -0.25 and +0.25
 	stuttering = true
 end
 
 local timetab = {
 	{func = start, startat = 0, endat = 34.9},
 	{func = mid1, startat = 34.9, endat = 46.4},
-	{func = mid2, startat = 46.4, endat = 69.2},	--22.772/32
+	{func = mid2, startat = 46.4, endat = 69.2},
 	{func = drop, startat = 69.2, endat = 69.848},
 	{func = main, startat = 69.848, endat = 116.08},
 	{func = start, startat = 116.308, endat = 140.895},
@@ -128,7 +131,7 @@ local timetab = {
 local function jf_update(curtime)
 	for key,val in ipairs(timetab) do
 		if curtime > val.startat and curtime < val.endat then
-			val.func(lasttime < val.startat or lasttime > val.endat, curtime)
+			val.func(lasttime < val.startat or lasttime > val.endat, curtime, val.startat, val.endat)
 		end
 	end
 	lasttime = curtime

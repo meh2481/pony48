@@ -34,6 +34,11 @@ public:
 			return g_pGlobalEngine->m_Board[x][y];
 		return NULL;
 	}
+	
+	static SDL_Haptic* getRumble()
+	{
+		return g_pGlobalEngine->m_rumble;
+	}
 };
 
 luaFunc(fireparticles)	//fireparticles(string particleSysName, bool bFire)
@@ -95,12 +100,28 @@ luaFunc(settilecol)	//settilecol(int tile, float r, float g, float b, float a)
 		col.g = lua_tonumber(L, 3);
 		col.b = lua_tonumber(L, 4);
 		col.a = lua_tonumber(L, 5);
-		if(col.r == 1 && col.g == 1 && col.b == 1 && col.a == 1)
+		if(col.r == 1 && col.g == 1 && col.b == 1)
+		{
 			pc->bg->col = pc->origCol;
+			pc->bg->col.a = col.a;
+		}
 		else
 			pc->bg->col = col;
 	}
 	luaReturnNil();
+}
+
+luaFunc(rumblecontroller)	//rumblecontroller(float force, float sec) --force is range [0,1]
+{
+	SDL_Haptic* rumble = PonyLua::getRumble();
+	if(rumble != NULL)
+	{
+		float32 force = lua_tonumber(L, 1);
+		float32 sec = lua_tonumber(L, 2);
+		force = max(force, 0.0f);
+		force = min(force, 1.0f);
+		SDL_HapticRumblePlay(rumble, force, sec*1000);
+	}
 }
 
 static LuaFunctions s_functab[] =
@@ -111,6 +132,7 @@ static LuaFunctions s_functab[] =
 	luaRegister(pinwheelspeed),
 	luaRegister(setcameraxy),
 	luaRegister(settilecol),
+	luaRegister(rumblecontroller),
 	{NULL, NULL}
 };
 
