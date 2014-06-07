@@ -39,6 +39,25 @@ public:
 	{
 		return g_pGlobalEngine->m_rumble;
 	}
+	
+	static Color* getTileBgCol(uint32_t num)
+	{
+		uint32_t x = num % 4;
+		uint32_t y = num / 4;
+		if(x < BOARD_WIDTH && y < BOARD_HEIGHT)
+			return &g_pGlobalEngine->m_TileBg[x][y];
+		return NULL;
+	}
+	
+	static Color* getBoardBgCol()
+	{
+		return &g_pGlobalEngine->m_BoardBg;
+	}
+	
+	static Color* getBgCol()
+	{
+		return &g_pGlobalEngine->m_BgCol;
+	}
 };
 
 luaFunc(fireparticles)	//fireparticles(string particleSysName, bool bFire)
@@ -124,6 +143,46 @@ luaFunc(rumblecontroller)	//rumblecontroller(float force, float sec) --force is 
 	}
 }
 
+luaFunc(gettilebgcol)	//gettilebgcol(uint num)
+{
+	int num = lua_tointeger(L, 1);
+	Color* col = PonyLua::getTileBgCol(num);
+	if(col != NULL)
+	{
+		lua_pushnumber(L, col->r);
+		lua_pushnumber(L, col->g);
+		lua_pushnumber(L, col->b);
+		lua_pushnumber(L, col->a);
+		return 4;
+	}
+	luaReturnNil();
+}
+
+luaFunc(settilebgcol)	//settilebgcol(uint num, float r, float g, float b, float a)
+{
+	int num = lua_tointeger(L, 1);
+	Color* col = PonyLua::getTileBgCol(num);
+	if(col != NULL)
+		col->set(lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4), lua_tonumber(L,5));
+	luaReturnNil();
+}
+
+luaFunc(setboardcol)	//setboardcol(float r, float g, float b, float a)
+{
+	Color* col = PonyLua::getBoardBgCol();
+	if(col != NULL)
+		col->set(lua_tonumber(L,1), lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+	luaReturnNil();
+}
+
+luaFunc(setbgcol)	//setbgcol(float r, float g, float b, float a)
+{
+	Color* col = PonyLua::getBgCol();
+	if(col != NULL)
+		col->set(lua_tonumber(L,1), lua_tonumber(L,2), lua_tonumber(L,3), lua_tonumber(L,4));
+	luaReturnNil();
+}
+
 static LuaFunctions s_functab[] =
 {
 	luaRegister(fireparticles),
@@ -133,6 +192,11 @@ static LuaFunctions s_functab[] =
 	luaRegister(setcameraxy),
 	luaRegister(settilecol),
 	luaRegister(rumblecontroller),
+	luaRegister(gettilebgcol),
+	luaRegister(settilebgcol),
+	luaRegister(setboardcol),
+	luaRegister(setbgcol),
+	//luaRegister(),
 	{NULL, NULL}
 };
 

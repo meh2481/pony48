@@ -9,14 +9,14 @@ local function jf_init()
 end
 setglobal("jf_init", jf_init)
 
-local function start(first, curtime)
+local function start(first)
 	if first == true then
 		showparticles("bgflash", false)
 		pinwheelspeed(40)
 	end
 end
 
-local function mid1(first, curtime)
+local function mid1(first)
 	if first == true then
 		resetparticles("bgponies")
 		showparticles("bgponies", true)
@@ -44,10 +44,12 @@ local function mid2(first, curtime)
 		--Reset color of all tiles
 		for i = 0, 15 do
 			settilecol(i, 1, 1, 1, 1)
+			settilebgcol(i, 0.5, 0.5, 0.5, 0.5)
 		end
 		--Change color of one row at a time
 		for i = 0, 3 do
-			settilecol(i + mid2currow, 0, 0, 0, 0.4)
+			settilecol(i + mid2currow, 1, 1, 1, 0.5)
+			settilebgcol(i + mid2currow, 0, 0, 0, 0.5)
 		end
 	end
 end
@@ -71,27 +73,30 @@ local function mid3(first, curtime)
 		--Reset color of all tiles
 		for i = 0, 15 do
 			settilecol(i, 1, 1, 1, 1)
+			settilebgcol(i, 0.5, 0.5, 0.5, 0.5)
 		end
 		--Change color of one row at a time
 		for i = 0,12,4 do
-			settilecol(i + mid2currow, 0, 0, 0, 0.4)
+			settilecol(i + mid2currow, 1, 1, 1, 0.5)
+			settilebgcol(i + mid2currow, 0, 0, 0, 0.5)
 		end
 	end
 end
 
-local function drop(first, curtime)
+local function drop(first)
 	if first == true then
 		showparticles("bgponies", false)
 		pinwheelspeed(0)
 		--Reset color of all tiles
 		for i = 0, 15 do
 			settilecol(i, 1, 1, 1, 1)
+			settilebgcol(i, 0.5, 0.5, 0.5, 0.5)
 		end
 	end
 end
 
 local stuttering = false
-local function main(first, curtime)
+local function main(first)
 	if first == true then
 		pinwheelspeed(240)
 		showparticles("bgflash", true)

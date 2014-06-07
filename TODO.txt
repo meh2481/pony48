@@ -7,3 +7,9 @@
 -Support as many mouse buttons as SDL2 can handle
 -Touchscreen support?
 -Rebindable controller - rebind axes, buttons, etc
+-Lua-controlled menu thing - ask fgen how he did it
+
+Linux Xbox controller rumble:
+sudo rmmod xpad
+sudo apt-get install xboxdrv
+reboot

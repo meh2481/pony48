@@ -50,7 +50,11 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_iCurMode = INTRO;//PLAYING;
 	m_fGameoverKeyDelay = 0;
 	m_BoardBg.set(0.7,0.7,0.7,.5);
-	m_TileBg.set(0.5,0.5,0.5,.5);
+	for(int i = 0; i < BOARD_HEIGHT; i++)
+	{
+		for(int j = 0; j < BOARD_WIDTH; j++)
+			m_TileBg[j][i].set(0.5,0.5,0.5,.5);
+	}
 	m_BgCol.set(0,0,0,1.0);
 	m_iHighScore = 0;
 	starfieldBg* bg = new starfieldBg();
@@ -489,10 +493,10 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #ifdef DEBUG_INPUT
 			cout << "Joystick " << (int)event.jbutton.which << " pressed button " << (int)event.jbutton.button << endl;
 #endif
-			if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
-				changeMode(PLAYING);
 			if(event.jbutton.button == JOY_BUTTON_BACK)
 				quit();
+			else if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
+				changeMode(PLAYING);
 			break;
 			
 		case SDL_JOYBUTTONUP:

@@ -457,7 +457,7 @@ void Engine::setup_sdl()
 	// Create SDL window
 	Uint32 flags = SDL_WINDOW_OPENGL;
 	if(m_bResizable)
-	flags |= SDL_WINDOW_RESIZABLE;
+		flags |= SDL_WINDOW_RESIZABLE;
 	
 	m_Window = SDL_CreateWindow(m_sTitle.c_str(),
 							 SDL_WINDOWPOS_UNDEFINED,
@@ -479,20 +479,20 @@ void Engine::setup_sdl()
 	SDL_DisplayMode mode;
 	SDL_GetDisplayMode(0, 0, &mode);
 	if(!mode.refresh_rate)	//If 0, display doesn't care, so default to 60
-	mode.refresh_rate = 60;
+		mode.refresh_rate = 60;
 	setFramerate(mode.refresh_rate);
 	
 	int numDisplays = SDL_GetNumVideoDisplays();
 	errlog << "Available displays: " << numDisplays << endl;
 	for(int display = 0; display < numDisplays; display++)
 	{
-	int num = SDL_GetNumDisplayModes(display);
-	errlog << "Available modes for display " << display+1 << ':' << endl;
-	for(int i = 0; i < num; i++)
-	{
-		SDL_GetDisplayMode(display, i, &mode);
-		errlog << "Mode: " << mode.w << "x" << mode.h << " " << mode.refresh_rate << "Hz" << endl;
-	}
+		int num = SDL_GetNumDisplayModes(display);
+		errlog << "Available modes for display " << display+1 << ':' << endl;
+		for(int i = 0; i < num; i++)
+		{
+			SDL_GetDisplayMode(display, i, &mode);
+			errlog << "Mode: " << mode.w << "x" << mode.h << " " << mode.refresh_rate << "Hz" << endl;
+		}
 	}
 	
 	
@@ -717,9 +717,9 @@ void Engine::toggleFullscreen()
 {
 	m_bFullscreen = !m_bFullscreen;
 	if(m_bFullscreen)
-	SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	else
-	SDL_SetWindowFullscreen(m_Window, 0);
+		SDL_SetWindowFullscreen(m_Window, 0);
 }
 
 void Engine::setFullscreen(bool bFullscreen)
@@ -751,7 +751,7 @@ void Engine::maximizeWindow()
 
 bool Engine::isMaximized()
 {
-#ifdef _WIN32	//Apparently SDL_GetWindowFlags() is completely broken in SDL2 for determining maximization, and nobody else seems to have this problem. Doing it the long way.
+#ifdef _WIN32	//Apparently SDL_GetWindowFlags() is completely broken in SDL2 for determining maximization, and nobody seems to care: https://bugzilla.libsdl.org/show_bug.cgi?id=2282
 	SDL_SysWMinfo info;
  
 	//Get window handle from SDL

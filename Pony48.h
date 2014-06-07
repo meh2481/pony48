@@ -102,7 +102,7 @@ private:
 	//Game stuff!
 	LuaInterface* Lua;
 	Color m_BoardBg;
-	Color m_TileBg;
+	Color m_TileBg[BOARD_WIDTH][BOARD_HEIGHT];
 	Color m_BgCol;
 	TilePiece* m_Board[BOARD_WIDTH][BOARD_HEIGHT];
 	list<TilePiece*> m_lSlideJoinAnimations;
