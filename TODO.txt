@@ -8,6 +8,7 @@
 -Touchscreen support?
 -Rebindable controller - rebind axes, buttons, etc
 -Lua-controlled menu thing - ask fgen how he did it
+-Joining right and down are broken - left and up work fine
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

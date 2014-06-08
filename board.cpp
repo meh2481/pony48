@@ -107,20 +107,26 @@ void Pony48Engine::updateBoard(float32 dt)
 		
 		if((*i)->drawSlide.x == 0 && (*i)->drawSlide.y == 0)
 		{
-			//Hit the end; join with destination tile
 			if((*i)->destx >= 0 && (*i)->desty >= 0)
 			{
+				//Hit the end; join with destination tile
 				if(m_Board[(*i)->destx][(*i)->desty] != NULL)
 				{
+					if(m_joy != NULL && SDL_JoystickGetButton(m_joy,4))
+						cout << "Slidejoin into tile " << (*i)->destx << "," << (*i)->desty << endl;
 					addScore((*i)->value * 2);
 					delete m_Board[(*i)->destx][(*i)->desty];
 					ostringstream oss;
-					oss << "res/tiles/" << (*i)->value * 2 << ".xml";	//TODO: Test for greater than 2048 or something
+					oss << "res/tiles/" << min((*i)->value * 2, 2048) << ".xml";	//TODO: Test for greater than 2048 or something
 					m_Board[(*i)->destx][(*i)->desty] = loadTile(oss.str());
 					m_Board[(*i)->destx][(*i)->desty]->drawSize.Set(TILE_WIDTH+0.001, TILE_HEIGHT+0.001);	//Start bounce animation
 					m_Board[(*i)->destx][(*i)->desty]->iAnimDir = 1;
 				}
+				else
+					cout << "Err board[x][y] == NULL" << (*i)->destx << "," << (*i)->desty << endl;
 			}
+			else
+				cout << "Err destx/y < 0: " << (*i)->destx << "," << (*i)->desty << endl;
 			delete (*i);
 			i = m_lSlideJoinAnimations.erase(i);
 			continue;
@@ -261,7 +267,7 @@ void Pony48Engine::drawBoard()
 		glPopMatrix();
 	}
 	
-	//Draw tiles themselves (separate loop because alpha issues with animations)
+	//Draw tiles themselves (separate loop because z-order alpha issues with animations)
 	for(int i = 0; i < BOARD_HEIGHT; i++)
 	{
 		for(int j = 0; j < BOARD_WIDTH; j++)
@@ -445,6 +451,8 @@ bool Pony48Engine::join(direction dir)
 					{
 						if(m_Board[j][i+1]->value == m_Board[j][i]->value)
 						{
+							if(m_joy != NULL && SDL_JoystickGetButton(m_joy,4))
+								cout << "Piece " << j << "," << i << " joined into " << j << "," << i+1 << endl;
 							m_Board[j][i]->destx = j;
 							m_Board[j][i]->desty = i+1;
 							m_Board[j][i]->drawSlide.y += TILE_HEIGHT + TILE_SPACING;
@@ -487,6 +495,8 @@ bool Pony48Engine::join(direction dir)
 					{
 						if(m_Board[j+1][i]->value == m_Board[j][i]->value)
 						{
+							if(m_joy != NULL && SDL_JoystickGetButton(m_joy,4))
+								cout << "Piece " << j << "," << i << " joined into " << j+1 << "," << i << endl;
 							m_Board[j][i]->destx = j+1;
 							m_Board[j][i]->desty = i;
 							m_Board[j][i]->drawSlide.x -= TILE_WIDTH + TILE_SPACING;
@@ -537,6 +547,8 @@ bool Pony48Engine::slide(direction dir)
 					{
 						if(m_Board[j][i+1] == NULL)
 						{
+							if(m_joy != NULL && SDL_JoystickGetButton(m_joy,4))
+								cout << "Piece " << j << "," << i << " slid to " << j << "," << i+1 << endl;
 							m_Board[j][i+1] = m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;
@@ -577,6 +589,8 @@ bool Pony48Engine::slide(direction dir)
 					{
 						if(m_Board[j+1][i] == NULL)
 						{
+							if(m_joy != NULL && SDL_JoystickGetButton(m_joy,4))
+								cout << "Piece " << j << "," << i << " slid to " << j+1 << "," << i << endl;
 							m_Board[j+1][i] = m_Board[j][i];
 							m_Board[j][i] = NULL;
 							mademove = true;

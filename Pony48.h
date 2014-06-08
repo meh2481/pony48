@@ -60,8 +60,9 @@ public:
 	int destx, desty;	//Destination piece we're trying to slide into
 	Color origCol;
 	int iAnimDir;
+	bool joined;
 	
-	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();drawSize.SetZero();destx=desty=-1;iAnimDir=1;};
+	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();drawSize.SetZero();destx=desty=-1;iAnimDir=1;joined=false;};
 	~TilePiece() {if(seg!=NULL)delete seg;if(bg!=NULL)delete bg;};
 	
 	//Helper functions (Defined in board.cpp)
@@ -125,6 +126,7 @@ private:
 	
 	//Keybinding stuff!
 	uint32_t JOY_BUTTON_BACK;
+	uint32_t JOY_BUTTON_RESTART;
 	uint32_t JOY_AXIS_HORIZ;
 	uint32_t JOY_AXIS_VERT;
 	uint32_t JOY_AXIS2_HORIZ;

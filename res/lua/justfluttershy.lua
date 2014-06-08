@@ -3,9 +3,16 @@
 --Copyright (c) 2014 Mark Hutcheson
 
 local lasttime
+local mid2startcounter
+local mid2currow
+local mid2rowdir
+local mid2humtime
+local stuttering
 
 local function jf_init()
 	lasttime = -0.001
+	mid2humtime = 0.7258
+	stuttering = false
 end
 setglobal("jf_init", jf_init)
 
@@ -25,32 +32,50 @@ local function mid1(first)
 	end
 end
 
-local mid2startcounter
-local mid2currow
-local mid2humtime = 0.7258
+local function setrowcol(row, dir)
+	dir = dir % 4
+	row = row % 4
+	if dir == 0 then		--from top
+		for i = 0, 3 do
+			settilecol(i + row*4, 1, 1, 1, 0.5)
+			settilebgcol(i + row*4, 0, 0, 0, 0.5)
+		end
+	elseif dir == 1 then	--from right
+		for i = 0,12,4 do
+			settilecol(i + (3-row), 1, 1, 1, 0.5)
+			settilebgcol(i + (3-row), 0, 0, 0, 0.5)
+		end
+	elseif dir == 2 then	--from bottom
+		for i = 0, 3 do
+			settilecol(i + (3-row)*4, 1, 1, 1, 0.5)
+			settilebgcol(i + (3-row)*4, 0, 0, 0, 0.5)
+		end
+	else					--from left
+		for i = 0,12,4 do
+			settilecol(i + row, 1, 1, 1, 0.5)
+			settilebgcol(i + row, 0, 0, 0, 0.5)
+		end
+	end
+end
+
 local function mid2(first, curtime)
 	if first == true then
 		mid2startcounter = curtime - mid2humtime
-		mid2currow = -4
+		mid2currow = -1
+		mid2rowdir = -1
 		pinwheelspeed(-120)
 	end
 	if curtime - mid2startcounter >= mid2humtime then
 		mid2startcounter = mid2startcounter + mid2humtime
-		mid2currow = mid2currow + 4
-		if mid2currow > 12 then
-			mid2currow = 0
-		end
+		mid2currow = mid2currow + 1
+		mid2rowdir = mid2rowdir + 1
 		
 		--Reset color of all tiles
 		for i = 0, 15 do
 			settilecol(i, 1, 1, 1, 1)
 			settilebgcol(i, 0.5, 0.5, 0.5, 0.5)
 		end
-		--Change color of one row at a time
-		for i = 0, 3 do
-			settilecol(i + mid2currow, 1, 1, 1, 0.5)
-			settilebgcol(i + mid2currow, 0, 0, 0, 0.5)
-		end
+		setrowcol(mid2currow, math.floor(mid2rowdir/4))
 	end
 end
 
@@ -62,13 +87,12 @@ local function mid3(first, curtime)
 		pinwheelspeed(-120)
 		mid2startcounter = curtime - mid2humtime
 		mid2currow = -1
+		mid2rowdir = 1		--Flip direction in middle of pattern. Originally on accident, but it looks cool
 	end
 	if curtime - mid2startcounter >= mid2humtime then
 		mid2startcounter = mid2startcounter + mid2humtime
 		mid2currow = mid2currow + 1
-		if mid2currow > 3 then
-			mid2currow = 0
-		end
+		mid2rowdir = mid2rowdir + 1
 		
 		--Reset color of all tiles
 		for i = 0, 15 do
@@ -76,10 +100,7 @@ local function mid3(first, curtime)
 			settilebgcol(i, 0.5, 0.5, 0.5, 0.5)
 		end
 		--Change color of one row at a time
-		for i = 0,12,4 do
-			settilecol(i + mid2currow, 1, 1, 1, 0.5)
-			settilebgcol(i + mid2currow, 0, 0, 0, 0.5)
-		end
+		setrowcol(mid2currow, math.floor(mid2rowdir/4))
 	end
 end
 
@@ -95,7 +116,6 @@ local function drop(first)
 	end
 end
 
-local stuttering = false
 local function main(first)
 	if first == true then
 		pinwheelspeed(240)

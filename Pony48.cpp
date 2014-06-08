@@ -69,6 +69,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	
 	//Keybinding stuff!
 	JOY_BUTTON_BACK = 6;
+	JOY_BUTTON_RESTART = 3;
 	JOY_AXIS_HORIZ = 0;
 	JOY_AXIS_VERT = 1;
 	JOY_AXIS2_HORIZ = 3;
@@ -101,7 +102,12 @@ void Pony48Engine::frame(float32 dt)
 		case PLAYING:
 		case GAMEOVER:
 			soundUpdate(dt);
-			updateBoard(dt);
+#ifdef DEBUG
+			if(m_joy != NULL && SDL_JoystickGetButton(m_joy,4))	//Slooow waaay dooown so we can see if everything's working properly
+				updateBoard(dt/64.0);
+			else
+#endif
+				updateBoard(dt);
 			
 			//First half of camera bounce; move back a bit every frame in an attempt to get back to default position
 			if(CameraPos.z > m_fDefCameraZ)
@@ -497,6 +503,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				quit();
 			else if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
 				changeMode(PLAYING);
+			else if(event.jbutton.button == JOY_BUTTON_RESTART)
+				resetBoard();
 			break;
 			
 		case SDL_JOYBUTTONUP:
@@ -719,6 +727,7 @@ void Pony48Engine::loadConfig(string sFilename)
 	{
 		joystick->QueryIntAttribute("axistripthreshold", &JOY_AXIS_TRIP);
 		joystick->QueryUnsignedAttribute("backbutton", &JOY_BUTTON_BACK);
+		joystick->QueryUnsignedAttribute("restartbutton", &JOY_BUTTON_RESTART);
 		joystick->QueryUnsignedAttribute("horizontalaxis1", &JOY_AXIS_HORIZ);
 		joystick->QueryUnsignedAttribute("verticalaxis1", &JOY_AXIS_VERT);
 		joystick->QueryUnsignedAttribute("horizontalaxis2", &JOY_AXIS2_HORIZ);
@@ -758,6 +767,7 @@ void Pony48Engine::saveConfig(string sFilename)
 	XMLElement* joystick = doc->NewElement("joystick");
 	joystick->SetAttribute("axistripthreshold", JOY_AXIS_TRIP);
 	joystick->SetAttribute("backbutton", JOY_BUTTON_BACK);
+	joystick->SetAttribute("restartbutton", JOY_BUTTON_RESTART);
 	joystick->SetAttribute("horizontalaxis1", JOY_AXIS_HORIZ);
 	joystick->SetAttribute("verticalaxis1", JOY_AXIS_VERT);
 	joystick->SetAttribute("horizontalaxis2", JOY_AXIS2_HORIZ);
