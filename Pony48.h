@@ -62,8 +62,8 @@ public:
 	int iAnimDir;
 	bool joined;
 	
-	TilePiece() {seg=NULL;bg=NULL;value=0;drawSlide.SetZero();drawSize.SetZero();destx=desty=-1;iAnimDir=1;joined=false;};
-	~TilePiece() {if(seg!=NULL)delete seg;if(bg!=NULL)delete bg;};
+	TilePiece();
+	~TilePiece();
 	
 	//Helper functions (Defined in board.cpp)
 	void draw();
@@ -193,7 +193,7 @@ public:
 	void resetBoard();						//Starts a new game
 	void clearBoard();						//Clears memory associated with the game board
 	void addScore(uint32_t amt);			//Add a value to the score (in function so we can have cool anim stuff)
-	void pieceSlid(uint32_t startx, uint32_t starty, uint32_t endx, uint32_t endy);	//Called when a piece slides, to update animations
+	void pieceSlid(int startx, int starty, int endx, int endy);	//Called when a piece slides, to update animations
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to the engine
