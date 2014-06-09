@@ -83,6 +83,9 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_iCAM = 0;
 	m_iCurCamFrameSkip = 0;
 	m_fGameoverWebcamFreeze = 0;
+	m_fWebcamDrawSize = 4;
+	m_ptWebcamDrawPos.Set(-6.2,5);
+	m_bDrawFacecam = false;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -200,7 +203,8 @@ void Pony48Engine::draw()
 					m_iCurCamFrameSkip = 0;
 					m_cam->getNewFrame();
 				}
-				m_cam->draw(4, Point(-6.2,5));
+				if(m_bDrawFacecam)
+					m_cam->draw(m_fWebcamDrawSize, m_ptWebcamDrawPos);
 			}
 			
 			glClear(GL_DEPTH_BUFFER_BIT);
@@ -223,12 +227,12 @@ void Pony48Engine::draw()
 			txt = (HUDTextbox*)m_hud->getChild("hiscorebox");
 			oss << "BEST: " << m_iHighScore;
 			txt->setText(oss.str());
-			oss.str("");
-			float32 fSec = getSeconds();
-			txt = (HUDTextbox*)m_hud->getChild("fps");
-			oss << 1.0 / (fSec - m_fLastFrame);
-			txt->setText(oss.str());
-			m_fLastFrame = fSec;
+			//oss.str("");
+			//float32 fSec = getSeconds();
+			//txt = (HUDTextbox*)m_hud->getChild("fps");
+			//oss << 1.0 / (fSec - m_fLastFrame);
+			//txt->setText(oss.str());
+			//m_fLastFrame = fSec;
 		}
 		break;
 	}
@@ -805,6 +809,11 @@ bool Pony48Engine::loadConfig(string sFilename)
 	{
 		webcam->QueryIntAttribute("device", &m_iCAM);
 		webcam->QueryIntAttribute("frameskip", &m_iCAM_FRAME_SKIP);
+		const char* facepos = webcam->Attribute("facepos");
+		if(facepos != NULL)
+			m_ptWebcamDrawPos = pointFromString(facepos);
+		webcam->QueryFloatAttribute("facesz", &m_fWebcamDrawSize);
+		webcam->QueryBoolAttribute("drawfacecam", &m_bDrawFacecam);
 	}
 	m_cam->open(m_iCAM);
 	
@@ -852,6 +861,9 @@ void Pony48Engine::saveConfig(string sFilename)
 	XMLElement* webcam = doc->NewElement("cam");
 	webcam->SetAttribute("device", m_iCAM);
 	webcam->SetAttribute("frameskip", m_iCAM_FRAME_SKIP);
+	webcam->SetAttribute("facepos", pointToString(m_ptWebcamDrawPos).c_str());
+	webcam->SetAttribute("facesz", m_fWebcamDrawSize);
+	webcam->SetAttribute("drawfacecam", m_bDrawFacecam);
 	root->InsertEndChild(webcam);
 	
 	doc->InsertFirstChild(root);

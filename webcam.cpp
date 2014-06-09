@@ -106,6 +106,8 @@ void Webcam::open(int device)
 		delete m_VideoCap;
 		m_VideoCap = NULL;
 	}
+	else
+		getNewFrame();	//Grab a new frame now while we're loading, because there seems to be a lag on getting the first frame
 }
 
 void Webcam::_clear()

@@ -99,8 +99,12 @@ private:
 	SDL_Joystick *m_joy;
 	SDL_Haptic* m_rumble;
 
+	//Webcam stuffs!
 	Webcam* m_cam;
 	float32 m_fGameoverWebcamFreeze;
+	float32 m_fWebcamDrawSize;
+	Point m_ptWebcamDrawPos;
+	bool m_bDrawFacecam;
 	
 	//Game stuff!
 	LuaInterface* Lua;
