@@ -42,9 +42,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	
 	m_joy = NULL;
 	m_rumble = NULL;
-	m_VideoCap = new cv::VideoCapture(0);
-	if(!m_VideoCap->isOpened())
-		errlog << "Unable to open webcam." << endl;
+	m_cam = new Webcam;
 	
 	//Game stuff!
 	m_iCurMode = INTRO;//PLAYING;
@@ -67,6 +65,8 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	beatMul = 0.75;
 	maxCamz = 4;
 	
+	m_fLastFrame = 0.0f;
+	
 	//Keybinding stuff!
 	JOY_BUTTON_BACK = 6;
 	JOY_BUTTON_RESTART = 3;
@@ -77,6 +77,11 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	JOY_AXIS_LT = 2;
 	JOY_AXIS_RT = 5;
 	JOY_AXIS_TRIP = 20000;
+	
+	//Camera stuff!
+	m_iCAM_FRAME_SKIP = 7;
+	m_iCAM = 0;
+	m_iCurCamFrameSkip = 0;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -92,7 +97,7 @@ Pony48Engine::~Pony48Engine()
 		SDL_HapticClose(m_rumble);
 	if(SDL_JoystickGetAttached(m_joy))
 		SDL_JoystickClose(m_joy);
-	delete m_VideoCap;
+	delete m_cam;
 }
 
 void Pony48Engine::frame(float32 dt)
@@ -143,10 +148,10 @@ void Pony48Engine::frame(float32 dt)
 			//Set icon if user has/doesn't have webcam
 			hIt = m_hud->getChild("yescam");
 			if(hIt != NULL)
-				hIt->hidden = !m_VideoCap->isOpened();
+				hIt->hidden = !m_cam->isOpen();
 			hIt = m_hud->getChild("nocam");
 			if(hIt != NULL)
-				hIt->hidden = m_VideoCap->isOpened();
+				hIt->hidden = m_cam->isOpen();
 			
 			//Calculate the proper alpha value for the black cover-up-intro graphic for our fadein time
 			float alpha = (getSeconds()-INTRO_FADEIN_DELAY) / INTRO_FADEIN_TIME;
@@ -185,6 +190,18 @@ void Pony48Engine::draw()
 			for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
 				i->second->draw();
 			
+			//Draw webcam stuffz right in front of that
+			if(m_cam->isOpen())
+			{
+				glColor4f(1,1,1,1);
+				if(++m_iCurCamFrameSkip >= m_iCAM_FRAME_SKIP)
+				{
+					m_iCurCamFrameSkip = 0;
+					m_cam->getNewFrame();
+				}
+				m_cam->draw(4, Point(-6.2,5));
+			}
+			
 			glClear(GL_DEPTH_BUFFER_BIT);
 			
 			//Set up OpenGL matrices
@@ -196,18 +213,6 @@ void Pony48Engine::draw()
 			drawBoard();
 			drawObjects();
 			
-			//Draw webcam stuffz
-			if(m_VideoCap->isOpened())
-			{
-				cv::Mat frame;
-				bool bSuccess = m_VideoCap->read(frame); // read a new frame from video
-				if (!bSuccess) //if not success, break loop
-				{
-					cout << "Cannot read the frame from video file" << endl;
-					break;
-				}
-			}
-			
 			//Update HUD score
 			HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("scorebox");
 			ostringstream oss;
@@ -217,6 +222,12 @@ void Pony48Engine::draw()
 			txt = (HUDTextbox*)m_hud->getChild("hiscorebox");
 			oss << "BEST: " << m_iHighScore;
 			txt->setText(oss.str());
+			oss.str("");
+			float32 fSec = getSeconds();
+			txt = (HUDTextbox*)m_hud->getChild("fps");
+			oss << 1.0 / (fSec - m_fLastFrame);
+			txt->setText(oss.str());
+			m_fLastFrame = fSec;
 		}
 		break;
 	}
@@ -225,6 +236,8 @@ void Pony48Engine::draw()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	glTranslatef(0, 0, m_fDefCameraZ);
+		
+	//Draw HUD
 	m_hud->draw(0);
 }
 
@@ -237,7 +250,8 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	}
 	
 	//Load our last screen position and such
-	loadConfig(getSaveLocation() + "config.xml");
+	if(!loadConfig(getSaveLocation() + "config.xml"))
+		m_cam->open(m_iCAM);	//Open webcam even if config loading fails
 	
 	//Set gravity to 0
 	getWorld()->SetGravity(b2Vec2(0,0));
@@ -365,8 +379,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					m_rumble = NULL;
 					SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
 					//Re-test webcam
-					delete m_VideoCap;
-					m_VideoCap = new cv::VideoCapture(0);
+					m_cam->open(m_iCAM);
 				}
 #ifdef DEBUG
 				else if(event.key.keysym.scancode == SDL_SCANCODE_F5)
@@ -661,7 +674,7 @@ Point Pony48Engine::worldPosFromCursor(Point cursorpos)
 	return cursorpos;
 }
 
-void Pony48Engine::loadConfig(string sFilename)
+bool Pony48Engine::loadConfig(string sFilename)
 {
 	errlog << "Parsing config file " << sFilename << endl;
 	//Open file
@@ -673,7 +686,7 @@ void Pony48Engine::loadConfig(string sFilename)
 		if(isFullscreen())
 			setInitialFullscreen();
 		delete doc;
-		return;	//No file; ignore
+		return false;	//No file; ignore
 	}
 	
 	//Grab root element
@@ -684,7 +697,7 @@ void Pony48Engine::loadConfig(string sFilename)
 		if(isFullscreen())
 			setInitialFullscreen();
 		delete doc;
-		return;
+		return false;
 	}
 	
 	XMLElement* window = root->FirstChildElement("window");
@@ -753,7 +766,16 @@ void Pony48Engine::loadConfig(string sFilename)
 		joystick->QueryUnsignedAttribute("rtaxis", &JOY_AXIS_RT);
 	}
 	
+	XMLElement* webcam = root->FirstChildElement("cam");
+	if(webcam != NULL)
+	{
+		webcam->QueryIntAttribute("device", &m_iCAM);
+		webcam->QueryIntAttribute("frameskip", &m_iCAM_FRAME_SKIP);
+	}
+	m_cam->open(m_iCAM);
+	
 	delete doc;
+	return true;
 }
 
 void Pony48Engine::saveConfig(string sFilename)
@@ -792,6 +814,11 @@ void Pony48Engine::saveConfig(string sFilename)
 	joystick->SetAttribute("ltaxis", JOY_AXIS_LT);
 	joystick->SetAttribute("rtaxis", JOY_AXIS_RT);
 	root->InsertEndChild(joystick);
+	
+	XMLElement* webcam = doc->NewElement("cam");
+	webcam->SetAttribute("device", m_iCAM);
+	webcam->SetAttribute("frameskip", m_iCAM_FRAME_SKIP);
+	root->InsertEndChild(webcam);
 	
 	doc->InsertFirstChild(root);
 	doc->SaveFile(sFilename.c_str());

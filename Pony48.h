@@ -9,7 +9,7 @@
 #include "bg.h"
 #include <vector>
 #include <set>
-#include "opencv2/opencv.hpp"
+#include "webcam.h"
 #include "luainterface.h"
 
 #define DEFAULT_WIDTH	800
@@ -98,7 +98,7 @@ private:
 	SDL_Joystick *m_joy;
 	SDL_Haptic* m_rumble;
 
-	cv::VideoCapture* m_VideoCap;
+	Webcam* m_cam;
 	
 	//Game stuff!
 	LuaInterface* Lua;
@@ -115,6 +115,10 @@ private:
 	gameMode m_iCurMode;
 	float m_fGameoverKeyDelay;
 	bool bJoyVerticalMove, bJoyHorizontalMove;
+	float m_fLastFrame;	//For fps counter
+	int m_iCAM_FRAME_SKIP;
+	int m_iCAM;
+	int m_iCurCamFrameSkip;
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;
@@ -158,7 +162,7 @@ public:
 	Point worldMovement(Point cursormove);		//Get the worldspace transform of the given mouse transformation
 	
 	//Functions dealing with program defaults
-	void loadConfig(string sFilename);
+	bool loadConfig(string sFilename);
 	void saveConfig(string sFilename);
 	
 	//Other stuff in Pony48.cpp
