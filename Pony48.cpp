@@ -196,6 +196,18 @@ void Pony48Engine::draw()
 			drawBoard();
 			drawObjects();
 			
+			//Draw webcam stuffz
+			if(m_VideoCap->isOpened())
+			{
+				cv::Mat frame;
+				bool bSuccess = m_VideoCap->read(frame); // read a new frame from video
+				if (!bSuccess) //if not success, break loop
+				{
+					cout << "Cannot read the frame from video file" << endl;
+					break;
+				}
+			}
+			
 			//Update HUD score
 			HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("scorebox");
 			ostringstream oss;
@@ -344,10 +356,13 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				if(event.key.keysym.scancode == SDL_SCANCODE_SPACE)
 				{
 					//Re-test joystick
+					if(m_rumble)
+						SDL_HapticClose(m_rumble);
 					if(SDL_JoystickGetAttached(m_joy))
 						SDL_JoystickClose(m_joy);
 					SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
 					m_joy = NULL;
+					m_rumble = NULL;
 					SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
 					//Re-test webcam
 					delete m_VideoCap;
@@ -458,7 +473,9 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				errlog << "Number of Hats: " << SDL_JoystickNumHats(m_joy) << endl;
 				
 				//On Linux, "xboxdrv" is the driver I had the most success with when it came to rumble (default driver said it rumbled, but didn't)
-				m_rumble = SDL_HapticOpenFromJoystick(m_joy);
+				m_rumble = NULL;
+				if(SDL_JoystickIsHaptic(m_joy))
+					m_rumble = SDL_HapticOpenFromJoystick(m_joy);
 				if(m_rumble)
 				{
 					if(SDL_HapticRumbleInit(m_rumble) != 0)
