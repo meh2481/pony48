@@ -31,6 +31,7 @@ public:
 	
 	void open(int device);			//Open specified webcam
 	bool isOpen();
+	bool saveFrame(string sFilename, bool bMirror = true);	//Save the current webcam frame to a file
 	
 	bool mirror;					//If we should mirror-image this when drawing or not
 };

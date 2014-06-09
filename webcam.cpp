@@ -129,3 +129,46 @@ bool Webcam::isOpen()
 	return (m_VideoCap != NULL && m_VideoCap->isOpened());
 }
 
+bool Webcam::saveFrame(string sFilename, bool bMirror)
+{
+	if(!m_curFrame) return false;
+	FIBITMAP* bmp = FreeImage_ConvertFromRawBits(m_curFrame->data, m_iWidth, m_iHeight, m_iWidth * 3, 24, 0x0000FF, 0x00FF00, 0xFF0000, true);
+	if(!bmp) return false;
+	if(bMirror)
+		FreeImage_FlipHorizontal(bmp);
+	bool bRet = FreeImage_Save(FIF_JPEG, bmp, sFilename.c_str());
+	FreeImage_Unload(bmp);
+	return bRet;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

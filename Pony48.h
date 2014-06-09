@@ -105,6 +105,7 @@ private:
 	float32 m_fWebcamDrawSize;
 	Point m_ptWebcamDrawPos;
 	bool m_bDrawFacecam;
+	bool m_bSavedFacepic;
 	
 	//Game stuff!
 	LuaInterface* Lua;

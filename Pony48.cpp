@@ -86,6 +86,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fWebcamDrawSize = 4;
 	m_ptWebcamDrawPos.Set(-6.2,5);
 	m_bDrawFacecam = false;
+	m_bSavedFacepic = false;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -137,6 +138,16 @@ void Pony48Engine::frame(float32 dt)
 			//Check if game is now over
 			if(m_iCurMode == PLAYING && !movePossible())
 				changeMode(GAMEOVER);
+			
+			//Save screenshot if we should
+			if(m_cam->isOpen() && m_iCurMode == GAMEOVER)
+			{
+				if(!m_bSavedFacepic && getSeconds() > m_fGameoverWebcamFreeze + 0.5)
+				{
+					m_bSavedFacepic = true;
+					m_cam->saveFrame(getSaveLocation() + "face.jpg");
+				}
+			}
 			break;
 		
 		case INTRO:
@@ -970,6 +981,7 @@ void Pony48Engine::changeMode(gameMode gm)
 			scrubPause();
 			m_fGameoverKeyDelay = getSeconds();
 			m_fGameoverWebcamFreeze = getSeconds() + GAMEOVER_FREEZE_CAM_TIME;
+			m_bSavedFacepic = false;
 			break;
 		}
 	}
