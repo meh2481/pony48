@@ -11,6 +11,7 @@ Webcam::Webcam()
 	m_curFrame = NULL;
 	m_hTex = 0;
 	m_iWidth = m_iHeight = -1;
+	mirror = true;
 }
 
 Webcam::~Webcam()
@@ -36,12 +37,25 @@ void Webcam::draw(float32 height, Point ptCenter)
 			ptCenter.x - width, ptCenter.y - height, // lower left
 			ptCenter.x + width, ptCenter.y - height, // lower right
 		};
+		
+		float left, right;
+		if(mirror)
+		{
+			left = 1;
+			right = 0;
+		}
+		else
+		{
+			left = 0;
+			right = 1;
+		}
+		
 		const GLfloat texCoords[] =
 		{
-			0, 0, // upper left
-			1, 0, // upper right
-			0, 1, // lower left
-			1, 1, // lower right
+			left, 0, // upper left
+			right, 0, // upper right
+			left, 1, // lower left
+			right, 1, // lower right
 		};
 		glVertexPointer(2, GL_FLOAT, 0, &vertexData);
 		glTexCoordPointer(2, GL_FLOAT, 0, &texCoords);

@@ -82,6 +82,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_iCAM_FRAME_SKIP = 7;
 	m_iCAM = 0;
 	m_iCurCamFrameSkip = 0;
+	m_fGameoverWebcamFreeze = 0;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -191,7 +192,7 @@ void Pony48Engine::draw()
 				i->second->draw();
 			
 			//Draw webcam stuffz right in front of that
-			if(m_cam->isOpen())
+			if(m_cam->isOpen() && m_iCurMode == PLAYING)
 			{
 				glColor4f(1,1,1,1);
 				if(++m_iCurCamFrameSkip >= m_iCAM_FRAME_SKIP)
@@ -239,6 +240,18 @@ void Pony48Engine::draw()
 		
 	//Draw HUD
 	m_hud->draw(0);
+	
+	if(m_cam->isOpen() && m_iCurMode == GAMEOVER)
+	{
+		glColor4f(1,1,1,1);
+		if(++m_iCurCamFrameSkip >= m_iCAM_FRAME_SKIP && getSeconds() < m_fGameoverWebcamFreeze)
+		{
+			m_iCurCamFrameSkip = 0;
+			m_cam->getNewFrame();
+		}
+		m_cam->draw(5, Point(0,-1.5));
+	}
+					
 }
 
 void Pony48Engine::init(list<commandlineArg> sArgs)
@@ -297,6 +310,27 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				}
 				else if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 					quit();
+#ifdef DEBUG
+				else if(event.key.keysym.scancode == SDL_SCANCODE_F5)
+				{
+					string sScene = m_hud->getScene();
+					delete m_hud;
+					m_hud = new HUD("hud");
+					m_hud->create("res/hud/hud.xml");
+					m_hud->setScene(sScene);
+					//Reload particles
+					for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
+					{
+						bool f = i->second->firing;
+						bool s = i->second->show;
+						i->second->reload();
+						i->second->firing = f;
+						i->second->show = s;
+						i->second->init();
+					}
+					break;
+				}
+#endif
 			}
 			else if(m_iCurMode == PLAYING)
 			{
@@ -923,6 +957,7 @@ void Pony48Engine::changeMode(gameMode gm)
 			m_iCurMode = GAMEOVER;
 			scrubPause();
 			m_fGameoverKeyDelay = getSeconds();
+			m_fGameoverWebcamFreeze = getSeconds() + GAMEOVER_FREEZE_CAM_TIME;
 			break;
 		}
 	}

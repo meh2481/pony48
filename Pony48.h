@@ -26,6 +26,7 @@
 #define TILE_SPACING 0.25
 
 #define GAMEOVER_KEY_DELAY 0.5
+#define GAMEOVER_FREEZE_CAM_TIME	0.7f
 
 //Defined by SDL
 #define JOY_AXIS_MIN	-32768
@@ -99,6 +100,7 @@ private:
 	SDL_Haptic* m_rumble;
 
 	Webcam* m_cam;
+	float32 m_fGameoverWebcamFreeze;
 	
 	//Game stuff!
 	LuaInterface* Lua;
