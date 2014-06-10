@@ -127,6 +127,7 @@ private:
 	int m_iCAM_FRAME_SKIP;
 	int m_iCAM;
 	int m_iCurCamFrameSkip;
+	SDL_JoystickID m_lastJoyHatMoved;	//Keep track of which joystick hat we're moving
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;

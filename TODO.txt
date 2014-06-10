@@ -9,6 +9,7 @@
 -Rebindable controller - rebind axes, buttons, etc
 -Lua-controlled menu thing - ask fgen how he did it
 -Move with joystick hat
+-"Press any key" should accept literally any key-- be it LT or MMB or whatever
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

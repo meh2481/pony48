@@ -77,6 +77,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	JOY_AXIS_LT = 2;
 	JOY_AXIS_RT = 5;
 	JOY_AXIS_TRIP = 20000;
+	m_lastJoyHatMoved = 0;
 	
 	//Camera stuff!
 	m_iCAM_FRAME_SKIP = 7;
@@ -640,34 +641,68 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			{
 				CameraPos.y = (float32)event.jaxis.value / (float32)JOY_AXIS_MIN * 2.0;
 			}
-#ifdef DEBUG
-			else if(event.jaxis.axis == JOY_AXIS_RT)	//DEBUG: right trigger fast-forwards music
+			else if(event.jaxis.axis == JOY_AXIS_RT)
 			{
+				if(event.jaxis.value > 0)	//Pressed more than halfway; behave like button
+				{
+					if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
+						changeMode(PLAYING);
+				}
+#ifdef DEBUG	//DEBUG: right trigger fast-forwards music
 				FMOD::Channel* channel = getChannel("music");
 				float curval = event.jaxis.value;
 				curval -= JOY_AXIS_MIN;	//Get absolute value of axis, from 0 to 65,535
 				curval /= (float)(JOY_AXIS_MAX-JOY_AXIS_MIN);
 				curval *= 12;	//Max speed
 				channel->setFrequency(soundFreqDefault+soundFreqDefault*curval);
+#endif
 			}
-	#ifdef DEBUG_REVSOUND
-			else if(event.jaxis.axis == JOY_AXIS_LT)	//DEBUG: left trigger rewinds music
+			else if(event.jaxis.axis == JOY_AXIS_LT)
 			{
+				if(event.jaxis.value > 0)	//Pressed more than halfway; behave like button
+				{
+					if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
+						changeMode(PLAYING);
+				}
+#ifdef DEBUG_REVSOUND	//DEBUG: left trigger rewinds music
 				FMOD::Channel* channel = getChannel("music");
 				float curval = event.jaxis.value;
 				curval -= JOY_AXIS_MIN;	//Get absolute value of axis, from 0 to 65,535
 				curval /= (float)(JOY_AXIS_MAX-JOY_AXIS_MIN);
 				curval *= -5;
 				channel->setFrequency(soundFreqDefault+soundFreqDefault*curval);
-			}
-	#endif
 #endif
+			}
 			break;
 			
 		case SDL_JOYHATMOTION:
 #ifdef DEBUG_INPUT
 			cout << "Joystick " << (int)event.jhat.which << " moved hat " << (int)event.jhat.hat << " to " << (int)event.jhat.value << endl;
 #endif
+			m_lastJoyHatMoved = event.jhat.which;
+			if((m_iCurMode == GAMEOVER || m_iCurMode == INTRO) && event.jhat.value)
+				changeMode(PLAYING);
+			else if(m_iCurMode == PLAYING)
+			{
+				switch(event.jhat.value)
+				{
+					case SDL_HAT_UP:
+						move(UP);
+						break;
+						
+					case SDL_HAT_DOWN:
+						move(DOWN);
+						break;
+						
+					case SDL_HAT_LEFT:
+						move(LEFT);
+						break;
+						
+					case SDL_HAT_RIGHT:
+						move(RIGHT);
+						break;
+				}
+			}
 			break;
 	}
 }
@@ -899,9 +934,10 @@ void Pony48Engine::handleKeys()
 	else
 		setTimeScale(DEFAULT_TIMESCALE);
 #endif
+	//Check joystick movement
 	Sint16 x_move = 0;
 	Sint16 y_move = 0;
-	if(SDL_JoystickGetAttached(m_joy))
+	if(m_joy && SDL_JoystickGetAttached(m_joy))
 	{
 		x_move = SDL_JoystickGetAxis(m_joy, JOY_AXIS_HORIZ);
 		y_move = SDL_JoystickGetAxis(m_joy, JOY_AXIS_VERT);
@@ -910,6 +946,50 @@ void Pony48Engine::handleKeys()
 	}
 	Point vecMove((float32)x_move/(float32)JOY_AXIS_MAX, (float32)-y_move/(float32)JOY_AXIS_MAX);
 	
+	//Check joystick hat movement
+	if(m_joy && SDL_JoystickGetAttached(m_joy) && SDL_JoystickNumHats(m_joy) > m_lastJoyHatMoved)
+	{
+		switch(SDL_JoystickGetHat(m_joy, m_lastJoyHatMoved))
+		{
+			case SDL_HAT_UP:
+				vecMove.y += 1.0f;
+				break;
+
+			case SDL_HAT_RIGHT:
+				vecMove.x += 1.0;
+				break;
+
+			case SDL_HAT_DOWN:
+				vecMove.y -= 1.0f;
+				break;
+
+			case SDL_HAT_LEFT:
+				vecMove.x -= 1.0;
+				break;
+
+			case SDL_HAT_RIGHTUP:
+				vecMove.y += 1.0f;
+				vecMove.x += 1.0;
+				break;
+
+			case SDL_HAT_RIGHTDOWN:
+				vecMove.y -= 1.0f;
+				vecMove.x += 1.0;
+				break;
+
+			case SDL_HAT_LEFTUP:
+				vecMove.y += 1.0f;
+				vecMove.x -= 1.0;
+				break;
+
+			case SDL_HAT_LEFTDOWN:
+				vecMove.y -= 1.0f;
+				vecMove.x -= 1.0;
+				break;
+		}
+	}
+	
+	//Check keyboard movement
 	if(keyDown(SDL_SCANCODE_W) || keyDown(SDL_SCANCODE_UP))
 		vecMove.y += 1.0;
 	if(keyDown(SDL_SCANCODE_S) || keyDown(SDL_SCANCODE_DOWN))
