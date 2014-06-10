@@ -457,21 +457,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #ifdef DEBUG_INPUT
 			cout << "Mouse button " << (int)event.button.button << " pressed." << endl;
 #endif
-			if(event.button.button == SDL_BUTTON_LEFT)
-			{
-			}
-			else if(event.button.button == SDL_BUTTON_RIGHT)
-			{
-			}
-			else if(event.button.button == SDL_BUTTON_MIDDLE)
-			{
-			}
-			else if(event.button.button == SDL_BUTTON_X1)
-			{
-			}
-			else if(event.button.button == SDL_BUTTON_X2)
-			{
-			}
+			if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
+				changeMode(PLAYING);
 			break;
 			
 		case SDL_MOUSEWHEEL:
@@ -557,18 +544,6 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			} 
 			else
 				errlog << "Couldn't open Joystick " << (int)event.jdevice.which << endl;
-			
-			/*if (SDL_IsGameController(event.jdevice.which)) 
-			{
-				m_controller = SDL_GameControllerOpen(event.jdevice.which);
-				if (m_controller)
-				{
-					cout << "Opened Controller " << event.jdevice.which << endl;
-				}
-				else
-					cout << "Could not open gamecontroller: " << SDL_GetError() << endl;
-			}*/			
-
 			break;
 			
 		case SDL_JOYDEVICEREMOVED:
