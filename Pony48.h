@@ -31,6 +31,7 @@
 //Defined by SDL
 #define JOY_AXIS_MIN	-32768
 #define JOY_AXIS_MAX	32767
+#define JOY_MINMOVE_TRIP	3000
 
 const float soundFreqDefault = 44100.0;
 

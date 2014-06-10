@@ -905,6 +905,8 @@ void Pony48Engine::handleKeys()
 	{
 		x_move = SDL_JoystickGetAxis(m_joy, JOY_AXIS_HORIZ);
 		y_move = SDL_JoystickGetAxis(m_joy, JOY_AXIS_VERT);
+		if(abs(x_move) < JOY_MINMOVE_TRIP && abs(y_move) < JOY_MINMOVE_TRIP)
+			x_move = y_move = 0;
 	}
 	Point vecMove((float32)x_move/(float32)JOY_AXIS_MAX, (float32)-y_move/(float32)JOY_AXIS_MAX);
 	
