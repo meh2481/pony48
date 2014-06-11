@@ -135,7 +135,7 @@ void Pony48Engine::updateBoard(float32 dt)
 					addScore((*i)->value * 2);
 					delete m_Board[(*i)->destx][(*i)->desty];
 					ostringstream oss;
-					oss << "res/tiles/" << min((*i)->value * 2, 2048) << ".xml";	//TODO: Test for greater than 2048 or something
+					oss << "res/tiles/" << min((*i)->value * 2, 4096) << ".xml";	//"Duh, muffins" is highest possible tile
 					m_Board[(*i)->destx][(*i)->desty] = loadTile(oss.str());
 					m_Board[(*i)->destx][(*i)->desty]->drawSize.Set(TILE_WIDTH+0.001, TILE_HEIGHT+0.001);	//Start bounce animation
 					m_Board[(*i)->destx][(*i)->desty]->iAnimDir = 1;
