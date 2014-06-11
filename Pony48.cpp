@@ -60,11 +60,6 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_bg = (Background*) bg;
 	bJoyVerticalMove = bJoyHorizontalMove = false;
 	
-	beatThresholdVolume = 0.75;
-	beatThresholdBar = 0;
-	beatMul = 0.75;
-	maxCamz = 4;
-	
 	m_fLastFrame = 0.0f;
 	
 	//Keybinding stuff!
@@ -108,21 +103,23 @@ Pony48Engine::~Pony48Engine()
 
 void Pony48Engine::frame(float32 dt)
 {
+#ifdef DEBUG
+	if(m_joy != NULL && SDL_JoystickGetButton(m_joy, 4))	//Slooow waaay dooown so we can see if everything's working properly
+		dt /= 64.0;
+#endif
 	switch(m_iCurMode)
 	{
 		case PLAYING:
 		case GAMEOVER:
+			m_gameoverTileRot += m_gameoverTileVel * dt;
+			m_gameoverTileVel += ((m_gameoverTileRot > 0)?(-m_gameoverTileAccel):(m_gameoverTileAccel)) * dt;
+			
 			soundUpdate(dt);
-#ifdef DEBUG
-			if(m_joy != NULL && SDL_JoystickGetButton(m_joy,4))	//Slooow waaay dooown so we can see if everything's working properly
-				updateBoard(dt/64.0);
-			else
-#endif
-				updateBoard(dt);
+			updateBoard(dt);
 			
 			//First half of camera bounce; move back a bit every frame in an attempt to get back to default position
 			if(CameraPos.z > m_fDefCameraZ)
-				CameraPos.z -= 0.3;
+				CameraPos.z -= m_fCamBounceBack;
 			if(CameraPos.z < m_fDefCameraZ)
 				CameraPos.z = m_fDefCameraZ;
 			
@@ -257,17 +254,28 @@ void Pony48Engine::draw()
 	//Draw HUD
 	m_hud->draw(0);
 	
-	if(m_cam->isOpen() && m_iCurMode == GAMEOVER)
+	if(m_iCurMode == GAMEOVER)
 	{
-		glColor4f(1,1,1,1);
-		if(++m_iCurCamFrameSkip >= m_iCAM_FRAME_SKIP && getSeconds() < m_fGameoverWebcamFreeze)
+		//If webcam there, draw reaction image
+		if(m_cam->isOpen())
 		{
-			m_iCurCamFrameSkip = 0;
-			m_cam->getNewFrame();
+			glColor4f(1,1,1,1);
+			if(++m_iCurCamFrameSkip >= m_iCAM_FRAME_SKIP && getSeconds() < m_fGameoverWebcamFreeze)
+			{
+				m_iCurCamFrameSkip = 0;
+				m_cam->getNewFrame();
+			}
+			m_cam->draw(5, Point(0,-1.5));
 		}
-		m_cam->draw(5, Point(0,-1.5));
-	}
-					
+		else if(m_highestTile && m_highestTile->seg && m_highestTile->bg)	//Otherwise, draw higest tile the player got
+		{
+			glTranslatef(0, -1.5, 0);
+			glRotatef(m_gameoverTileRot, 0, 0, 1);
+			m_highestTile->seg->size = m_highestTile->bg->size = Point(4,4);
+			m_highestTile->bg->draw();
+			m_highestTile->seg->draw();
+		}
+	}					
 }
 
 void Pony48Engine::init(list<commandlineArg> sArgs)
@@ -1024,6 +1032,9 @@ void Pony48Engine::changeMode(gameMode gm)
 			
 		case GAMEOVER:
 		{
+			m_gameoverTileRot = 0;
+			m_gameoverTileVel = 30;
+			m_gameoverTileAccel = 16;
 			//Play gameover rumble if ded
 			if(m_rumble != NULL)
 				SDL_HapticRumblePlay(m_rumble, 1.0, 800);

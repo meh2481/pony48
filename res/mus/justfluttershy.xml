@@ -17,6 +17,6 @@
 		<spoke col="209,159,228,200"/>
 		<spoke col="255,248,173,200"/>
 	</background>
-	<bounce threshold="0.75" bar="0" mul="0.75" max="4" />
+	<bounce threshold="0.75" bar="0" mul="0.75" max="4" bounceback="0.3"/>
 	<lua file="res/lua/justfluttershy.lua" update="jf_update" init="jf_init"/>
 </song>

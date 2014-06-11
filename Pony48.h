@@ -28,6 +28,8 @@
 #define GAMEOVER_KEY_DELAY 0.5
 #define GAMEOVER_FREEZE_CAM_TIME	0.7f
 
+#define MAX_TILE_VALUE	4098	//Above this, the game would crash, so cap it here
+
 //Defined by SDL
 #define JOY_AXIS_MIN	-32768
 #define JOY_AXIS_MAX	32767
@@ -54,7 +56,7 @@ class TilePiece
 public:
 	physSegment* seg;
 	physSegment* bg;
-	int 	value;		//The actual value of the piece (2, 4, 8, etc, or 0 for nothing here)
+	int 	value;		//The actual value of the piece (2, 4, 8, etc.)
 	
 	//Animation stuff
 	Point	drawSlide;	//Used for the slide animation
@@ -135,6 +137,7 @@ private:
 	uint32_t beatThresholdBar;		//The bar in the volume distribution to examine
 	float32 beatMul;				//The multiplication factor to move the camera
 	float32 maxCamz;				//The maximum value for the camera's z axis
+	float32 m_fCamBounceBack;
 	map<string, ParticleSystem*> songParticles;
 	
 	//Keybinding stuff!
@@ -147,6 +150,12 @@ private:
 	uint32_t JOY_AXIS_LT;
 	uint32_t JOY_AXIS_RT;
 	int32_t JOY_AXIS_TRIP;
+	
+	//Random gameover stuff!
+	TilePiece* m_highestTile;
+	float32 m_gameoverTileRot;
+	float32 m_gameoverTileVel;
+	float32 m_gameoverTileAccel;
 
 protected:
 	void frame(float32 dt);

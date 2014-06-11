@@ -8,6 +8,7 @@
 -Touchscreen support?
 -Rebindable controller - rebind axes, buttons, etc
 -Lua-controlled menu thing - ask fgen how he did it
+-Menu screens shouldn't just appear; make them more flashy
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

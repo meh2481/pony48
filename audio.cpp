@@ -77,6 +77,12 @@ void Pony48Engine::loadSongXML(string sFilename)
 		return;
 	}
 	
+	beatThresholdVolume = 0.75;
+	beatThresholdBar = 0;
+	beatMul = 45;
+	maxCamz = 4;
+	m_fCamBounceBack = 18.0;
+	
 	for(XMLElement* elem = root->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
 	{
 		const char* cName = elem->Name();
@@ -137,6 +143,7 @@ void Pony48Engine::loadSongXML(string sFilename)
 				elem->QueryUnsignedAttribute("bar", &beatThresholdBar);
 				elem->QueryFloatAttribute("mul", &beatMul);
 				elem->QueryFloatAttribute("max", &maxCamz);
+				elem->QueryFloatAttribute("bounceback", &m_fCamBounceBack);
 			}
 			else if(name == "lua")
 			{

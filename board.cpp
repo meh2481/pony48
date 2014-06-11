@@ -72,6 +72,10 @@ void Pony48Engine::resetBoard()
 		}
 	}
 	m_iScore = 0;	//Reset score also
+	m_highestTile = NULL;
+	m_gameoverTileRot = 0;
+	m_gameoverTileVel = 15;
+	m_gameoverTileAccel = 1;
 }
 
 //Update slide-and-join animations if the to-join-to piece slid
@@ -135,10 +139,12 @@ void Pony48Engine::updateBoard(float32 dt)
 					addScore((*i)->value * 2);
 					delete m_Board[(*i)->destx][(*i)->desty];
 					ostringstream oss;
-					oss << "res/tiles/" << min((*i)->value * 2, 4096) << ".xml";	//"Duh, muffins" is highest possible tile
+					oss << "res/tiles/" << min((*i)->value * 2, MAX_TILE_VALUE) << ".xml";	//"Duh, muffins" is highest possible tile
 					m_Board[(*i)->destx][(*i)->desty] = loadTile(oss.str());
 					m_Board[(*i)->destx][(*i)->desty]->drawSize.Set(TILE_WIDTH+0.001, TILE_HEIGHT+0.001);	//Start bounce animation
 					m_Board[(*i)->destx][(*i)->desty]->iAnimDir = 1;
+					if(!(m_highestTile) || m_highestTile->value < m_Board[(*i)->destx][(*i)->desty]->value)
+						m_highestTile = m_Board[(*i)->destx][(*i)->desty];
 				}
 				else
 					errlog << "Err board[x][y] == NULL" << (*i)->destx << "," << (*i)->desty << endl;
@@ -239,9 +245,11 @@ void Pony48Engine::clearBoardAnimations()
 				addScore((*i)->value * 2);
 				delete m_Board[(*i)->destx][(*i)->desty];
 				ostringstream oss;
-				oss << "res/tiles/" << (*i)->value * 2 << ".xml";	//TODO: Test for greater than 2048 or something
+				oss << "res/tiles/" << min((*i)->value * 2, MAX_TILE_VALUE) << ".xml";	//"Duh, muffins" is highest possible tile
 				m_Board[(*i)->destx][(*i)->desty] = loadTile(oss.str());
 				m_Board[(*i)->destx][(*i)->desty]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);	//Don't have a newly-created piece make an appear animation here
+				if(!(m_highestTile) || m_highestTile->value < m_Board[(*i)->destx][(*i)->desty]->value)
+					m_highestTile = m_Board[(*i)->destx][(*i)->desty];
 			}
 		}
 		//Wipe this out (Step through list this way, rather than incrementing i)
