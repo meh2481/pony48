@@ -663,7 +663,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			cout << "Joystick " << (int)event.jhat.which << " moved hat " << (int)event.jhat.hat << " to " << (int)event.jhat.value << endl;
 #endif
 			m_lastJoyHatMoved = event.jhat.which;
-			if((m_iCurMode == GAMEOVER || m_iCurMode == INTRO) && event.jhat.value)
+			if((m_iCurMode == GAMEOVER || m_iCurMode == INTRO) && event.jhat.value && getSeconds() - m_fGameoverKeyDelay >= GAMEOVER_KEY_DELAY)
 				changeMode(PLAYING);
 			else if(m_iCurMode == PLAYING)
 			{
