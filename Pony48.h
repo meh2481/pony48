@@ -104,7 +104,6 @@ private:
 	SDL_Joystick *m_joy;
 	SDL_Haptic* m_rumble;
 	map<string, Cursor*> m_mCursors;
-	int m_iMouseControl;	//If the game is controlled via mouse or not
 
 	//Webcam stuffs!
 	Webcam* m_cam;
@@ -134,6 +133,8 @@ private:
 	int m_iCAM;
 	int m_iCurCamFrameSkip;
 	SDL_JoystickID m_lastJoyHatMoved;	//Keep track of which joystick hat we're moving
+	int m_iMouseControl;	//If the game is controlled via mouse or not
+	Image* m_imgMouseMoveArrow;	//Image to be shown overtop of the board when the player is moving via mouse
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;
@@ -220,6 +221,7 @@ public:
 	void clearBoard();						//Clears memory associated with the game board
 	void addScore(uint32_t amt);			//Add a value to the score (in function so we can have cool anim stuff)
 	void pieceSlid(int startx, int starty, int endx, int endy);	//Called when a piece slides, to update animations
+	direction getDirOfVec2(Point ptVec);		//Get direction (UP, DOWN, LEFT, RIGHT) that given vector is mostly pointing towards
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to the engine

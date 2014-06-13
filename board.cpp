@@ -258,6 +258,7 @@ void Pony48Engine::clearBoardAnimations()
 #define TILEBG_DRAWZ 	0.3
 #define JOINANIM_DRAWZ 	0.5
 #define TILE_DRAWZ		0.7
+#define MOVEARROW_DRAWZ	0.9
 void Pony48Engine::drawBoard()
 {
 	float fTotalWidth = BOARD_WIDTH * TILE_WIDTH + (BOARD_WIDTH + 1) * TILE_SPACING;
@@ -307,6 +308,47 @@ void Pony48Engine::drawBoard()
 			}
 		}
 	}
+	
+	//Draw arrows for direction the mouse will move the board
+	if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT)
+	{
+		glPushMatrix();
+		Point ptMoveDir = worldPosFromCursor(getCursorPos());
+		glTranslatef(0, 0, MOVEARROW_DRAWZ);
+		switch(getDirOfVec2(ptMoveDir))
+		{
+			case UP:
+				glRotatef(90, 0, 0, 1);
+				break;
+				
+			case DOWN:
+				glRotatef(-90, 0, 0, 1);
+				break;
+				
+			case LEFT:
+				glRotatef(180, 0, 0, 1);
+				break;
+		}
+		glColor4f(1, 1, 1, min(abs(ptMoveDir.Length() / (getCameraView().height() / 2.0f)) - 0.2f, 0.5f));
+		m_imgMouseMoveArrow->render(Point(2,2));
+		glPopMatrix();
+	}
+}
+
+direction Pony48Engine::getDirOfVec2(Point ptVec)
+{
+	float32 fAngle = atan2(ptVec.y, ptVec.x);
+	if(fAngle > PI/4.0 && fAngle < 3.0*PI/4.0)	//Up
+		return UP;
+	else if(fAngle > -3.0*PI/4.0 && fAngle < -PI/4.0)	//Down
+		return DOWN;
+	else if(fAngle < PI/4.0 && fAngle > -PI/4.0)	//Right
+		return RIGHT;
+	else	//Left
+		return LEFT;
+	
+	//Unreachable
+	return UP;
 }
 
 TilePiece* Pony48Engine::loadTile(string sFilename)

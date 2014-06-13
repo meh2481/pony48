@@ -41,7 +41,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_iMouseControl = 0;
 	
 	m_hud = new HUD("hud");
-	m_hud->create("res/hud/hud.xml");
+	m_hud->create("res/hud.xml");
 	m_hud->setScene("intro");
 	
 	setTimeScale(DEFAULT_TIMESCALE);
@@ -320,11 +320,10 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	}
 	resetBoard();
 	
+	m_imgMouseMoveArrow = getImage("res/movearrow.png");
+	
 	//Create sounds up front
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items
-	
-	//pauseMusic();
-	//hideCursor();
 }
 
 
@@ -359,7 +358,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					string sScene = m_hud->getScene();
 					delete m_hud;
 					m_hud = new HUD("hud");
-					m_hud->create("res/hud/hud.xml");
+					m_hud->create("res/hud.xml");
 					m_hud->setScene(sScene);
 					//Reload particles
 					for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
@@ -396,7 +395,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						string sScene = m_hud->getScene();
 						delete m_hud;
 						m_hud = new HUD("hud");
-						m_hud->create("res/hud/hud.xml");
+						m_hud->create("res/hud.xml");
 						m_hud->setScene(sScene);
 						//Reload particles
 						for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
@@ -472,7 +471,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					string sScene = m_hud->getScene();
 					delete m_hud;
 					m_hud = new HUD("hud");
-					m_hud->create("res/hud/hud.xml");
+					m_hud->create("res/hud.xml");
 					m_hud->setScene(sScene);
 				}
 #endif
