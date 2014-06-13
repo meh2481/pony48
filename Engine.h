@@ -66,6 +66,7 @@ private:
 	int m_iMSAA;		//Antialiasing (0x, 2x, 4x, 8x, etc)
 	Cursor* m_cursor;
 	bool m_bCursorShow;
+	bool m_bCursorOutOfWindow;	//If the cursor is outside of the window, don't draw it
 	
 	map<string, FMOD::Channel*> m_channels;
 	map<string, FMOD::Sound*> m_sounds;

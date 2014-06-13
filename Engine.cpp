@@ -86,7 +86,7 @@ bool Engine::_frame()
 			m_ptCursorPos.x = event.motion.x;
 			m_ptCursorPos.y = event.motion.y;
 		}
-		if(event.type == SDL_WINDOWEVENT)
+		else if(event.type == SDL_WINDOWEVENT)
 		{
 			if(event.window.event == SDL_WINDOWEVENT_FOCUS_LOST && m_bPauseOnKeyboardFocus)
 			{
@@ -105,9 +105,15 @@ bool Engine::_frame()
 				else
 					errlog << "Error! Resize event generated, but resizable flag not set." << endl;
 			}
+			else if(event.window.event == SDL_WINDOWEVENT_ENTER)
+				m_bCursorOutOfWindow = false;
+			else if(event.window.event == SDL_WINDOWEVENT_LEAVE)
+				m_bCursorOutOfWindow = true;
 		}
-		if(event.type == SDL_QUIT)
+		else if(event.type == SDL_QUIT)
 			return true;
+			
+		//Let final game engine handle it, whatever the case
 		if(!m_bPaused)
 			handleEvent(event);
 	}
@@ -140,7 +146,7 @@ void Engine::_render()
 	draw();
 	
 	//Draw cursor over everything
-	if(m_cursor && m_bCursorShow)
+	if(m_cursor && m_bCursorShow && !m_bCursorOutOfWindow)
 		m_cursor->draw();
 	
 	//Draw gamma/brightness overlay on top of everything else
@@ -193,6 +199,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 	m_bPauseOnKeyboardFocus = true;
 	m_cursor = NULL;
 	m_bCursorShow = true;
+	m_bCursorOutOfWindow = false;
 
 	//Initialize engine stuff
 	m_fAccumulatedTime = 0.0;
