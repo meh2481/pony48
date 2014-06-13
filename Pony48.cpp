@@ -545,6 +545,10 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				case SDL_WINDOWEVENT_FOCUS_GAINED:
 					grabMouse(m_bMouseGrabOnWindowRegain);	//Grab mouse on input regain, if we should
 					break;
+					
+				case SDL_WINDOWEVENT_LEAVE:
+					m_iMouseControl = MOUSE_MOVE_TRIP_AMT - 1;	//Make board tilt back if the mouse exits the window
+					break;
 			}
 			break;
 			
