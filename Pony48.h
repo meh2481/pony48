@@ -101,6 +101,7 @@ private:
 	list<ColorPhase> m_ColorsChanging;
 	SDL_Joystick *m_joy;
 	SDL_Haptic* m_rumble;
+	map<string, Cursor*> m_mCursors;
 
 	//Webcam stuffs!
 	Webcam* m_cam;

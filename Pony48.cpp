@@ -31,8 +31,14 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_bMouseGrabOnWindowRegain = false;
 #else
 	m_bMouseGrabOnWindowRegain = true;
-#endif	
-	showCursor();
+#endif
+	hideCursor();
+	m_mCursors["sel"] = new Cursor();
+	m_mCursors["sel"]->fromXML("res/cursor/arrowsel.xml");
+	setCursor(m_mCursors["sel"]);
+	
+	m_mCursors["dir"] = new Cursor();
+	m_mCursors["dir"]->fromXML("res/cursor/arrowdir.xml");
 	
 	m_hud = new HUD("hud");
 	m_hud->create("res/hud/hud.xml");
@@ -92,6 +98,8 @@ Pony48Engine::~Pony48Engine()
 	clearBoard();
 	if(m_bg != NULL)
 		delete m_bg;
+	for(map<string, Cursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
+		delete i->second;
 	errlog << "delete hud" << endl;
 	delete m_hud;
 	if(m_rumble != NULL)
@@ -269,13 +277,23 @@ void Pony48Engine::draw()
 		}
 		else if(m_highestTile && m_highestTile->seg && m_highestTile->bg)	//Otherwise, draw higest tile the player got
 		{
+			glPushMatrix();
 			glTranslatef(0, -1.5, 0);
 			glRotatef(m_gameoverTileRot, 0, 0, 1);
 			m_highestTile->seg->size = m_highestTile->bg->size = Point(4,4);
 			m_highestTile->bg->draw();
 			m_highestTile->seg->draw();
+			glPopMatrix();
 		}
-	}					
+	}
+	
+	//Set mouse cursor to proper location
+	for(map<string, Cursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
+	{
+		i->second->pos = worldPosFromCursor(getCursorPos());
+		if(i->first == "dir")
+			i->second->rot = RAD2DEG * atan2(i->second->pos.y, i->second->pos.x);
+	}
 }
 
 void Pony48Engine::init(list<commandlineArg> sArgs)
@@ -305,7 +323,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items
 	
 	//pauseMusic();
-	hideCursor();
+	//hideCursor();
 }
 
 
@@ -705,8 +723,8 @@ Rect Pony48Engine::getCameraView()
 	Rect rcCamera;
 	const float32 tan45_2 = tan(DEG2RAD*45/2);
 	const float32 fAspect = (float32)getWidth() / (float32)getHeight();
-	rcCamera.bottom = (tan45_2 * CameraPos.z);
-	rcCamera.top = -(tan45_2 * CameraPos.z);
+	rcCamera.bottom = (tan45_2 * m_fDefCameraZ);
+	rcCamera.top = -(tan45_2 * m_fDefCameraZ);
 	rcCamera.left = rcCamera.bottom * fAspect;
 	rcCamera.right = rcCamera.top * fAspect;
 	rcCamera.offset(CameraPos.x, CameraPos.y);
@@ -1019,6 +1037,8 @@ void Pony48Engine::changeMode(gameMode gm)
 	switch(gm)
 	{
 		case PLAYING:
+			showCursor();
+			setCursor(m_mCursors["dir"]);
 			if(m_iCurMode == GAMEOVER)
 			{
 				resetBoard();
@@ -1032,6 +1052,8 @@ void Pony48Engine::changeMode(gameMode gm)
 			
 		case GAMEOVER:
 		{
+			showCursor();
+			setCursor(m_mCursors["sel"]);
 			m_gameoverTileRot = 0;
 			m_gameoverTileVel = 30;
 			m_gameoverTileAccel = 16;

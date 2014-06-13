@@ -12,6 +12,7 @@
 #include "Text.h"
 #include "hud.h"
 #include "particles.h"
+#include "cursor.h"
 #include <fmod.hpp>
 #include <map>
 #include <set>
@@ -63,6 +64,8 @@ private:
 	bool m_bPauseOnKeyboardFocus;	//If the game pauses when keyboard focus is lost
 	bool m_bSoundDied;  //If tyrsound fails to load, don't try to use it
 	int m_iMSAA;		//Antialiasing (0x, 2x, 4x, 8x, etc)
+	Cursor* m_cursor;
+	bool m_bCursorShow;
 	
 	map<string, FMOD::Channel*> m_channels;
 	map<string, FMOD::Sound*> m_sounds;
@@ -150,8 +153,9 @@ public:
 	void setCursorPos(int32_t x, int32_t y);
 	void setCursorPos(Point ptPos)  {setCursorPos(ptPos.x, ptPos.y);};
 	bool getCursorDown(int iButtonCode);
-	void showCursor()	{SDL_ShowCursor(1);};
-	void hideCursor()	{SDL_ShowCursor(0);};
+	void showCursor()	{m_bCursorShow = true;};
+	void hideCursor()	{m_bCursorShow = false;};
+	void setCursor(Cursor* cur)	{m_cursor = cur;};
 	bool isMouseGrabbed()	{return SDL_GetWindowGrab(m_Window);};
 	void grabMouse(bool bGrab = true) {SDL_SetWindowGrab(m_Window, (SDL_bool)bGrab);};
 	

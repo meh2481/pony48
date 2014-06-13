@@ -139,6 +139,10 @@ void Engine::_render()
 	// Game-specific drawing
 	draw();
 	
+	//Draw cursor over everything
+	if(m_cursor && m_bCursorShow)
+		m_cursor->draw();
+	
 	//Draw gamma/brightness overlay on top of everything else
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_BLEND);
@@ -158,15 +162,8 @@ void Engine::_render()
 	//Reset blend func
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	//Draw cursor at absolute location
-	//glPushMatrix();
-	//glLoadIdentity();
-	//glTranslatef( 0.0f, 0.0f, MAGIC_ZOOM_NUMBER);
-	//glClear(GL_DEPTH_BUFFER_BIT); //TODO Draw cursor over everything
-	//glPopMatrix();
-	
-	// End rendering and update the screen
-	 SDL_GL_SwapWindow(m_Window);
+	//End rendering and update the screen
+	SDL_GL_SwapWindow(m_Window);
 }
 
 Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName, string sIcon, bool bResizable)
@@ -194,6 +191,8 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 	m_fGamma = 1.0f;
 	m_bPaused = false;
 	m_bPauseOnKeyboardFocus = true;
+	m_cursor = NULL;
+	m_bCursorShow = true;
 
 	//Initialize engine stuff
 	m_fAccumulatedTime = 0.0;
