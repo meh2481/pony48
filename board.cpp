@@ -73,9 +73,6 @@ void Pony48Engine::resetBoard()
 	}
 	m_iScore = 0;	//Reset score also
 	m_highestTile = NULL;
-	m_gameoverTileRot = 0;
-	m_gameoverTileVel = 15;
-	m_gameoverTileAccel = 1;
 }
 
 //Update slide-and-join animations if the to-join-to piece slid

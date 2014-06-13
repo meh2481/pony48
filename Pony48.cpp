@@ -294,6 +294,7 @@ void Pony48Engine::draw()
 		if(i->first == "dir")
 			i->second->rot = RAD2DEG * atan2(i->second->pos.y, i->second->pos.x);
 	}
+	glColor4f(1,1,1,1);
 }
 
 void Pony48Engine::init(list<commandlineArg> sArgs)
@@ -493,6 +494,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #endif
 			if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
 				changeMode(PLAYING);
+			m_iMouseControl = MOUSE_MOVE_TRIP_AMT;
+			showCursor();
 			break;
 			
 		case SDL_MOUSEWHEEL:
@@ -968,7 +971,7 @@ void Pony48Engine::handleKeys()
 		if(abs(x_move) < JOY_MINMOVE_TRIP && abs(y_move) < JOY_MINMOVE_TRIP)
 			x_move = y_move = 0;
 	}
-	if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT)
+	if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT && m_iCurMode == PLAYING)
 	{
 		Point ptMouse = worldPosFromCursor(getCursorPos());
 		ptMouse *= (float32)JOY_AXIS_MAX / (getCameraView().height()/2);
