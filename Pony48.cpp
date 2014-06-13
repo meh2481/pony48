@@ -491,6 +491,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #ifdef DEBUG_INPUT
 			cout << "Mouse button " << (int)event.button.button << " pressed." << endl;
 #endif
+			if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT && m_iCurMode == PLAYING)
+				move(getDirOfVec2(worldPosFromCursor(getCursorPos())));	//Nested functions much?
 			if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
 				changeMode(PLAYING);
 			m_iMouseControl = MOUSE_MOVE_TRIP_AMT;

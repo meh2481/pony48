@@ -329,7 +329,7 @@ void Pony48Engine::drawBoard()
 				glRotatef(180, 0, 0, 1);
 				break;
 		}
-		glColor4f(1, 1, 1, min(abs(ptMoveDir.Length() / (getCameraView().height() / 2.0f)) - 0.2f, 0.5f));
+		glColor4f(1, 1, 1, min(abs(ptMoveDir.Length() / (getCameraView().height() / 2.0f)) - 0.4f, 0.4f));
 		m_imgMouseMoveArrow->render(Point(2,2));
 		glPopMatrix();
 	}
