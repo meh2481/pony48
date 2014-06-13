@@ -33,7 +33,9 @@
 //Defined by SDL
 #define JOY_AXIS_MIN	-32768
 #define JOY_AXIS_MAX	32767
+
 #define JOY_MINMOVE_TRIP	3000
+#define MOUSE_MOVE_TRIP_AMT	20
 
 const float soundFreqDefault = 44100.0;
 
@@ -102,6 +104,7 @@ private:
 	SDL_Joystick *m_joy;
 	SDL_Haptic* m_rumble;
 	map<string, Cursor*> m_mCursors;
+	int m_iMouseControl;	//If the game is controlled via mouse or not
 
 	//Webcam stuffs!
 	Webcam* m_cam;

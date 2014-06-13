@@ -36,9 +36,9 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_mCursors["sel"] = new Cursor();
 	m_mCursors["sel"]->fromXML("res/cursor/arrowsel.xml");
 	setCursor(m_mCursors["sel"]);
-	
 	m_mCursors["dir"] = new Cursor();
 	m_mCursors["dir"]->fromXML("res/cursor/arrowdir.xml");
+	m_iMouseControl = 0;
 	
 	m_hud = new HUD("hud");
 	m_hud->create("res/hud/hud.xml");
@@ -417,24 +417,32 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					
 					case SDL_SCANCODE_W:
 					case SDL_SCANCODE_UP:
+						m_iMouseControl = 0;
+						hideCursor();
 						if(m_iCurMode == PLAYING)
 							move(UP);
 						break;
 						
 					case SDL_SCANCODE_S:
 					case SDL_SCANCODE_DOWN:
+						m_iMouseControl = 0;
+						hideCursor();
 						if(m_iCurMode == PLAYING)
 							move(DOWN);
 						break;
 						
 					case SDL_SCANCODE_A:
 					case SDL_SCANCODE_LEFT:
+						m_iMouseControl = 0;
+						hideCursor();
 						if(m_iCurMode == PLAYING)
 							move(LEFT);
 						break;
 						
 					case SDL_SCANCODE_D:
 					case SDL_SCANCODE_RIGHT:
+						m_iMouseControl = 0;
+						hideCursor();
 						if(m_iCurMode == PLAYING)
 							move(RIGHT);
 						break;
@@ -518,6 +526,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			break;
 
 		case SDL_MOUSEMOTION:
+			if(++m_iMouseControl >= MOUSE_MOVE_TRIP_AMT)
+				showCursor();
 			break;
 		
 		case SDL_WINDOWEVENT:
@@ -580,6 +590,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #ifdef DEBUG_INPUT
 			cout << "Joystick " << (int)event.jbutton.which << " pressed button " << (int)event.jbutton.button << endl;
 #endif
+			m_iMouseControl = 0;
+			hideCursor();
 			if(event.jbutton.button == JOY_BUTTON_BACK)
 				quit();
 			else if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
@@ -595,10 +607,15 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			break;
 			
 		case SDL_JOYAXISMOTION:
+			if(abs(event.jaxis.value) > JOY_MINMOVE_TRIP)
+			{
+				m_iMouseControl = 0;
+				hideCursor();
 #ifdef DEBUG_INPUT
-			if(abs(event.jaxis.value) > 8000)
 				cout << "Joystick " << (int)event.jaxis.which << " moved axis " << (int)event.jaxis.axis << " to " << event.jaxis.value << endl;
 #endif
+			}
+			
 			if(event.jaxis.axis == JOY_AXIS_HORIZ)	//Horizontal axis
 			{
 				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Left
@@ -702,6 +719,12 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					case SDL_HAT_RIGHT:
 						move(RIGHT);
 						break;
+				}
+				
+				if(event.jhat.value)
+				{
+					m_iMouseControl = 0;
+					hideCursor();
 				}
 			}
 			break;
@@ -945,6 +968,13 @@ void Pony48Engine::handleKeys()
 		if(abs(x_move) < JOY_MINMOVE_TRIP && abs(y_move) < JOY_MINMOVE_TRIP)
 			x_move = y_move = 0;
 	}
+	if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT)
+	{
+		Point ptMouse = worldPosFromCursor(getCursorPos());
+		ptMouse *= (float32)JOY_AXIS_MAX / (getCameraView().height()/2);
+		x_move = min(max(-ptMouse.x, (float32)JOY_AXIS_MIN), (float32)JOY_AXIS_MAX);
+		y_move = min(max(ptMouse.y, (float32)JOY_AXIS_MIN), (float32)JOY_AXIS_MAX);
+	}
 	Point vecMove((float32)x_move/(float32)JOY_AXIS_MAX, (float32)-y_move/(float32)JOY_AXIS_MAX);
 	
 	//Check joystick hat movement
@@ -1037,7 +1067,6 @@ void Pony48Engine::changeMode(gameMode gm)
 	switch(gm)
 	{
 		case PLAYING:
-			showCursor();
 			setCursor(m_mCursors["dir"]);
 			if(m_iCurMode == GAMEOVER)
 			{
@@ -1052,7 +1081,6 @@ void Pony48Engine::changeMode(gameMode gm)
 			
 		case GAMEOVER:
 		{
-			showCursor();
 			setCursor(m_mCursors["sel"]);
 			m_gameoverTileRot = 0;
 			m_gameoverTileVel = 30;
