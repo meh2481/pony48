@@ -264,7 +264,8 @@ void Pony48Engine::clearBoardAnimations()
 #define JOINANIM_DRAWZ 	0.5
 #define TILE_DRAWZ		0.7
 #define MOVEARROW_DRAWZ	0.9
-#define MOVEARROW_FADEDIST	(TILE_WIDTH * 3.0f / 4.0f)
+#define MOVEARROW_FADEOUTDIST	(TILE_WIDTH * 0.5f)
+#define MOVEARROW_FADEINDIST	(TILE_WIDTH * 0.95f)
 void Pony48Engine::drawBoard()
 {
 	float fTotalWidth = BOARD_WIDTH * TILE_WIDTH + (BOARD_WIDTH + 1) * TILE_SPACING;
@@ -348,8 +349,8 @@ void Pony48Engine::drawBoard()
 				
 				//If this arrow is reaching the end of its lifespan, fade out
 				float32 fDrawAlpha = fDestAlpha;
-				if(m_fArrowAdd >= MOVEARROW_FADEDIST && x == BOARD_WIDTH - 1)
-					fDrawAlpha *= 1.0f - ((m_fArrowAdd - MOVEARROW_FADEDIST) / MOVEARROW_FADEDIST);
+				if(m_fArrowAdd >= MOVEARROW_FADEOUTDIST && x == BOARD_WIDTH - 1)
+					fDrawAlpha *= 1.0f - ((m_fArrowAdd - MOVEARROW_FADEOUTDIST) / MOVEARROW_FADEOUTDIST);
 				fDrawAlpha = min(fDrawAlpha, 1.0f);
 				fDrawAlpha = max(fDrawAlpha, 0.0f);
 				
@@ -361,10 +362,10 @@ void Pony48Engine::drawBoard()
 				glPopMatrix();
 				
 				//See if we should draw new arrow spawning
-				if(!x && (ARROW_RESET - m_fArrowAdd) <= MOVEARROW_FADEDIST)
+				if(!x && (ARROW_RESET - m_fArrowAdd) <= MOVEARROW_FADEINDIST)
 				{
 					fDrawAlpha = fDestAlpha;
-					fDrawAlpha *= 1.0 - (ARROW_RESET - m_fArrowAdd) / MOVEARROW_FADEDIST;
+					fDrawAlpha *= 1.0 - (ARROW_RESET - m_fArrowAdd) / MOVEARROW_FADEINDIST;
 					fDrawAlpha = min(fDrawAlpha, 1.0f);
 					fDrawAlpha = max(fDrawAlpha, 0.0f);
 					glColor4f(1,1,1,fDrawAlpha);

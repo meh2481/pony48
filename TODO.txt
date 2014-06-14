@@ -1,18 +1,11 @@
 -OpenCV camera madness
 -FMOD mic madness
--Nukes?
--Bop-It?
--Support mouse
+-Bop-It gameover sound
 -Joystick list in case multiple controllers connected - most recent one used for board-tilt-testing
--Support as many mouse buttons as SDL2 can handle
 -Touchscreen support?
 -Rebindable controller - rebind axes, buttons, etc
 -Lua-controlled menu thing - ask fgen how he did it
 -Menu screens shouldn't just appear; make them more flashy
--Movement with mouse:
-	-foreground arrows as mouse is moved to say which direction the tiles will shift
-	-Alpha of foreground arrows depends on position: alpha of 0 near the center, near 1 near the edge
-	-arrows move + wrap
 -Only rumble the controller if you're currently using the controller
 
 Linux Xbox controller rumble:
