@@ -95,12 +95,13 @@ void Pony48Engine::pieceSlid(int startx, int starty, int endx, int endy)
 #define PIECE_BOUNCE_SPEED	4.5
 #define PIECE_BOUNCE_SIZE TILE_WIDTH+TILE_SPACING*2.2
 #define ARROW_SPEED 	3.5
+#define ARROW_RESET		(TILE_WIDTH + TILE_SPACING)
 
 void Pony48Engine::updateBoard(float32 dt)
 {
 	m_fArrowAdd += dt * ARROW_SPEED;
-	if(m_fArrowAdd >= TILE_WIDTH + TILE_SPACING)
-		m_fArrowAdd -= TILE_WIDTH + TILE_SPACING;
+	if(m_fArrowAdd >= ARROW_RESET)
+		m_fArrowAdd -= ARROW_RESET;
 	//Check slide-and-join animations
 	for(list<TilePiece*>::iterator i = m_lSlideJoinAnimations.begin(); i != m_lSlideJoinAnimations.end();)
 	{
@@ -263,6 +264,7 @@ void Pony48Engine::clearBoardAnimations()
 #define JOINANIM_DRAWZ 	0.5
 #define TILE_DRAWZ		0.7
 #define MOVEARROW_DRAWZ	0.9
+#define MOVEARROW_FADEDIST	(TILE_WIDTH / 3.0f)
 void Pony48Engine::drawBoard()
 {
 	float fTotalWidth = BOARD_WIDTH * TILE_WIDTH + (BOARD_WIDTH + 1) * TILE_SPACING;
@@ -318,6 +320,7 @@ void Pony48Engine::drawBoard()
 	{
 		glPushMatrix();
 		Point ptMoveDir = worldPosFromCursor(getCursorPos());
+		//Rotate first to simplify logic. Hooray!
 		switch(getDirOfVec2(ptMoveDir))
 		{
 			case UP:
@@ -332,17 +335,33 @@ void Pony48Engine::drawBoard()
 				glRotatef(180, 0, 0, 1);
 				break;
 		}
-		glColor4f(1, 1, 1, min(abs(ptMoveDir.Length() / (getCameraView().height() / 2.0f)) - 0.4f, 0.4f));
+		//Determine the drawing alpha based on how far away from the center the mouse is
+		float32 fDestAlpha = min(abs(ptMoveDir.Length() / (getCameraView().height() / 2.0f)) - 0.4f, 0.4f);
+		//Draw 16 arrows pointing in the direction we'll move
 		for(int y = 0; y < BOARD_HEIGHT; y++)
 		{
 			for(int x = 0; x < BOARD_WIDTH; x++)
 			{
+				//Position to draw this arrow at
 				Point ptDrawPos(-fTotalWidth/2.0 + (TILE_SPACING + TILE_WIDTH) * x + TILE_WIDTH / 2.0 + TILE_SPACING + m_fArrowAdd,
 								fTotalHeight/2.0 - (TILE_SPACING + TILE_WIDTH) * y - TILE_HEIGHT / 2.0 - TILE_SPACING);
+				
+				//If this arrow is reaching the end of its lifespan, fade out
+				float32 fDrawAlpha = fDestAlpha;
+				if(m_fArrowAdd >= MOVEARROW_FADEDIST && x == BOARD_WIDTH - 1)
+					fDrawAlpha *= 1.0f - ((m_fArrowAdd - MOVEARROW_FADEDIST) / MOVEARROW_FADEDIST);
+				fDrawAlpha = min(fDrawAlpha, 1.0f);
+				fDrawAlpha = max(fDrawAlpha, 0.0f);
+				
+				//Now draw
+				glColor4f(1,1,1,fDrawAlpha);
 				glPushMatrix();
 				glTranslatef(ptDrawPos.x, ptDrawPos.y, MOVEARROW_DRAWZ);
 				m_imgMouseMoveArrow->render(Point(1,1));
 				glPopMatrix();
+				
+				//See if we should draw new arrow spawning
+				//if(!x && 
 			}
 		}
 		glPopMatrix();

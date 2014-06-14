@@ -295,7 +295,8 @@ void Pony48Engine::draw()
 		i->second->pos = worldPosFromCursor(getCursorPos());
 		if(i->first == "dir")
 		{
-			switch(getDirOfVec2(i->second->pos))
+			i->second->rot = -RAD2DEG * atan2(i->second->pos.x, i->second->pos.y) + 90;
+			/*switch(getDirOfVec2(i->second->pos))
 			{
 				case UP:
 					i->second->rot = 90;
@@ -312,7 +313,7 @@ void Pony48Engine::draw()
 				case RIGHT:
 					i->second->rot = 1;
 					break;
-			}
+			}*/
 		}
 	}
 	glColor4f(1,1,1,1);
