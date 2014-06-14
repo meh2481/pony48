@@ -89,6 +89,8 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_ptWebcamDrawPos.Set(-6.2,5);
 	m_bDrawFacecam = false;
 	m_bSavedFacepic = false;
+	
+	m_fArrowAdd = 0;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -292,7 +294,26 @@ void Pony48Engine::draw()
 	{
 		i->second->pos = worldPosFromCursor(getCursorPos());
 		if(i->first == "dir")
-			i->second->rot = RAD2DEG * atan2(i->second->pos.y, i->second->pos.x);
+		{
+			switch(getDirOfVec2(i->second->pos))
+			{
+				case UP:
+					i->second->rot = 90;
+					break;
+					
+				case DOWN:
+					i->second->rot = -90;
+					break;
+					
+				case LEFT:
+					i->second->rot = 180;
+					break;
+					
+				case RIGHT:
+					i->second->rot = 1;
+					break;
+			}
+		}
 	}
 	glColor4f(1,1,1,1);
 }
@@ -491,7 +512,9 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #ifdef DEBUG_INPUT
 			cout << "Mouse button " << (int)event.button.button << " pressed." << endl;
 #endif
-			if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT && m_iCurMode == PLAYING)
+			if(event.button.button == SDL_BUTTON_MIDDLE && m_iCurMode == PLAYING)
+				resetBoard();
+			else if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT && m_iCurMode == PLAYING)
 				move(getDirOfVec2(worldPosFromCursor(getCursorPos())));	//Nested functions much?
 			if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
 				changeMode(PLAYING);
@@ -979,7 +1002,7 @@ void Pony48Engine::handleKeys()
 	if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT && m_iCurMode == PLAYING)
 	{
 		Point ptMouse = worldPosFromCursor(getCursorPos());
-		ptMouse *= (float32)JOY_AXIS_MAX / (getCameraView().height()/2);
+		ptMouse *= (float32)JOY_AXIS_MAX / (getCameraView().height()*1.5);
 		x_move = min(max(-ptMouse.x, (float32)JOY_AXIS_MIN), (float32)JOY_AXIS_MAX);
 		y_move = min(max(ptMouse.y, (float32)JOY_AXIS_MIN), (float32)JOY_AXIS_MAX);
 	}

@@ -94,9 +94,13 @@ void Pony48Engine::pieceSlid(int startx, int starty, int endx, int endy)
 #define PIECE_APPEAR_SPEED	10.0
 #define PIECE_BOUNCE_SPEED	4.0
 #define PIECE_BOUNCE_SIZE TILE_WIDTH+TILE_SPACING*2.0
+#define ARROW_SPEED 	4
 
 void Pony48Engine::updateBoard(float32 dt)
 {
+	m_fArrowAdd += dt * ARROW_SPEED;
+	if(m_fArrowAdd >= TILE_WIDTH + TILE_SPACING)
+		m_fArrowAdd -= TILE_WIDTH + TILE_SPACING;
 	//Check slide-and-join animations
 	for(list<TilePiece*>::iterator i = m_lSlideJoinAnimations.begin(); i != m_lSlideJoinAnimations.end();)
 	{
@@ -310,11 +314,10 @@ void Pony48Engine::drawBoard()
 	}
 	
 	//Draw arrows for direction the mouse will move the board
-	if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT)
+	if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT && m_iCurMode == PLAYING)
 	{
 		glPushMatrix();
 		Point ptMoveDir = worldPosFromCursor(getCursorPos());
-		glTranslatef(0, 0, MOVEARROW_DRAWZ);
 		switch(getDirOfVec2(ptMoveDir))
 		{
 			case UP:
@@ -329,8 +332,19 @@ void Pony48Engine::drawBoard()
 				glRotatef(180, 0, 0, 1);
 				break;
 		}
-		glColor4f(1, 1, 1, min(abs(ptMoveDir.Length() / (getCameraView().height() / 2.0f)) - 0.4f, 0.4f));
-		m_imgMouseMoveArrow->render(Point(2,2));
+		glColor4f(1, 1, 1, min(abs(ptMoveDir.Length() / (getCameraView().height() / 2.0f)) - 0.4f, 0.5f));
+		for(int y = 0; y < BOARD_HEIGHT; y++)
+		{
+			for(int x = 0; x < BOARD_WIDTH; x++)
+			{
+				Point ptDrawPos(-fTotalWidth/2.0 + (TILE_SPACING + TILE_WIDTH) * x + TILE_WIDTH / 2.0 + TILE_SPACING + m_fArrowAdd,
+								fTotalHeight/2.0 - (TILE_SPACING + TILE_WIDTH) * y - TILE_HEIGHT / 2.0 - TILE_SPACING);
+				glPushMatrix();
+				glTranslatef(ptDrawPos.x, ptDrawPos.y, MOVEARROW_DRAWZ);
+				m_imgMouseMoveArrow->render(Point(1,1));
+				glPopMatrix();
+			}
+		}
 		glPopMatrix();
 	}
 }
