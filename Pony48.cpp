@@ -349,6 +349,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	
 	//Create sounds up front
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items
+	createSound("res/sfx/jointile.ogg", "jointile");
 }
 
 
