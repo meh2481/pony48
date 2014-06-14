@@ -140,6 +140,7 @@ void Pony48Engine::updateBoard(float32 dt)
 				{
 					addScore((*i)->value * 2);
 					playSound("jointile");
+					rumbleController(0.2, 0.1);
 					delete m_Board[(*i)->destx][(*i)->desty];
 					ostringstream oss;
 					oss << "res/tiles/" << min((*i)->value * 2, MAX_TILE_VALUE) << ".xml";	//"Duh, muffins" is highest possible tile
@@ -247,6 +248,7 @@ void Pony48Engine::clearBoardAnimations()
 			{
 				addScore((*i)->value * 2);
 				playSound("jointile");
+				rumbleController(0.2, 0.1);
 				delete m_Board[(*i)->destx][(*i)->desty];
 				ostringstream oss;
 				oss << "res/tiles/" << min((*i)->value * 2, MAX_TILE_VALUE) << ".xml";	//"Duh, muffins" is highest possible tile

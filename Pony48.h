@@ -194,6 +194,7 @@ public:
 	obj* objFromXML(string sXMLFilename, Point ptOffset, Point ptVel = Point(0,0));
 	Rect getCameraView();		//Return the rectangle, in world position z=0, that the camera can see 
 	void changeMode(gameMode gm);	//Change to the specified game mode
+	void rumbleController(float32 strength, float32 sec, bool priority = false);	//Rumble the controller, if certain conditions are met
 	
 	//color.cpp functions
 	void updateColors(float32 dt);

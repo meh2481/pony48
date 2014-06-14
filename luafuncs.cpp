@@ -35,11 +35,9 @@ public:
 		return NULL;
 	}
 	
-	static SDL_Haptic* getRumble()
+	static void rumble(float32 fAmt, float32 len)
 	{
-		if(g_pGlobalEngine->m_bJoyControl)
-			return g_pGlobalEngine->m_rumble;
-		return NULL;
+		g_pGlobalEngine->rumbleController(fAmt, len, true);
 	}
 	
 	static Color* getTileBgCol(uint32_t num)
@@ -134,15 +132,9 @@ luaFunc(settilecol)	//settilecol(int tile, float r, float g, float b, float a)
 
 luaFunc(rumblecontroller)	//rumblecontroller(float force, float sec) --force is range [0,1]
 {
-	SDL_Haptic* rumble = PonyLua::getRumble();
-	if(rumble != NULL)
-	{
-		float32 force = lua_tonumber(L, 1);
-		float32 sec = lua_tonumber(L, 2);
-		force = max(force, 0.0f);
-		force = min(force, 1.0f);
-		SDL_HapticRumblePlay(rumble, force, sec*1000);
-	}
+	float32 force = lua_tonumber(L, 1);
+	float32 sec = lua_tonumber(L, 2);
+	PonyLua::rumble(force, sec);
 }
 
 luaFunc(gettilebgcol)	//gettilebgcol(uint num)

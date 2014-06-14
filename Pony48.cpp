@@ -286,7 +286,10 @@ void Pony48Engine::draw()
 			glTranslatef(0, -1.5, 0);
 			glRotatef(m_gameoverTileRot, 0, 0, 1);
 			m_highestTile->seg->size = m_highestTile->bg->size = Point(4,4);
+			float32 fHighestTileAlpha = m_highestTile->bg->col.a;
+			m_highestTile->bg->col.a = 1.0f;	//Draw this at full opacity, even if in the actual game the color has changed
 			m_highestTile->bg->draw();
+			m_highestTile->bg->col.a = fHighestTileAlpha;
 			m_highestTile->seg->draw();
 			glPopMatrix();
 		}
@@ -1135,8 +1138,7 @@ void Pony48Engine::changeMode(gameMode gm)
 			m_gameoverTileVel = 30;
 			m_gameoverTileAccel = 16;
 			//Play gameover rumble if ded
-			if(m_rumble != NULL && m_bJoyControl)
-				SDL_HapticRumblePlay(m_rumble, 1.0, 800);
+			rumbleController(1.0, 0.8, true);
 			//Update final score counter
 			ostringstream oss;
 			HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("finalscore");
@@ -1154,7 +1156,18 @@ void Pony48Engine::changeMode(gameMode gm)
 	}
 }
 
-
+void Pony48Engine::rumbleController(float32 strength, float32 sec, bool priority)
+{
+	static float32 fLastRumble = 0.0f;
+	if(priority)
+		fLastRumble = getSeconds() + sec;
+	else if(getSeconds() < fLastRumble)
+		return;
+	strength = max(strength, 0.0f);
+	strength = min(strength, 1.0f);
+	if(m_rumble != NULL && m_bJoyControl)
+		SDL_HapticRumblePlay(m_rumble, strength, sec*1000);
+}
 
 
 
