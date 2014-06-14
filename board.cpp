@@ -90,11 +90,11 @@ void Pony48Engine::pieceSlid(int startx, int starty, int endx, int endy)
 	}
 }
 
-#define PIECE_MOVE_SPEED 100.0
-#define PIECE_APPEAR_SPEED	10.0
-#define PIECE_BOUNCE_SPEED	4.0
-#define PIECE_BOUNCE_SIZE TILE_WIDTH+TILE_SPACING*2.0
-#define ARROW_SPEED 	4
+#define PIECE_MOVE_SPEED 50.0
+#define PIECE_APPEAR_SPEED	8.0
+#define PIECE_BOUNCE_SPEED	4.5
+#define PIECE_BOUNCE_SIZE TILE_WIDTH+TILE_SPACING*2.2
+#define ARROW_SPEED 	3.5
 
 void Pony48Engine::updateBoard(float32 dt)
 {
@@ -332,7 +332,7 @@ void Pony48Engine::drawBoard()
 				glRotatef(180, 0, 0, 1);
 				break;
 		}
-		glColor4f(1, 1, 1, min(abs(ptMoveDir.Length() / (getCameraView().height() / 2.0f)) - 0.4f, 0.5f));
+		glColor4f(1, 1, 1, min(abs(ptMoveDir.Length() / (getCameraView().height() / 2.0f)) - 0.4f, 0.4f));
 		for(int y = 0; y < BOARD_HEIGHT; y++)
 		{
 			for(int x = 0; x < BOARD_WIDTH; x++)

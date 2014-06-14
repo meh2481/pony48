@@ -341,7 +341,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	}
 	resetBoard();
 	
-	m_imgMouseMoveArrow = getImage("res/movearrow.png");
+	m_imgMouseMoveArrow = getImage("res/movearrow2.png");
 	
 	//Create sounds up front
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items

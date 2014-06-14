@@ -13,6 +13,7 @@
 	-foreground arrows as mouse is moved to say which direction the tiles will shift
 	-Alpha of foreground arrows depends on position: alpha of 0 near the center, near 1 near the edge
 	-arrows move + wrap
+-Only rumble the controller if you're currently using the controller
 
 Linux Xbox controller rumble:
 sudo rmmod xpad
