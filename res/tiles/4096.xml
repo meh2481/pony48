@@ -1,3 +1,6 @@
 <tile value="4096" bgcolor="212,193,125"> 
 	<img path="res/tiles/derpy/winning.png" />
+	<sound>
+		<fx path="res/vox/vinyl_ermahgerd.ogg" name="vinyl_ermahgerd" />
+	</sound>
 </tile>

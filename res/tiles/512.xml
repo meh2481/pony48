@@ -3,4 +3,7 @@
 	<img path="res/tiles/twi/2.png" />
 	<img path="res/tiles/twi/3.png" />
 	<img path="res/tiles/twi/4.png" />
+	<sound type="newhigh">
+		<fx path="res/vox/vinyl_yeah2.ogg" name="vinyl_yeah2" />
+	</sound>
 </tile>

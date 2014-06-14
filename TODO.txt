@@ -7,6 +7,8 @@
 -Lua-controlled menu thing - ask fgen how he did it
 -Menu screens shouldn't just appear; make them more flashy
 -Warning before resetting the game if press MMB or Y
+-SFX
+-VOX
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

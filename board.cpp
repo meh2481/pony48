@@ -424,6 +424,36 @@ TilePiece* Pony48Engine::loadTile(string sFilename)
 			vImages.push_back(getImage(cPath));
 	}
 	
+	for(XMLElement* sound = root->FirstChildElement("sound"); sound != NULL; sound = sound->NextSiblingElement("sound"))
+	{
+		bool bPlaySoundImmediately = true;
+		const char* cType = sound->Attribute("type");
+		if(cType)
+		{
+			string sType = cType;
+			if(sType == "newhigh")
+				//I have no idea how this happens, but apparently the highest tile can be this before it even returns. Wat
+				bPlaySoundImmediately = ((m_highestTile == NULL) || (m_highestTile->value < ret->value) || (m_highestTile == ret));
+		}
+		
+		//Save all sfx if there's multiple
+		vector<string> vSounds;
+		
+		for(XMLElement* fx = sound->FirstChildElement("fx"); fx != NULL; fx = fx->NextSiblingElement("fx"))
+		{
+			const char* cPath = fx->Attribute("path");
+			const char* cName = fx->Attribute("name");
+			if(cPath && cName)
+			{
+				createSound(cPath, cName);
+				vSounds.push_back(cName);
+			}
+		}
+		//Play one of these randomly
+		if(vSounds.size() && bPlaySoundImmediately)
+			playSound(vSounds[randInt(0, vSounds.size() - 1)], m_fSoundVolume);
+	}
+	
 	physSegment* tmpseg = new physSegment();
 	int which = randInt(0, vImages.size()-1);
 	tmpseg->img = vImages[which];

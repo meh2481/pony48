@@ -21,6 +21,8 @@
 #define RMB	0
 #define MMB 2
 
+const float soundFreqDefault = 44100.0;
+
 typedef struct
 {
 	string sSwitch, sValue;
@@ -129,9 +131,9 @@ public:
 	
 	//Sound functions
 	void createSound(string sPath, string sName);   //Creates a sound from this name and file path
-	virtual void playSound(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);	 //Play a sound
+	virtual void playSound(string sName, float32 volume = 1.0f, float32 pan = 0.0f, float32 pitch = 1.0f);	 //Play a sound
 	FMOD::Channel* getChannel(string sSoundName);	//Return the channel of this sound
-	void playMusic(string sName, int volume = 100, int pan = 0, float32 pitch = 1.0);	 //Play looping music, or resume paused music
+	void playMusic(string sName, float32 volume = 1.0f, float32 pan = 0.0f, float32 pitch = 1.0f);	 //Play looping music, or resume paused music
 	void musicLoop(float32 startSec, float32 endSec);									//Set the starting and ending loop points for the currently-playing song
 	void pauseMusic();																	 //Pause music that's currently playing
 	void resumeMusic();																		//Resume music that was paused

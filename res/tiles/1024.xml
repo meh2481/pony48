@@ -3,4 +3,7 @@
 	<img path="res/tiles/luna/2.png" />
 	<img path="res/tiles/luna/3.png" />
 	<img path="res/tiles/luna/4.png" />
+	<sound type="newhigh">
+		<fx path="res/vox/vinyl_yeah3.ogg" name="vinyl_yeah3" />
+	</sound>
 </tile>

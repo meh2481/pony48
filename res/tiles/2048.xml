@@ -1,3 +1,6 @@
 <tile value="2048" bgcolor="228,192,231"> 
 	<img path="res/tiles/celestia/1.png" />
+	<sound type="newhigh">
+		<fx path="res/vox/vinyl_wutup.ogg" name="vinyl_wutup" />
+	</sound>
 </tile>

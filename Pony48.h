@@ -28,7 +28,7 @@
 #define GAMEOVER_KEY_DELAY 0.5
 #define GAMEOVER_FREEZE_CAM_TIME	0.7f
 
-#define MAX_TILE_VALUE	4098	//Above this, the game would crash, so cap it here
+#define MAX_TILE_VALUE	4096	//Above this, the game would crash, so cap it here
 
 //Defined by SDL
 #define JOY_AXIS_MIN	-32768
@@ -36,8 +36,6 @@
 
 #define JOY_MINMOVE_TRIP	3000
 #define MOUSE_MOVE_TRIP_AMT	20
-
-const float soundFreqDefault = 44100.0;
 
 #define INTRO_FADEIN_TIME	2.0	//How long the intro fadein takes
 #define INTRO_FADEIN_DELAY	2.0	//How long before the intro fadein starts
@@ -137,6 +135,8 @@ private:
 	bool m_bJoyControl;		//If we're controlling the game with a gamepad or not
 	Image* m_imgMouseMoveArrow;	//Image to be shown overtop of the board when the player is moving via mouse
 	float32 m_fArrowAdd;	//Amount to add for directional arrows
+	float32 m_fMusicVolume;
+	float32 m_fSoundVolume;
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;

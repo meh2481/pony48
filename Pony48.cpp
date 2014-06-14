@@ -92,6 +92,8 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	
 	m_fArrowAdd = 0;
 	m_bJoyControl = false;
+	m_fMusicVolume = 0.5f;
+	m_fSoundVolume = 1.0f;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -900,6 +902,8 @@ bool Pony48Engine::loadConfig(string sFilename)
 	if(pony48 != NULL)
 	{
 		pony48->QueryUnsignedAttribute("highscore", &m_iHighScore);
+		pony48->QueryFloatAttribute("musicvol", &m_fMusicVolume);
+		pony48->QueryFloatAttribute("soundvol", &m_fSoundVolume);
 	}
 	
 	XMLElement* joystick = root->FirstChildElement("joystick");
@@ -956,6 +960,8 @@ void Pony48Engine::saveConfig(string sFilename)
 	
 	XMLElement* pony48 = doc->NewElement("pony48");
 	pony48->SetAttribute("highscore", m_iHighScore);
+	pony48->SetAttribute("musicvol", m_fMusicVolume);
+	pony48->SetAttribute("soundvol", m_fSoundVolume);
 	root->InsertEndChild(pony48);
 	
 	XMLElement* joystick = doc->NewElement("joystick");

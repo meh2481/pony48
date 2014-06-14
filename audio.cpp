@@ -93,7 +93,7 @@ void Pony48Engine::loadSongXML(string sFilename)
 			{
 				const char* cPath = elem->Attribute("path");
 				if(cPath != NULL && strlen(cPath))
-					playMusic(cPath);
+					playMusic(cPath, m_fMusicVolume);
 			}
 			else if(name == "loop")
 			{

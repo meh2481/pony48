@@ -314,7 +314,8 @@ bool Engine::hasMic()
 
 void Engine::createSound(string sPath, string sName)
 {
-	if(m_bSoundDied) return;
+	if(m_bSoundDied || m_sounds.count(sName)) return;	//Don't duplicate sounds or attempt to play sounds if we can't
+	errlog << "Load sound " << sPath << endl;
 	FMOD::Sound* handle;
 #ifdef DEBUG_REVSOUND
 	if(m_audioSystem->createSound(sPath.c_str(), FMOD_CREATESAMPLE, 0, &handle) == FMOD_OK)
@@ -324,13 +325,16 @@ void Engine::createSound(string sPath, string sName)
 		m_sounds[sName] = handle;
 }
 
-void Engine::playSound(string sName, int volume, int pan, float32 pitch)
+void Engine::playSound(string sName, float32 volume, float32 pan, float32 pitch)
 {
-	if(m_bSoundDied) return;
+	if(m_bSoundDied || !m_sounds.count(sName)) return;
+	errlog << "Playing sound " << sName << endl;
 	FMOD::Channel* channel;
 	m_audioSystem->playSound(FMOD_CHANNEL_FREE, m_sounds[sName], false, &channel);
 	m_channels[sName] = channel;
-	//TODO: Volume, pan, pitch
+	m_channels[sName]->setVolume(volume);
+	m_channels[sName]->setPan(pan);
+	m_channels[sName]->setFrequency(pitch * soundFreqDefault);
 }
 
 FMOD::Channel* Engine::getChannel(string sSoundName)
@@ -374,7 +378,7 @@ void Engine::seekMusic(float32 fTime)
 	m_channels["music"]->setPosition(fTime * 1000.0, FMOD_TIMEUNIT_MS);
 }
 
-void Engine::playMusic(string sName, int volume, int pan, float32 pitch)
+void Engine::playMusic(string sName, float32 volume, float32 pan, float32 pitch)
 {
 	if(m_bSoundDied) return;
 	if(!m_sounds.count("music"))

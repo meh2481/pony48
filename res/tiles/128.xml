@@ -3,4 +3,7 @@
 	<img path="res/tiles/rarity/2.png" />
 	<img path="res/tiles/rarity/3.png" />
 	<img path="res/tiles/rarity/4.png" />
+	<sound type="newhigh">
+		<fx path="res/vox/vinyl_awwyeah.ogg" name="vinyl_awwyeah" />
+	</sound>
 </tile>
