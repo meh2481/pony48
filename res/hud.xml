@@ -29,7 +29,7 @@
 		<textbox name="restart" font="cmr" text="Press any key to play again" pos="0,-5" pt="1.0" col="255,255,255,255" />
 	</scene>
 	<scene name="intro">
-		<textbox name="plugitallin" font="cmr" text="Plug in all the things!" pos="0,4" pt="1.5" col="255,255,255,255" />
+		<textbox name="plugitallin" font="cmr" text="PLUG_MSG_STR" pos="0,4" pt="1.25" col="255,255,255,255" />
 		<textbox name="retest" font="cmr" text="(Press Spacebar to re-test, any other button to continue as-is)" pos="0,-4.25" pt="0.6" col="255,255,255,255" />
 		<bgimage name="phones" img="phones" pos="-1.5,1.5" size="2,2" />
 		<bgimage name="mic" img="mic" pos="1.5,1.55" size="2,2" />

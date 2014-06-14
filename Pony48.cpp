@@ -44,6 +44,45 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_hud->create("res/hud.xml");
 	m_hud->setScene("intro");
 	
+	HUDTextbox* txtbox = (HUDTextbox*)m_hud->getChild("plugitallin");
+	if(txtbox)
+	{
+		switch(rand() % 8)
+		{
+			case 0:
+				txtbox->setText("Plug in all the things!");
+				break;
+				
+			case 1:
+				txtbox->setText("These make your life better!");
+				break;
+				
+			case 2:
+				txtbox->setText("You\'ll want all these!");
+				break;
+				
+			case 3:
+				txtbox->setText("Plz plug these in dood!");
+				break;
+				
+			case 4:
+				txtbox->setText("Your life is incomplete without these!");
+				break;
+				
+			case 5:
+				txtbox->setText("It\'s dangerous in there without these!");
+				break;
+				
+			case 6:
+				txtbox->setText("All the cool kids plug in these!");
+				break;
+				
+			case 7:
+				txtbox->setText("If you haz these, insert cord!");
+				break;
+		}
+	}
+	
 	setTimeScale(DEFAULT_TIMESCALE);
 	
 	m_joy = NULL;
