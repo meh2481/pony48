@@ -37,7 +37,9 @@ public:
 	
 	static SDL_Haptic* getRumble()
 	{
-		return g_pGlobalEngine->m_rumble;
+		if(g_pGlobalEngine->m_bJoyControl)
+			return g_pGlobalEngine->m_rumble;
+		return NULL;
 	}
 	
 	static Color* getTileBgCol(uint32_t num)

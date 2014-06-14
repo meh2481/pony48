@@ -134,6 +134,7 @@ private:
 	int m_iCurCamFrameSkip;
 	SDL_JoystickID m_lastJoyHatMoved;	//Keep track of which joystick hat we're moving
 	int m_iMouseControl;	//If the game is controlled via mouse or not
+	bool m_bJoyControl;		//If we're controlling the game with a gamepad or not
 	Image* m_imgMouseMoveArrow;	//Image to be shown overtop of the board when the player is moving via mouse
 	float32 m_fArrowAdd;	//Amount to add for directional arrows
 	

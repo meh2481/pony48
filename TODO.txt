@@ -6,7 +6,7 @@
 -Rebindable controller - rebind axes, buttons, etc
 -Lua-controlled menu thing - ask fgen how he did it
 -Menu screens shouldn't just appear; make them more flashy
--Only rumble the controller if you're currently using the controller
+-Warning before resetting the game if press MMB or Y
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

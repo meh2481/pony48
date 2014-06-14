@@ -91,6 +91,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_bSavedFacepic = false;
 	
 	m_fArrowAdd = 0;
+	m_bJoyControl = false;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -361,6 +362,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 		//Key pressed
 		case SDL_KEYDOWN:
 		{
+			m_bJoyControl = false;
 			if(m_iCurMode == GAMEOVER)
 			{
 				if(!(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE
@@ -521,6 +523,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				changeMode(PLAYING);
 			m_iMouseControl = MOUSE_MOVE_TRIP_AMT;
 			showCursor();
+			m_bJoyControl = false;
 			break;
 			
 		case SDL_MOUSEWHEEL:
@@ -555,7 +558,10 @@ void Pony48Engine::handleEvent(SDL_Event event)
 
 		case SDL_MOUSEMOTION:
 			if(++m_iMouseControl >= MOUSE_MOVE_TRIP_AMT)
+			{
 				showCursor();
+				m_bJoyControl = false;
+			}
 			break;
 		
 		case SDL_WINDOWEVENT:
@@ -583,6 +589,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 
 			if(m_joy) 
 			{
+				m_bJoyControl = true;
 				errlog << "Opened Joystick " << event.jdevice.which << endl;
 				errlog << "Name: " << SDL_JoystickNameForIndex(event.jdevice.which) << endl;
 				errlog << "Number of Axes: " << SDL_JoystickNumAxes(m_joy) << endl;
@@ -624,6 +631,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #endif
 			m_iMouseControl = 0;
 			hideCursor();
+			m_bJoyControl = true;
 			if(event.jbutton.button == JOY_BUTTON_BACK)
 				quit();
 			else if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
@@ -643,6 +651,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			{
 				m_iMouseControl = 0;
 				hideCursor();
+				m_bJoyControl = true;
 #ifdef DEBUG_INPUT
 				cout << "Joystick " << (int)event.jaxis.which << " moved axis " << (int)event.jaxis.axis << " to " << event.jaxis.value << endl;
 #endif
@@ -757,6 +766,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				{
 					m_iMouseControl = 0;
 					hideCursor();
+					m_bJoyControl = true;
 				}
 			}
 			break;
@@ -1118,7 +1128,7 @@ void Pony48Engine::changeMode(gameMode gm)
 			m_gameoverTileVel = 30;
 			m_gameoverTileAccel = 16;
 			//Play gameover rumble if ded
-			if(m_rumble != NULL)
+			if(m_rumble != NULL && m_bJoyControl)
 				SDL_HapticRumblePlay(m_rumble, 1.0, 800);
 			//Update final score counter
 			ostringstream oss;
