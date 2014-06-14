@@ -264,7 +264,7 @@ void Pony48Engine::clearBoardAnimations()
 #define JOINANIM_DRAWZ 	0.5
 #define TILE_DRAWZ		0.7
 #define MOVEARROW_DRAWZ	0.9
-#define MOVEARROW_FADEDIST	(TILE_WIDTH / 3.0f)
+#define MOVEARROW_FADEDIST	(TILE_WIDTH * 3.0f / 4.0f)
 void Pony48Engine::drawBoard()
 {
 	float fTotalWidth = BOARD_WIDTH * TILE_WIDTH + (BOARD_WIDTH + 1) * TILE_SPACING;
@@ -361,7 +361,18 @@ void Pony48Engine::drawBoard()
 				glPopMatrix();
 				
 				//See if we should draw new arrow spawning
-				//if(!x && 
+				if(!x && (ARROW_RESET - m_fArrowAdd) <= MOVEARROW_FADEDIST)
+				{
+					fDrawAlpha = fDestAlpha;
+					fDrawAlpha *= 1.0 - (ARROW_RESET - m_fArrowAdd) / MOVEARROW_FADEDIST;
+					fDrawAlpha = min(fDrawAlpha, 1.0f);
+					fDrawAlpha = max(fDrawAlpha, 0.0f);
+					glColor4f(1,1,1,fDrawAlpha);
+					glPushMatrix();
+					glTranslatef(ptDrawPos.x - (TILE_SPACING + TILE_WIDTH), ptDrawPos.y, MOVEARROW_DRAWZ);
+					m_imgMouseMoveArrow->render(Point(1,1));
+					glPopMatrix();
+				}
 			}
 		}
 		glPopMatrix();
