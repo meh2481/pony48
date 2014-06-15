@@ -73,6 +73,8 @@ void Pony48Engine::resetBoard()
 	}
 	m_iScore = 0;	//Reset score also
 	m_highestTile = NULL;
+	m_fLastMovedSec = getSeconds();
+	m_bHasBoredVox = false;
 }
 
 //Update slide-and-join animations if the to-join-to piece slid
@@ -548,6 +550,8 @@ bool Pony48Engine::movePossible(direction dir)
 
 void Pony48Engine::move(direction dir)
 {
+	m_fLastMovedSec = getSeconds();
+	m_bHasBoredVox = false;
 	clearBoardAnimations();	//Wipe out any movement animations that are still playing
 	bool moved = false;
 	while(slide(dir))	//Slide as far as we can

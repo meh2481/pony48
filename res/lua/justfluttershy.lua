@@ -13,6 +13,10 @@ local function jf_init()
 	lasttime = -0.001
 	mid2humtime = 0.7258
 	stuttering = false
+	showparticles("bgrdu", true)
+	showparticles("bgrdd", true)
+	showparticles("bgrdl", true)
+	showparticles("bgrdr", true)
 end
 setglobal("jf_init", jf_init)
 
@@ -20,6 +24,10 @@ local function start(first)
 	if first == true then
 		showparticles("bgflash", false)
 		pinwheelspeed(40)
+		fireparticles("bgrdu", false)
+		fireparticles("bgrdd", false)
+		fireparticles("bgrdl", false)
+		fireparticles("bgrdr", false)
 	end
 end
 
@@ -121,6 +129,10 @@ local function main(first)
 		pinwheelspeed(240)
 		showparticles("bgflash", true)
 		fireparticles("bgflash", true)
+		fireparticles("bgrdu", true)
+		fireparticles("bgrdd", true)
+		fireparticles("bgrdl", true)
+		fireparticles("bgrdr", true)
 	end
 	if stuttering == true then	--Camera can be panned with a secondary gamepad stick, so deal with that possibility
 		setcameraxy(0,0)	--Cause this is called before stutter, it all works out

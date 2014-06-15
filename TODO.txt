@@ -9,6 +9,8 @@
 -Warning before resetting the game if press MMB or Y
 -SFX
 -VOX
+-Make tiles appear slower/slide faster so that they don't appear while another tile is sliding over that location
+-Make bored sfx only play if game hasn't been minimized/in background
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

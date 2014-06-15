@@ -40,6 +40,8 @@
 #define INTRO_FADEIN_TIME	2.0	//How long the intro fadein takes
 #define INTRO_FADEIN_DELAY	2.0	//How long before the intro fadein starts
 
+#define BORED_VOX_TIME		120.0	//2mins until bored sfx
+
 class ColorPhase
 {
 public:
@@ -137,6 +139,8 @@ private:
 	float32 m_fArrowAdd;	//Amount to add for directional arrows
 	float32 m_fMusicVolume;
 	float32 m_fSoundVolume;
+	float32 m_fLastMovedSec;
+	bool m_bHasBoredVox;
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;

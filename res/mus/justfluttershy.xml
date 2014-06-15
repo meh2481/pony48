@@ -3,6 +3,10 @@
 	<loop start="23.259" end="222.582"/>
 	<particles effect="res/particles/bgponies.xml" name="bgponies" autofire="false"/>
 	<particles effect="res/particles/bgflash.xml" name="bgflash" autofire="false"/>
+	<particles effect="res/particles/rdflyu.xml" name="bgrdu" autofire="false"/>
+	<particles effect="res/particles/rdflyd.xml" name="bgrdd" autofire="false"/>
+	<particles effect="res/particles/rdflyl.xml" name="bgrdl" autofire="false"/>
+	<particles effect="res/particles/rdflyr.xml" name="bgrdr" autofire="false"/>
 	<background type="pinwheel" speed="50">
 		<spoke col="252,186,100,200"/>
 		<spoke col="246,183,210,200"/>

@@ -129,10 +129,13 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_bDrawFacecam = false;
 	m_bSavedFacepic = false;
 	
+	//Other stuff!
 	m_fArrowAdd = 0;
 	m_bJoyControl = false;
 	m_fMusicVolume = 0.5f;
 	m_fSoundVolume = 1.0f;
+	m_bHasBoredVox = false;
+	m_fLastMovedSec = 0.0f;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -162,6 +165,11 @@ void Pony48Engine::frame(float32 dt)
 	switch(m_iCurMode)
 	{
 		case PLAYING:
+			if(getSeconds() - m_fLastMovedSec > BORED_VOX_TIME && !m_bHasBoredVox)
+			{
+				m_bHasBoredVox = true;
+				playSound("nowhacking_theyreponies");
+			}
 		case GAMEOVER:
 			m_gameoverTileRot += m_gameoverTileVel * dt;
 			m_gameoverTileVel += ((m_gameoverTileRot > 0)?(-m_gameoverTileAccel):(m_gameoverTileAccel)) * dt;
@@ -392,6 +400,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	//Create sounds up front
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items
 	createSound("res/sfx/jointile.ogg", "jointile");
+	createSound("res/vox/nowhacking_theyreponies.ogg", "nowhacking_theyreponies");
 }
 
 
