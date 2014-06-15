@@ -11,6 +11,7 @@
 -VOX
 -Make tiles appear slower/slide faster so that they don't appear while another tile is sliding over that location
 -Make bored sfx only play if game hasn't been minimized/in background
+-Test and see if 8192x256 image even works with lower-end lappy gfx card
 
 Linux Xbox controller rumble:
 sudo rmmod xpad
