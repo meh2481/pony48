@@ -1,6 +1,6 @@
-<particlesystem emitfrom="-64,6,-64,-6" fireonstart="true" blend="normal" rate="1.23" max="150">
+<particlesystem emitfrom="-64,6,-64,-6" fireonstart="true" blend="normal" rate="3.5" max="150" velrotate="true">
 	<img path="res/particles/rd.png"/>
-	<emit angle="0" var="0" />
+	<emit angle="0" var="45" />
 	<size start="32,1" end="32,1" var="0" />
 	<speed value="100" var="30" />
 	<life value="10" var="0" />

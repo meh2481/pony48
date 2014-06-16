@@ -1,7 +1,7 @@
-<particlesystem emitfrom="-15,38,15,38" fireonstart="true" blend="normal" rate="1.21" max="150">
+<particlesystem emitfrom="-15,38,15,38" fireonstart="true" blend="normal" rate="3.7" max="150" velrotate="true">
 	<img path="res/particles/rd.png"/>
-	<emit angle="-90"/>
-	<size start="-32,1" end="-32,1"/>
+	<emit angle="-90" var="45"/>
+	<size start="32,1" end="32,1"/>
 	<speed value="100" var="30" />
 	<life value="10"/>
 	<rotstart value="90"/>

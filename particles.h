@@ -90,6 +90,7 @@ public:
 	float32 			emissionAngleVar;	//Variation in emission angle
 	bool				firing;				//If we're creating new particles or not
 	bool				show;				//If this should draw or not
+	bool				velRotate;			//If these particles should rotate according to their velocity
 	
 	void update(float32 dt);
 	void draw();

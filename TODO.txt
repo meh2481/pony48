@@ -4,14 +4,12 @@
 -Joystick list in case multiple controllers connected - most recent one used for board-tilt-testing
 -Touchscreen support?
 -Rebindable controller - rebind axes, buttons, etc
--Lua-controlled menu thing - ask fgen how he did it
+-Lua-controlled menu thing
 -Menu screens shouldn't just appear; make them more flashy
 -Warning before resetting the game if press MMB or Y
 -SFX
 -VOX
--Make tiles appear slower/slide faster so that they don't appear while another tile is sliding over that location
--Make bored sfx only play if game hasn't been minimized/in background
--Test and see if 8192x256 image even works with lower-end lappy gfx card
+-Test and see if 2048x64 image even works with lower-end lappy gfx card
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

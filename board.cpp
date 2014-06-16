@@ -92,7 +92,7 @@ void Pony48Engine::pieceSlid(int startx, int starty, int endx, int endy)
 	}
 }
 
-#define PIECE_MOVE_SPEED 50.0
+#define PIECE_MOVE_SPEED 60.0
 #define PIECE_APPEAR_SPEED	8.0
 #define PIECE_BOUNCE_SPEED	4.5
 #define PIECE_BOUNCE_SIZE TILE_WIDTH+TILE_SPACING*2.2

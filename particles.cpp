@@ -220,6 +220,7 @@ void ParticleSystem::_initValues()
 	emissionAngleVar = 0;
 	firing = true;
 	show = true;
+	velRotate = false;
 }
 
 void ParticleSystem::update(float32 dt)
@@ -327,7 +328,10 @@ void ParticleSystem::draw()
 		glPushMatrix();
 		glColor4f(drawcol.r, drawcol.g, drawcol.b, drawcol.a);
 		glTranslatef(m_pos[i].x, m_pos[i].y, 0);
-		glRotatef(m_rot[i], 0, 0, 1);
+		if(!velRotate)
+			glRotatef(m_rot[i], 0, 0, 1);
+		else
+			glRotatef(RAD2DEG*atan2(m_vel[i].y, m_vel[i].x), 0, 0, 1);
 		img->render(drawsz, m_imgRect[i]);
 		glPopMatrix();
 	}
@@ -404,6 +408,7 @@ void ParticleSystem::fromXML(string sXMLFilename)
 	
 	root->QueryUnsignedAttribute("max", &max);
 	root->QueryFloatAttribute("rate", &rate);
+	root->QueryBoolAttribute("velrotate", &velRotate);
 	
 	for(XMLElement* elem = root->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
 	{

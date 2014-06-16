@@ -395,7 +395,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	}
 	resetBoard();
 	
-	m_imgMouseMoveArrow = getImage("res/movearrow2.png");
+	m_imgMouseMoveArrow = getImage("res/movearrow.png");
 	
 	//Create sounds up front
 	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items
@@ -835,6 +835,7 @@ void Pony48Engine::pause()
 void Pony48Engine::resume()
 {
 	resumeMusic();
+	m_fLastMovedSec = getSeconds();	//don't play bored vox if we've minimized or been in bg
 }
 
 Rect Pony48Engine::getCameraView()
