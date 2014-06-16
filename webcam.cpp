@@ -35,7 +35,7 @@ void Webcam::draw(float32 height, Point ptCenter)
 		float32 width = height * ((float32)m_iWidth / (float32)m_iHeight);
 		width /= 2.0;
 		height /= 2.0;
-		
+
 		const GLfloat vertexData[] =
 		{
 			ptCenter.x - width, ptCenter.y + height, // upper left
@@ -44,7 +44,7 @@ void Webcam::draw(float32 height, Point ptCenter)
 			ptCenter.x + width, ptCenter.y - height, // lower right
 		};
 		
-		float left, right;
+		float left, right, top, bot;
 		if(mirror)
 		{
 			left = 1;
@@ -56,12 +56,20 @@ void Webcam::draw(float32 height, Point ptCenter)
 			right = 1;
 		}
 		
+#ifdef USE_VIDEOINPUT
+		top = 1;
+		bot = 0;
+#else
+		top = 0;
+		bot = 1;
+#endif
+		
 		const GLfloat texCoords[] =
 		{
-			left, 0, // upper left
-			right, 0, // upper right
-			left, 1, // lower left
-			right, 1, // lower right
+			left, top, // upper left
+			right, top, // upper right
+			left, bot, // lower left
+			right, bot, // lower right
 		};
 		glVertexPointer(2, GL_FLOAT, 0, &vertexData);
 		glTexCoordPointer(2, GL_FLOAT, 0, &texCoords);
@@ -78,8 +86,8 @@ void Webcam::getNewFrame()
 	if(VI.isFrameNew(m_device))
 	{
 		VI.getPixels(m_device, m_curFrame, false, false);
-		m_iHeight = VI.getWidth(m_device);
-		m_iWidth = VI.getHeight(m_device);
+		m_iHeight = VI.getHeight(m_device);
+		m_iWidth = VI.getWidth(m_device);
 		if(m_iHeight > 0 && m_iWidth > 0)
 		{
 			//Create OpenGL texture out of this data
@@ -221,6 +229,9 @@ bool Webcam::saveFrame(string sFilename, bool bMirror)
 	if(!bmp) return false;
 	if(bMirror)
 		FreeImage_FlipHorizontal(bmp);
+#ifdef USE_VIDEOINPUT
+	FreeImage_FlipVertical(bmp);
+#endif
 	bool bRet = FreeImage_Save(FIF_JPEG, bmp, sFilename.c_str());
 	FreeImage_Unload(bmp);
 	return bRet;
