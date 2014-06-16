@@ -139,6 +139,7 @@ private:
 	float32 m_fArrowAdd;	//Amount to add for directional arrows
 	float32 m_fMusicVolume;
 	float32 m_fSoundVolume;
+	float32 m_fVoxVolume;
 	float32 m_fLastMovedSec;
 	bool m_bHasBoredVox;
 	

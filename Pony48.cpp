@@ -134,6 +134,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_bJoyControl = false;
 	m_fMusicVolume = 0.5f;
 	m_fSoundVolume = 1.0f;
+	m_fVoxVolume = 1.0f;
 	m_bHasBoredVox = false;
 	m_fLastMovedSec = 0.0f;
 }
@@ -168,7 +169,7 @@ void Pony48Engine::frame(float32 dt)
 			if(getSeconds() - m_fLastMovedSec > BORED_VOX_TIME && !m_bHasBoredVox)
 			{
 				m_bHasBoredVox = true;
-				playSound("nowhacking_theyreponies");
+				playSound("nowhacking_theyreponies", m_fVoxVolume);
 			}
 		case GAMEOVER:
 			m_gameoverTileRot += m_gameoverTileVel * dt;
@@ -957,6 +958,7 @@ bool Pony48Engine::loadConfig(string sFilename)
 		pony48->QueryUnsignedAttribute("highscore", &m_iHighScore);
 		pony48->QueryFloatAttribute("musicvol", &m_fMusicVolume);
 		pony48->QueryFloatAttribute("soundvol", &m_fSoundVolume);
+		pony48->QueryFloatAttribute("voxvol", &m_fVoxVolume);
 	}
 	
 	XMLElement* joystick = root->FirstChildElement("joystick");
@@ -1015,6 +1017,7 @@ void Pony48Engine::saveConfig(string sFilename)
 	pony48->SetAttribute("highscore", m_iHighScore);
 	pony48->SetAttribute("musicvol", m_fMusicVolume);
 	pony48->SetAttribute("soundvol", m_fSoundVolume);
+	pony48->SetAttribute("voxvol", m_fVoxVolume);
 	root->InsertEndChild(pony48);
 	
 	XMLElement* joystick = doc->NewElement("joystick");

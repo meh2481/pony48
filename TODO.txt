@@ -1,5 +1,3 @@
--OpenCV camera madness
--FMOD mic madness
 -Bop-It gameover sound
 -Joystick list in case multiple controllers connected - most recent one used for board-tilt-testing
 -Touchscreen support?
@@ -10,6 +8,7 @@
 -SFX
 -VOX
 -Test and see if 2048x64 image even works with lower-end lappy gfx card
+-Mic record people's reaction on gameover? Or remove mic?
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

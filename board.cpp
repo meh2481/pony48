@@ -98,6 +98,7 @@ void Pony48Engine::pieceSlid(int startx, int starty, int endx, int endy)
 #define PIECE_BOUNCE_SIZE TILE_WIDTH+TILE_SPACING*2.2
 #define ARROW_SPEED 	3.5
 #define ARROW_RESET		(TILE_WIDTH + TILE_SPACING)
+#define SOUND_DIV_FAC	2.5f
 
 void Pony48Engine::updateBoard(float32 dt)
 {
@@ -141,7 +142,12 @@ void Pony48Engine::updateBoard(float32 dt)
 				if(m_Board[(*i)->destx][(*i)->desty] != NULL)
 				{
 					addScore((*i)->value * 2);
-					playSound("jointile");
+					float32 xPos = ((float32)(*i)->destx - 2.0f);
+					if(xPos >= 0) xPos++;
+					xPos /= SOUND_DIV_FAC;
+					playSound("jointile", m_fSoundVolume, xPos);
+					if(m_highestTile == m_Board[(*i)->destx][(*i)->desty]) 
+						m_highestTile = NULL;
 					rumbleController(0.2, 0.1);
 					delete m_Board[(*i)->destx][(*i)->desty];
 					ostringstream oss;
@@ -249,7 +255,12 @@ void Pony48Engine::clearBoardAnimations()
 			if(m_Board[(*i)->destx][(*i)->desty] != NULL)
 			{
 				addScore((*i)->value * 2);
-				playSound("jointile");
+				float32 xPos = ((float32)(*i)->destx - 2.0f);
+				if(xPos >= 0) xPos++;
+				xPos /= SOUND_DIV_FAC;
+				playSound("jointile", m_fSoundVolume, xPos);
+				if(m_highestTile == m_Board[(*i)->destx][(*i)->desty]) 
+					m_highestTile = NULL;
 				rumbleController(0.2, 0.1);
 				delete m_Board[(*i)->destx][(*i)->desty];
 				ostringstream oss;
@@ -439,7 +450,7 @@ TilePiece* Pony48Engine::loadTile(string sFilename)
 			string sType = cType;
 			if(sType == "newhigh")
 				//I have no idea how this happens, but apparently the highest tile can be this before it even returns. Wat
-				bPlaySoundImmediately = ((m_highestTile == NULL) || (m_highestTile->value < ret->value) || (m_highestTile == ret));
+				bPlaySoundImmediately = ((m_highestTile == NULL) || (m_highestTile->value < ret->value));
 		}
 		
 		//Save all sfx if there's multiple
@@ -457,7 +468,7 @@ TilePiece* Pony48Engine::loadTile(string sFilename)
 		}
 		//Play one of these randomly
 		if(vSounds.size() && bPlaySoundImmediately)
-			playSound(vSounds[randInt(0, vSounds.size() - 1)], m_fSoundVolume);
+			playSound(vSounds[randInt(0, vSounds.size() - 1)], m_fVoxVolume);
 	}
 	
 	physSegment* tmpseg = new physSegment();
