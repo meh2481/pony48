@@ -107,7 +107,16 @@ void Webcam::open(int device)
 		m_VideoCap = NULL;
 	}
 	else
+	{
 		getNewFrame();	//Grab a new frame now while we're loading, because there seems to be a lag on getting the first frame
+		errlog << "Webcam frame width: " << m_VideoCap->get(CV_CAP_PROP_FRAME_WIDTH) << endl;
+		errlog << "Webcam frame height: " << m_VideoCap->get(CV_CAP_PROP_FRAME_HEIGHT) << endl;
+		errlog << "Webcam fps: " << m_VideoCap->get(CV_CAP_PROP_FPS) << endl;
+		errlog << "Webcam codec: " << m_VideoCap->get(CV_CAP_PROP_FOURCC) << endl;
+		errlog << "Webcam Mat format: " << m_VideoCap->get(CV_CAP_PROP_FORMAT) << endl;
+		errlog << "Webcam mode: " << m_VideoCap->get(CV_CAP_PROP_MODE) << endl;
+		errlog << "Webcam rgb: " << m_VideoCap->get(CV_CAP_PROP_CONVERT_RGB) << endl;
+	}
 }
 
 void Webcam::_clear()
