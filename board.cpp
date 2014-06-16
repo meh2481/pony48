@@ -354,7 +354,7 @@ void Pony48Engine::drawBoard()
 				break;
 		}
 		//Determine the drawing alpha based on how far away from the center the mouse is
-		float32 fDestAlpha = min(abs(ptMoveDir.Length() / (getCameraView().height() / 2.0f)) - 0.4f, 0.4f);
+		float32 fDestAlpha = min(fabs(ptMoveDir.Length() / (getCameraView().height() / 2.0)) - 0.4, 0.4);
 		//Draw 16 arrows pointing in the direction we'll move
 		for(int y = 0; y < BOARD_HEIGHT; y++)
 		{

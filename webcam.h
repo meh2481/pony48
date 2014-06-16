@@ -6,14 +6,24 @@
 #ifndef WEBCAM_H
 #define WEBCAM_H
 
-#include "opencv2/opencv.hpp"
+#ifdef USE_VIDEOINPUT
+	#include "videoInput.h"
+#else
+	#include "opencv2/opencv.hpp"
+#endif
 #include "globaldefs.h"
 
 class Webcam
 {
 protected:
+#ifdef USE_VIDEOINPUT
+	videoInput VI;
+	unsigned char* m_curFrame;
+	int m_device;
+#else
 	cv::VideoCapture*	m_VideoCap;
 	cv::Mat* 			m_curFrame;
+#endif
 	GLuint   			m_hTex;
 	
 	int m_iWidth, m_iHeight;
