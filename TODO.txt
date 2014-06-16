@@ -9,6 +9,11 @@
 -VOX
 -Test and see if 2048x64 image even works with lower-end lappy gfx card
 -Mic record people's reaction on gameover? Or remove mic?
+-Fix broken OpenCV in Windows
+-Add getting-points effect over score
+-Fix maximize-window bug in Linux?
+-Main menu with song selection
+-Support other bg types in song XML
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

@@ -10,8 +10,7 @@ const int sampleSize = 64;
 void Pony48Engine::beatDetect()
 {
 	if(m_iCurMode == GAMEOVER) return;	//music stops when game is over, so it looks silly
-	
-	FMOD::Channel* channel = getChannel("music");
+	FMOD_CHANNEL* channel = getChannel("music");
 	if(channel == NULL) return;
 	
 	
@@ -23,8 +22,8 @@ void Pony48Engine::beatDetect()
 	spec = new float[sampleSize];
 
 	// Get spectrum for left and right stereo channels
-	channel->getSpectrum(specLeft, sampleSize, 0, FMOD_DSP_FFT_WINDOW_RECT);
-	channel->getSpectrum(specRight, sampleSize, 1, FMOD_DSP_FFT_WINDOW_RECT);
+	FMOD_Channel_GetSpectrum(channel, specLeft, sampleSize, 0, FMOD_DSP_FFT_WINDOW_RECT);
+	FMOD_Channel_GetSpectrum(channel, specRight, sampleSize, 1, FMOD_DSP_FFT_WINDOW_RECT);
 
 	//Center for a mono sound
 	for(int i = 0; i < sampleSize; i++)
@@ -222,63 +221,61 @@ const float timeToDecay = 0.5f;
 
 void Pony48Engine::soundUpdate(float32 dt)
 {
-	FMOD::Channel* channel = getChannel("music");
+	FMOD_CHANNEL* channel = getChannel("music");
 	if(channel != NULL)
 	{
 		if(startedDecay < 0)	//Resuming
 		{
 			float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
 			float freq;
-			channel->getFrequency(&freq);
+			FMOD_Channel_GetFrequency(channel, &freq);
 			freq += amt;
 			if(freq >= soundFreqDefault)
 			{
 				freq = soundFreqDefault;
 				startedDecay = 0;
 			}
-			channel->setFrequency(freq);
+			FMOD_Channel_SetFrequency(channel, freq);
 		}
 		else if(startedDecay > 0)	//Pausing
 		{
 			float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
 			float freq;
-			channel->getFrequency(&freq);
+			FMOD_Channel_GetFrequency(channel, &freq);
 			freq -= amt;
 			if(freq <= 0)
 			{
 				freq = 0;
 				startedDecay = 0;
 			}
-			channel->setFrequency(freq);
+			FMOD_Channel_SetFrequency(channel, freq);
 		}
 #ifdef DEBUG
 		else if(keyDown(SDL_SCANCODE_2))
-			channel->setFrequency(soundFreqDefault*2);
+			FMOD_Channel_SetFrequency(channel, soundFreqDefault*2);
 		else if(keyDown(SDL_SCANCODE_3))
-			channel->setFrequency(soundFreqDefault*3);
+			FMOD_Channel_SetFrequency(channel, soundFreqDefault*3);
 		else if(keyDown(SDL_SCANCODE_4))
-			channel->setFrequency(soundFreqDefault*4);
+			FMOD_Channel_SetFrequency(channel, soundFreqDefault*4);
 		else if(keyDown(SDL_SCANCODE_5))
-			channel->setFrequency(soundFreqDefault*5);
+			FMOD_Channel_SetFrequency(channel, soundFreqDefault*5);
 	#ifdef DEBUG_REVSOUND
 		else if(keyDown(SDL_SCANCODE_6))
-			channel->setFrequency(soundFreqDefault*-1);
+			FMOD_Channel_SetFrequency(channel, soundFreqDefault*-1);
 		else if(keyDown(SDL_SCANCODE_7))
-			channel->setFrequency(soundFreqDefault*-2);
+			FMOD_Channel_SetFrequency(channel, soundFreqDefault*-2);
 		else if(keyDown(SDL_SCANCODE_8))
-			channel->setFrequency(soundFreqDefault*-3);
+			FMOD_Channel_SetFrequency(channel, soundFreqDefault*-3);
 		else if(keyDown(SDL_SCANCODE_9))
-			channel->setFrequency(soundFreqDefault*-4);
+			FMOD_Channel_SetFrequency(channel, soundFreqDefault*-4);
 		else if(keyDown(SDL_SCANCODE_0))
-			channel->setFrequency(soundFreqDefault*-5);
+			FMOD_Channel_SetFrequency(channel, soundFreqDefault*-5);
 	#endif
-		//else if(m_iCurMode != GAMEOVER)
-		//	channel->setFrequency(soundFreqDefault);	//Reset to playing normally
 #endif
 		if(sLuaUpdateFunc.size())
 		{
 			unsigned int ms;
-			channel->getPosition(&ms, FMOD_TIMEUNIT_MS);
+			FMOD_Channel_GetPosition(channel, &ms, FMOD_TIMEUNIT_MS);
 			Lua->call(sLuaUpdateFunc.c_str(), (float)ms/1000.0);
 		}
 	}

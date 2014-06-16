@@ -73,7 +73,7 @@ void PrintEvent(const SDL_Event * event)
 bool Engine::_frame()
 {
 	if(!m_bSoundDied)
-		m_audioSystem->update();
+		FMOD_System_Update(m_audioSystem);
 	
 	//Handle input events from SDL
 	SDL_Event event;
@@ -209,7 +209,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 	m_fTimeScale = 1.0f;
 
 	errlog << "Initializing FMOD..." << endl;
-	if(FMOD::System_Create(&m_audioSystem) != FMOD_OK || m_audioSystem->init(32, FMOD_INIT_NORMAL, 0) != FMOD_OK)
+	if(FMOD_System_Create(&m_audioSystem) != FMOD_OK || FMOD_System_Init(m_audioSystem, 32, FMOD_INIT_NORMAL, 0) != FMOD_OK)
 	{
 		errlog << "Failed to init FMOD." << std::endl;
 		m_bSoundDied = true;
@@ -219,13 +219,13 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 		m_bSoundDied = false;
 		//Figure out what sound drivers for input we have here
 		int numDrivers = 0;
-		m_audioSystem->getRecordNumDrivers(&numDrivers);
+		FMOD_System_GetRecordNumDrivers(m_audioSystem, &numDrivers);
 		const int DRIVER_INFO_STR_SIZE = 512;
 		char driverInfoStr[DRIVER_INFO_STR_SIZE];
 		errlog << numDrivers << " recording drivers available." << endl;
 		for(int i = 0; i < numDrivers; i++)
 		{
-			m_audioSystem->getRecordDriverInfo(i, driverInfoStr, DRIVER_INFO_STR_SIZE, NULL);
+			FMOD_System_GetRecordDriverInfo(m_audioSystem, i, driverInfoStr, DRIVER_INFO_STR_SIZE, NULL);
 			errlog << "Driver " << i << ": " << driverInfoStr << endl;
 		}
 	}
@@ -242,15 +242,15 @@ Engine::~Engine()
 	//Clean up our sound effects
 	if(!m_bSoundDied)
 	{
-		for(map<string, FMOD::Sound*>::iterator i = m_sounds.begin(); i != m_sounds.end(); i++)
-			i->second->release();
+		for(map<string, FMOD_SOUND*>::iterator i = m_sounds.begin(); i != m_sounds.end(); i++)
+			FMOD_Sound_Release(i->second);
 	}
 	
 	//Clean up FMOD
 	if(!m_bSoundDied)
 	{
-		m_audioSystem->close();
-		m_audioSystem->release();
+		FMOD_System_Close(m_audioSystem);
+		FMOD_System_Release(m_audioSystem);
 	}
 
 	// Clean up and shutdown
@@ -308,7 +308,7 @@ bool Engine::hasMic()
 {
 	if(m_bSoundDied) return false;
 	int numDrivers = 0;
-	m_audioSystem->getRecordNumDrivers(&numDrivers);
+	FMOD_System_GetRecordNumDrivers(m_audioSystem, &numDrivers);
 	return numDrivers;
 }
 
@@ -316,11 +316,11 @@ void Engine::createSound(string sPath, string sName)
 {
 	if(m_bSoundDied || m_sounds.count(sName)) return;	//Don't duplicate sounds or attempt to play sounds if we can't
 	errlog << "Load sound " << sPath << endl;
-	FMOD::Sound* handle;
+	FMOD_SOUND* handle;
 #ifdef DEBUG_REVSOUND
-	if(m_audioSystem->createSound(sPath.c_str(), FMOD_CREATESAMPLE, 0, &handle) == FMOD_OK)
+	if(FMOD_System_CreateSound(m_audioSystem, sPath.c_str(), FMOD_CREATESAMPLE, 0, &handle) == FMOD_OK)
 #else
-	if(m_audioSystem->createSound(sPath.c_str(), FMOD_CREATESTREAM, 0, &handle) == FMOD_OK)
+	if(FMOD_System_CreateSound(m_audioSystem, sPath.c_str(), FMOD_CREATESTREAM, 0, &handle) == FMOD_OK)
 #endif
 		m_sounds[sName] = handle;
 }
@@ -329,15 +329,15 @@ void Engine::playSound(string sName, float32 volume, float32 pan, float32 pitch)
 {
 	if(m_bSoundDied || !m_sounds.count(sName)) return;
 	errlog << "Playing sound " << sName << endl;
-	FMOD::Channel* channel;
-	m_audioSystem->playSound(FMOD_CHANNEL_FREE, m_sounds[sName], false, &channel);
+	FMOD_CHANNEL* channel;
+	FMOD_System_PlaySound(m_audioSystem, FMOD_CHANNEL_FREE, m_sounds[sName], false, &channel);
 	m_channels[sName] = channel;
-	m_channels[sName]->setVolume(volume);
-	m_channels[sName]->setPan(pan);
-	m_channels[sName]->setFrequency(pitch * soundFreqDefault);
+	FMOD_Channel_SetVolume(m_channels[sName], volume);
+	FMOD_Channel_SetPan(m_channels[sName], pan);
+	FMOD_Channel_SetFrequency(m_channels[sName], pitch * soundFreqDefault);
 }
 
-FMOD::Channel* Engine::getChannel(string sSoundName)
+FMOD_CHANNEL* Engine::getChannel(string sSoundName)
 {
 	if(!m_channels.count(sSoundName)) return NULL;
 	return m_channels[sSoundName];
@@ -347,35 +347,35 @@ void Engine::pauseMusic()
 {
 	if(m_bSoundDied) return;
 	if(!m_channels.count("music")) return;
-	m_channels["music"]->setPaused(true);
+	FMOD_Channel_SetPaused(m_channels["music"], true);
 }
 
 void Engine::stopMusic()
 {
 	if(m_bSoundDied) return;
 	if(!m_channels.count("music")) return;
-	m_channels["music"]->setPaused(true);
+	FMOD_Channel_SetPaused(m_channels["music"], true);
 }
 
 void Engine::restartMusic()
 {
 	if(m_bSoundDied) return;
 	if(!m_channels.count("music")) return;
-	m_channels["music"]->setPosition(0, FMOD_TIMEUNIT_MS);
+	FMOD_Channel_SetPosition(m_channels["music"], 0, FMOD_TIMEUNIT_MS);
 }
 
 void Engine::resumeMusic()
 {
 	if(m_bSoundDied) return;
 	if(!m_channels.count("music")) return;
-	m_channels["music"]->setPaused(false);
+	FMOD_Channel_SetPaused(m_channels["music"], false);
 }
 
 void Engine::seekMusic(float32 fTime)
 {
 	if(m_bSoundDied) return;
 	if(!m_channels.count("music")) return;
-	m_channels["music"]->setPosition(fTime * 1000.0, FMOD_TIMEUNIT_MS);
+	FMOD_Channel_SetPosition(m_channels["music"], fTime * 1000.0, FMOD_TIMEUNIT_MS);
 }
 
 void Engine::playMusic(string sName, float32 volume, float32 pan, float32 pitch)
@@ -386,9 +386,9 @@ void Engine::playMusic(string sName, float32 volume, float32 pan, float32 pitch)
 	playSound("music", volume, pan, pitch);
 	if(m_channels.count("music"))
 	{
-		m_channels["music"]->setLoopCount(-1);
-		m_channels["music"]->setMode(FMOD_LOOP_NORMAL);
-		m_channels["music"]->setPosition(0, FMOD_TIMEUNIT_MS);
+		FMOD_Channel_SetLoopCount(m_channels["music"], -1);
+		FMOD_Channel_SetMode(m_channels["music"], FMOD_LOOP_NORMAL);
+		FMOD_Channel_SetPosition(m_channels["music"], 0, FMOD_TIMEUNIT_MS);
 	}
 }
 
@@ -397,12 +397,12 @@ void Engine::musicLoop(float32 startSec, float32 endSec)
 	if(m_bSoundDied) return;
 	if(m_channels.count("music"))
 	{
-		m_channels["music"]->setLoopPoints(startSec * 1000, FMOD_TIMEUNIT_MS, endSec * 1000, FMOD_TIMEUNIT_MS);
+		FMOD_Channel_SetLoopPoints(m_channels["music"], startSec * 1000, FMOD_TIMEUNIT_MS, endSec * 1000, FMOD_TIMEUNIT_MS);
 		//Flush music stream
-		m_channels["music"]->setMode(FMOD_LOOP_NORMAL);
+		FMOD_Channel_SetMode(m_channels["music"], FMOD_LOOP_NORMAL);
 		unsigned int ms;
-		m_channels["music"]->getPosition(&ms, FMOD_TIMEUNIT_MS);
-		m_channels["music"]->setPosition(ms, FMOD_TIMEUNIT_MS);
+		FMOD_Channel_GetPosition(m_channels["music"], &ms, FMOD_TIMEUNIT_MS);
+		FMOD_Channel_SetPosition(m_channels["music"], ms, FMOD_TIMEUNIT_MS);
 	}
 }
 
