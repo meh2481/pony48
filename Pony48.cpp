@@ -763,12 +763,12 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						changeMode(PLAYING);
 				}
 #ifdef DEBUG	//DEBUG: right trigger fast-forwards music
-				FMOD::Channel* channel = getChannel("music");
+				FMOD_CHANNEL* channel = getChannel("music");
 				float curval = event.jaxis.value;
 				curval -= JOY_AXIS_MIN;	//Get absolute value of axis, from 0 to 65,535
 				curval /= (float)(JOY_AXIS_MAX-JOY_AXIS_MIN);
 				curval *= 12;	//Max speed
-				channel->setFrequency(soundFreqDefault+soundFreqDefault*curval);
+				FMOD_Channel_SetFrequency(channel, soundFreqDefault+soundFreqDefault*curval);
 #endif
 			}
 			else if(event.jaxis.axis == JOY_AXIS_LT)
@@ -779,12 +779,12 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						changeMode(PLAYING);
 				}
 #ifdef DEBUG_REVSOUND	//DEBUG: left trigger rewinds music
-				FMOD::Channel* channel = getChannel("music");
+				FMOD_CHANNEL* channel = getChannel("music");
 				float curval = event.jaxis.value;
 				curval -= JOY_AXIS_MIN;	//Get absolute value of axis, from 0 to 65,535
 				curval /= (float)(JOY_AXIS_MAX-JOY_AXIS_MIN);
 				curval *= -5;
-				channel->setFrequency(soundFreqDefault+soundFreqDefault*curval);
+				FMOD_Channel_SetFrequency(channel, soundFreqDefault+soundFreqDefault*curval);
 #endif
 			}
 			break;

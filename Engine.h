@@ -13,7 +13,7 @@
 #include "hud.h"
 #include "particles.h"
 #include "cursor.h"
-#include <fmod.hpp>
+#include <fmod.h>
 #include <map>
 #include <set>
 
@@ -70,9 +70,9 @@ private:
 	bool m_bCursorShow;
 	bool m_bCursorOutOfWindow;	//If the cursor is outside of the window, don't draw it
 	
-	map<string, FMOD::Channel*> m_channels;
-	map<string, FMOD::Sound*> m_sounds;
-	FMOD::System* m_audioSystem;
+	map<string, FMOD_CHANNEL*> m_channels;
+	map<string, FMOD_SOUND*> m_sounds;
+	FMOD_SYSTEM* m_audioSystem;
 
 	//Engine-use function definitions
 	bool _frame();
@@ -132,7 +132,7 @@ public:
 	//Sound functions
 	void createSound(string sPath, string sName);   //Creates a sound from this name and file path
 	virtual void playSound(string sName, float32 volume = 1.0f, float32 pan = 0.0f, float32 pitch = 1.0f);	 //Play a sound
-	FMOD::Channel* getChannel(string sSoundName);	//Return the channel of this sound
+	FMOD_CHANNEL* getChannel(string sSoundName);	//Return the channel of this sound
 	void playMusic(string sName, float32 volume = 1.0f, float32 pan = 0.0f, float32 pitch = 1.0f);	 //Play looping music, or resume paused music
 	void musicLoop(float32 startSec, float32 endSec);									//Set the starting and ending loop points for the currently-playing song
 	void pauseMusic();																	 //Pause music that's currently playing
