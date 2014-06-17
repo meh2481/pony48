@@ -10,9 +10,6 @@ Webcam::Webcam()
 #ifndef USE_VIDEOINPUT
 	m_VideoCap = NULL;
 	m_device = 0;
-	#ifndef DEBUG
-	VI.setVerbose(false);
-	#endif
 #endif
 	m_hTex = 0;
 	m_curFrame = NULL;
