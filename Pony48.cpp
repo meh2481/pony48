@@ -108,16 +108,26 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fLastFrame = 0.0f;
 	
 	//Keybinding stuff!
-	JOY_BUTTON_BACK = 6;
-	JOY_BUTTON_RESTART = 3;
 	JOY_AXIS_HORIZ = 0;
 	JOY_AXIS_VERT = 1;
-	JOY_AXIS2_HORIZ = 3;
-	JOY_AXIS2_VERT = 4;
-	JOY_AXIS_LT = 2;
 	JOY_AXIS_RT = 5;
 	JOY_AXIS_TRIP = 20000;
 	m_lastJoyHatMoved = 0;
+	
+	//Apparently our Xbox drivers for different OS's can't agree on which buttons are which
+#ifdef _WIN32
+	JOY_BUTTON_BACK = 5;
+	JOY_BUTTON_RESTART = 13;
+	JOY_AXIS2_HORIZ = 2;
+	JOY_AXIS2_VERT = 3;
+	JOY_AXIS_LT = 4;
+#else
+	JOY_BUTTON_BACK = 6;
+	JOY_BUTTON_RESTART = 3;
+	JOY_AXIS2_HORIZ = 3;
+	JOY_AXIS2_VERT = 4;
+	JOY_AXIS_LT = 2;
+#endif
 	
 	//Camera stuff!
 	m_iCAM = 0;
