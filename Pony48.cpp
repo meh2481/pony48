@@ -120,9 +120,11 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_lastJoyHatMoved = 0;
 	
 	//Camera stuff!
-	m_iCAM_FRAME_SKIP = 7;
 	m_iCAM = 0;
+#ifndef USE_VIDEOINPUT
+	m_iCAM_FRAME_SKIP = 7;
 	m_iCurCamFrameSkip = 0;
+#endif
 	m_fGameoverWebcamFreeze = 0;
 	m_fWebcamDrawSize = 4;
 	m_ptWebcamDrawPos.Set(-6.2,5);
@@ -268,11 +270,15 @@ void Pony48Engine::draw()
 			if(m_cam->isOpen() && m_iCurMode == PLAYING)
 			{
 				glColor4f(1,1,1,1);
+#ifndef USE_VIDEOINPUT
 				if(++m_iCurCamFrameSkip >= m_iCAM_FRAME_SKIP)
 				{
 					m_iCurCamFrameSkip = 0;
+#endif
 					m_cam->getNewFrame();
+#ifndef USE_VIDEOINPUT
 				}
+#endif
 				if(m_bDrawFacecam)
 					m_cam->draw(m_fWebcamDrawSize, m_ptWebcamDrawPos);
 			}
@@ -321,9 +327,15 @@ void Pony48Engine::draw()
 		if(m_cam->isOpen())
 		{
 			glColor4f(1,1,1,1);
+#ifdef USE_VIDEOINPUT
+			if(getSeconds() < m_fGameoverWebcamFreeze)
+#else
 			if(++m_iCurCamFrameSkip >= m_iCAM_FRAME_SKIP && getSeconds() < m_fGameoverWebcamFreeze)
+#endif
 			{
+#ifndef USE_VIDEOINPUT
 				m_iCurCamFrameSkip = 0;
+#endif
 				m_cam->getNewFrame();
 			}
 			m_cam->draw(5, Point(0,-1.5));
@@ -979,7 +991,9 @@ bool Pony48Engine::loadConfig(string sFilename)
 	if(webcam != NULL)
 	{
 		webcam->QueryIntAttribute("device", &m_iCAM);
+#ifndef USE_VIDEOINPUT
 		webcam->QueryIntAttribute("frameskip", &m_iCAM_FRAME_SKIP);
+#endif
 		const char* facepos = webcam->Attribute("facepos");
 		if(facepos != NULL)
 			m_ptWebcamDrawPos = pointFromString(facepos);
@@ -1034,7 +1048,9 @@ void Pony48Engine::saveConfig(string sFilename)
 	
 	XMLElement* webcam = doc->NewElement("cam");
 	webcam->SetAttribute("device", m_iCAM);
+#ifndef USE_VIDEOINPUT
 	webcam->SetAttribute("frameskip", m_iCAM_FRAME_SKIP);
+#endif
 	webcam->SetAttribute("facepos", pointToString(m_ptWebcamDrawPos).c_str());
 	webcam->SetAttribute("facesz", m_fWebcamDrawSize);
 	webcam->SetAttribute("drawfacecam", m_bDrawFacecam);

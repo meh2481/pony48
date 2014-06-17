@@ -209,7 +209,7 @@ void Webcam::_clear()
 bool Webcam::isOpen()
 {
 #ifdef USE_VIDEOINPUT
-	return (VI.isDeviceSetup(m_device) > 0);
+	return (VI.isDeviceSetup(m_device));
 #else
 	return (m_VideoCap != NULL && m_VideoCap->isOpened());
 #endif

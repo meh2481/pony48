@@ -112,6 +112,11 @@ private:
 	Point m_ptWebcamDrawPos;
 	bool m_bDrawFacecam;
 	bool m_bSavedFacepic;
+	int m_iCAM;
+#ifndef USE_VIDEOINPUT
+	int m_iCurCamFrameSkip;
+	int m_iCAM_FRAME_SKIP;
+#endif
 	
 	//Game stuff!
 	LuaInterface* Lua;
@@ -129,9 +134,6 @@ private:
 	float m_fGameoverKeyDelay;
 	bool bJoyVerticalMove, bJoyHorizontalMove;
 	float m_fLastFrame;	//For fps counter
-	int m_iCAM_FRAME_SKIP;
-	int m_iCAM;
-	int m_iCurCamFrameSkip;
 	SDL_JoystickID m_lastJoyHatMoved;	//Keep track of which joystick hat we're moving
 	int m_iMouseControl;	//If the game is controlled via mouse or not
 	bool m_bJoyControl;		//If we're controlling the game with a gamepad or not
