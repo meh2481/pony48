@@ -9,6 +9,7 @@ Webcam::Webcam()
 {
 #ifndef USE_VIDEOINPUT
 	m_VideoCap = NULL;
+#else
 	m_device = 0;
 #endif
 	m_hTex = 0;
@@ -146,7 +147,6 @@ void Webcam::open(int device)
 #else
 	//Open the webcam with OpenCV
 	m_VideoCap = new cv::VideoCapture(device);
-	cout << cv::getBuildInformation() << endl;
 	if(!m_VideoCap->isOpened())	
 	{
 		m_VideoCap->open(device);
