@@ -128,11 +128,14 @@ void starfieldBg::update(float32 dt)
 	for(list<starfieldStar>::iterator i = m_lStars.begin(); i != m_lStars.end(); i++)
 	{
 		i->pos.z -= speed*dt;	//Update position
-		if(i->pos.z <= 0)	//If this particle has gone off the screen
+		if(i->pos.z < 0 || i->pos.z > fieldSize.z)	//If this particle has gone off the screen either direction
 		{
 			i->col = gen;
 			i->size = starSize;
-			i->pos.z = fieldSize.z;
+			if(speed > 0)
+				i->pos.z = fieldSize.z;
+			else
+				i->pos.z = 0;
 			i->pos.x = randFloat(-fieldSize.x/2.0, fieldSize.x/2.0);
 			i->pos.y = randFloat(-fieldSize.y/2.0, fieldSize.y/2.0);
 		}

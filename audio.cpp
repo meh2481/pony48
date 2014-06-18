@@ -133,6 +133,25 @@ void Pony48Engine::loadSongXML(string sFilename)
 						elem->QueryFloatAttribute("rot", &bg->rot);
 						elem->QueryFloatAttribute("acceleration", &bg->acceleration);
 					}
+					else if(sBgType == "starfield")
+					{
+						starfieldBg* bg = new starfieldBg();
+						if(m_bg)
+							delete m_bg;
+						m_bg = (Background*) bg;
+						elem->QueryFloatAttribute("speed", &bg->speed);
+						const char* cCol = elem->Attribute("col");
+						if(cCol && strlen(cCol))
+							bg->gen = colorFromString(cCol);
+						elem->QueryUnsignedAttribute("num", &bg->num);
+						const char* cSize = elem->Attribute("size");
+						if(cSize && strlen(cSize))
+							bg->fieldSize = vec3FromString(cSize);
+						const char* cStarSize = elem->Attribute("starsize");
+						if(cStarSize && strlen(cStarSize))
+							bg->starSize = pointFromString(cStarSize);
+						bg->init();
+					}
 					//TODO
 				}
 			}

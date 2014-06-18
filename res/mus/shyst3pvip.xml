@@ -1,0 +1,14 @@
+<song>
+	<sfx path="res/mus/ShySt3pVIP.mp3"/>
+	<background type="starfield" speed="15" col="255,255,255,255" num="800" size="80,60,120" starsize="0.075,0.075"/>
+	<loop start="8.383" end="308.901"/>
+	<!--particles effect="res/particles/bgponies.xml" name="bgponies" autofire="false"/>
+	<particles effect="res/particles/bgflash.xml" name="bgflash" autofire="false"/>
+	<particles effect="res/particles/rdflyu.xml" name="bgrdu" autofire="false"/>
+	<particles effect="res/particles/rdflyd.xml" name="bgrdd" autofire="false"/>
+	<particles effect="res/particles/rdflyl.xml" name="bgrdl" autofire="false"/>
+	<particles effect="res/particles/rdflyr.xml" name="bgrdr" autofire="false"/-->
+	<lua file="res/lua/shyst3pvip.lua" update="ss_update" init="ss_init"/>
+	<bounce threshold="0.7" bar="0" mul="0.4" max="5.5" bounceback="0.1"/>
+</song>
+ 
