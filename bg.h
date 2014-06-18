@@ -76,7 +76,6 @@ protected:
 	public:
 		Color col;
 		Vec3 pos;
-		Point size;
 	};
 
 	list<starfieldStar> m_lStars;

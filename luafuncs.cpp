@@ -92,9 +92,12 @@ luaFunc(resetparticles)	//resetparticles(string particleSysName)
 luaFunc(pinwheelspeed)	//pinwheelspeed(float speed)
 {
 	float32 f = lua_tonumber(L, 1);
-	pinwheelBg* bg = (pinwheelBg*)PonyLua::getBg();
-	if(bg)
+	Background* bgtest = PonyLua::getBg();
+	if(bgtest && bgtest->type == PINWHEEL)
+	{
+		pinwheelBg* bg = (pinwheelBg*)bgtest;
 		bg->speed = f;
+	}
 	luaReturnNil();
 }
 
@@ -177,6 +180,18 @@ luaFunc(setbgcol)	//setbgcol(float r, float g, float b, float a)
 	luaReturnNil();
 }
 
+luaFunc(setstarbgvel)	//setstarbgvel(float32 fSpeed)
+{
+	float32 fSpeed = lua_tonumber(L, 1);
+	Background* bgtest = PonyLua::getBg();
+	if(bgtest && bgtest->type == STARFIELD)
+	{
+		starfieldBg* bg = (starfieldBg*)bgtest;
+		bg->speed = fSpeed;
+	}
+	luaReturnNil();
+}
+
 static LuaFunctions s_functab[] =
 {
 	luaRegister(fireparticles),
@@ -190,6 +205,7 @@ static LuaFunctions s_functab[] =
 	luaRegister(settilebgcol),
 	luaRegister(setboardcol),
 	luaRegister(setbgcol),
+	luaRegister(setstarbgvel),
 	//luaRegister(),
 	{NULL, NULL}
 };

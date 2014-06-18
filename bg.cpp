@@ -92,7 +92,6 @@ void starfieldBg::init()
 	{
 		starfieldStar st;
 		st.col = gen;
-		st.size = starSize;
 		st.pos.z = randFloat(0,fieldSize.z);
 		st.pos.x = randFloat(-fieldSize.x/2.0, fieldSize.x/2.0);
 		st.pos.y = randFloat(-fieldSize.y/2.0, fieldSize.y/2.0);
@@ -111,10 +110,10 @@ void starfieldBg::draw()
 		glPushMatrix();
 		glTranslatef(i->pos.x, i->pos.y, -i->pos.z);
 		glBegin(GL_QUADS);
-		glVertex3f(-i->size.x/2.0, i->size.y/2.0, 0);
-		glVertex3f(i->size.x/2.0, i->size.y/2.0, 0);
-		glVertex3f(i->size.x/2.0, -i->size.y/2.0, 0);
-		glVertex3f(-i->size.x/2.0, -i->size.y/2.0, 0);
+		glVertex3f(-starSize.x/2.0, starSize.y/2.0, 0);
+		glVertex3f(starSize.x/2.0, starSize.y/2.0, 0);
+		glVertex3f(starSize.x/2.0, -starSize.y/2.0, 0);
+		glVertex3f(-starSize.x/2.0, -starSize.y/2.0, 0);
 		glEnd();
 		glPopMatrix();
 	}
@@ -131,7 +130,6 @@ void starfieldBg::update(float32 dt)
 		if(i->pos.z < 0 || i->pos.z > fieldSize.z)	//If this particle has gone off the screen either direction
 		{
 			i->col = gen;
-			i->size = starSize;
 			if(speed > 0)
 				i->pos.z = fieldSize.z;
 			else

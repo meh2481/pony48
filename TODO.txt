@@ -14,6 +14,14 @@
 -Fix maximize-window bug in Linux?
 -Main menu with song selection
 -Support other bg types in song XML
+-FX
+	-Rotate screen on z axis
+	-Star bg change size on the fly
+	-Star bg acceleration
+	-Get waveform data so can have bg bars
+	-Electric arcs?
+	-Gradient bg stuff in Lua
+-Tile-appearing animations should only appear after sliding animations are done
 
 Linux Xbox controller rumble:
 sudo rmmod xpad
