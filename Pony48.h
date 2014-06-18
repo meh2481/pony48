@@ -75,6 +75,15 @@ public:
 	void draw();
 };
 
+class Song
+{
+public:
+	string filename;
+	string artist;
+	string title;
+	string genre;
+};
+
 typedef enum 
 {
 	LEFT,
@@ -144,6 +153,7 @@ private:
 	float32 m_fVoxVolume;
 	float32 m_fLastMovedSec;
 	bool m_bHasBoredVox;
+	uint32_t m_iSongToPlay;
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;
@@ -153,6 +163,7 @@ private:
 	float32 maxCamz;				//The maximum value for the camera's z axis
 	float32 m_fCamBounceBack;
 	map<string, ParticleSystem*> songParticles;
+	vector<Song> m_vSongs;		//Info for each song
 	
 	//Keybinding stuff!
 	uint32_t JOY_BUTTON_BACK;

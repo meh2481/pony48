@@ -149,6 +149,8 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fVoxVolume = 1.0f;
 	m_bHasBoredVox = false;
 	m_fLastMovedSec = 0.0f;
+	//TODO Song select
+	m_iSongToPlay = 0;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -420,8 +422,10 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	
 	m_imgMouseMoveArrow = getImage("res/movearrow.png");
 	
+	//Load all the songs
+	loadSongs("res/mus/music.xml");
+	
 	//Create sounds up front
-	//createSound("res/sfx/select.ogg", "select");			//When you're selecting different menu items
 	createSound("res/sfx/jointile.ogg", "jointile");
 	createSound("res/vox/nowhacking_theyreponies.ogg", "nowhacking_theyreponies");
 }
@@ -1203,8 +1207,8 @@ void Pony48Engine::changeMode(gameMode gm)
 				resetBoard();
 				scrubResume();
 			}
-			else if(m_iCurMode == INTRO)
-				loadSongs("res/mus/music.xml");	//Play music
+			else if(m_iCurMode == INTRO)	//Start playing a song
+				loadSongXML(m_vSongs[m_iSongToPlay].filename);
 			m_iCurMode = PLAYING;
 			m_hud->setScene("playing");
 			break;

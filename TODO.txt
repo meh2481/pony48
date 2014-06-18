@@ -17,5 +17,6 @@
 
 Linux Xbox controller rumble:
 sudo rmmod xpad
+echo "blacklist xpad" > /etc/modprobe.d/blacklist.conf
 sudo apt-get install xboxdrv
 reboot

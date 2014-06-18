@@ -177,6 +177,7 @@ void Pony48Engine::loadSongXML(string sFilename)
 
 void Pony48Engine::loadSongs(string sFilename)
 {
+	m_vSongs.clear();
 	XMLDocument* doc = new XMLDocument();
     int iErr = doc->LoadFile(sFilename.c_str());
 	if(iErr != XML_NO_ERROR)
@@ -194,14 +195,23 @@ void Pony48Engine::loadSongs(string sFilename)
 		return;
 	}
 	
-	//TODO Song select
 	for(XMLElement* song = root->FirstChildElement("song"); song != NULL; song = song->NextSiblingElement("song"))
 	{
+		Song s;
 		const char* cPath = song->Attribute("path");
-		if(cPath != NULL && strlen(cPath))
-		{
-			loadSongXML(cPath);
-		}
+		if(cPath && strlen(cPath))
+			s.filename = cPath;
+		const char* cArtist = song->Attribute("artist");
+		if(cArtist && strlen(cArtist))
+			s.artist = cArtist;
+		const char* cTitle = song->Attribute("title");
+		if(cTitle && strlen(cTitle))
+			s.title = cTitle;
+		const char* cGenre = song->Attribute("genre");
+		if(cGenre && strlen(cGenre))
+			s.genre = cGenre;
+		
+		m_vSongs.push_back(s);
 	}
 }
 
