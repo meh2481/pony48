@@ -149,7 +149,10 @@ void Pony48Engine::loadSongXML(string sFilename)
 							bg->fieldSize = vec3FromString(cSize);
 						const char* cStarSize = elem->Attribute("starsize");
 						if(cStarSize && strlen(cStarSize))
-							bg->starSize = pointFromString(cStarSize);
+							bg->starSize = vec3FromString(cStarSize);
+						const char* cAvoidCam = elem->Attribute("avoidcam");
+						if(cAvoidCam && strlen(cAvoidCam))
+							bg->avoidCam = pointFromString(cAvoidCam);
 						bg->init();
 					}
 					//TODO

@@ -192,6 +192,23 @@ luaFunc(setstarbgvel)	//setstarbgvel(float32 fSpeed)
 	luaReturnNil();
 }
 
+//Set the sizes of stars in a starfield background
+luaFunc(setstarbgsize)	//setstarbgsize(float32 x, float32 y, float32 z)
+{
+	float32 x = lua_tonumber(L, 1);
+	float32 y = lua_tonumber(L, 2);
+	float32 z = lua_tonumber(L, 3);
+	Background* bgtest = PonyLua::getBg();
+	if(bgtest && bgtest->type == STARFIELD)
+	{
+		starfieldBg* bg = (starfieldBg*)bgtest;
+		bg->starSize.x = x;
+		bg->starSize.y = y;
+		bg->starSize.z = z;
+	}
+	luaReturnNil();
+}
+
 static LuaFunctions s_functab[] =
 {
 	luaRegister(fireparticles),
@@ -206,6 +223,7 @@ static LuaFunctions s_functab[] =
 	luaRegister(setboardcol),
 	luaRegister(setbgcol),
 	luaRegister(setstarbgvel),
+	luaRegister(setstarbgsize),
 	//luaRegister(),
 	{NULL, NULL}
 };

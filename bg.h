@@ -67,8 +67,9 @@ public:
 	Color gen;		//Starting color
 	float32 speed;	//Simulation speed
 	uint32_t num;	//Maximum number of stars
-	Point starSize;	//Size of stars
+	Vec3 starSize;	//Size of stars
 	Vec3 fieldSize;	//How large the starfield is
+	Point avoidCam;	//Size of rectangle in the center that a star shouldn't be placed in to avoid hitting the camera
 	
 protected:
 	class starfieldStar
@@ -79,6 +80,8 @@ protected:
 	};
 
 	list<starfieldStar> m_lStars;
+	
+	Vec3 _place(float32 z);	//Decide where to put a new star
 };
 
 class gradientBg : public Background

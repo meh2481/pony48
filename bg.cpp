@@ -82,7 +82,8 @@ starfieldBg::starfieldBg()
 	speed = 15;
 	num = 500;
 	fieldSize.set(40,40,75);
-	starSize.Set(0.1, 0.1);
+	starSize.set(0.1,0.1,0);
+	avoidCam.Set(1,1);
 	type = STARFIELD;
 }
 
@@ -92,9 +93,7 @@ void starfieldBg::init()
 	{
 		starfieldStar st;
 		st.col = gen;
-		st.pos.z = randFloat(0,fieldSize.z);
-		st.pos.x = randFloat(-fieldSize.x/2.0, fieldSize.x/2.0);
-		st.pos.y = randFloat(-fieldSize.y/2.0, fieldSize.y/2.0);
+		st.pos = _place(randFloat(0,fieldSize.z));
 		m_lStars.push_back(st);
 	}
 }
@@ -103,17 +102,54 @@ void starfieldBg::draw()
 {	
 	glPushMatrix();
 	glLoadIdentity();	//So camera is at z = 0
+	glBindTexture(GL_TEXTURE_2D, 0);
 	//Draw stars
 	for(list<starfieldStar>::iterator i = m_lStars.begin(); i != m_lStars.end(); i++)
 	{
 		glColor4f(i->col.r,i->col.g,i->col.b,i->col.a);
 		glPushMatrix();
 		glTranslatef(i->pos.x, i->pos.y, -i->pos.z);
+		
+		//Start drawing
 		glBegin(GL_QUADS);
+		//Draw front side
 		glVertex3f(-starSize.x/2.0, starSize.y/2.0, 0);
 		glVertex3f(starSize.x/2.0, starSize.y/2.0, 0);
 		glVertex3f(starSize.x/2.0, -starSize.y/2.0, 0);
 		glVertex3f(-starSize.x/2.0, -starSize.y/2.0, 0);
+		
+		if(starSize.z)	//If this star has depth
+		{
+			//Draw back side
+			glVertex3f(-starSize.x/2.0, starSize.y/2.0, starSize.z);
+			glVertex3f(starSize.x/2.0, starSize.y/2.0, starSize.z);
+			glVertex3f(starSize.x/2.0, -starSize.y/2.0, starSize.z);
+			glVertex3f(-starSize.x/2.0, -starSize.y/2.0, starSize.z);
+			
+			//Draw top side
+			glVertex3f(-starSize.x/2.0, starSize.y/2.0, 0);
+			glVertex3f(starSize.x/2.0, starSize.y/2.0, 0);
+			glVertex3f(starSize.x/2.0, starSize.y/2.0, starSize.z);
+			glVertex3f(-starSize.x/2.0, starSize.y/2.0, starSize.z);
+			
+			//Draw right side
+			glVertex3f(starSize.x/2.0, starSize.y/2.0, 0);
+			glVertex3f(starSize.x/2.0, -starSize.y/2.0, 0);
+			glVertex3f(starSize.x/2.0, -starSize.y/2.0, starSize.z);
+			glVertex3f(starSize.x/2.0, starSize.y/2.0, starSize.z);
+			
+			//Draw bottom side
+			glVertex3f(starSize.x/2.0, -starSize.y/2.0, 0);
+			glVertex3f(-starSize.x/2.0, -starSize.y/2.0, 0);
+			glVertex3f(-starSize.x/2.0, -starSize.y/2.0, starSize.z);
+			glVertex3f(starSize.x/2.0, -starSize.y/2.0, starSize.z);
+			
+			//Draw left side
+			glVertex3f(-starSize.x/2.0, starSize.y/2.0, 0);
+			glVertex3f(-starSize.x/2.0, -starSize.y/2.0, 0);
+			glVertex3f(-starSize.x/2.0, -starSize.y/2.0, starSize.z);
+			glVertex3f(-starSize.x/2.0, starSize.y/2.0, starSize.z);
+		}
 		glEnd();
 		glPopMatrix();
 	}
@@ -134,10 +170,22 @@ void starfieldBg::update(float32 dt)
 				i->pos.z = fieldSize.z;
 			else
 				i->pos.z = 0;
-			i->pos.x = randFloat(-fieldSize.x/2.0, fieldSize.x/2.0);
-			i->pos.y = randFloat(-fieldSize.y/2.0, fieldSize.y/2.0);
+			i->pos = _place(i->pos.z);
 		}
 	}
+}
+
+Vec3 starfieldBg::_place(float32 z)
+{
+	Vec3 ret;
+	ret.z = z;
+	ret.x = randFloat(-fieldSize.x/2.0, fieldSize.x/2.0);
+	ret.y = randFloat(-fieldSize.y/2.0, fieldSize.y/2.0);
+	
+	//Make sure that we're staying outside of our avoid-camera rectangle
+	if(fabs(ret.x) <= avoidCam.x && fabs(ret.y) <= avoidCam.y)
+		return _place(z);
+	return ret;
 }
 
 

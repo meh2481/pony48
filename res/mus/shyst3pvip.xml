@@ -1,6 +1,6 @@
 <song>
 	<sfx path="res/mus/ShySt3pVIP.mp3"/>
-	<background type="starfield" speed="15" col="255,255,255,255" num="800" size="80,60,120" starsize="0.075,0.075"/>
+	<background type="starfield" speed="15" col="255,255,255,255" num="800" size="80,60,130" avoidcam="3,3"/>
 	<loop start="8.383" end="308.901"/>
 	<!--particles effect="res/particles/bgponies.xml" name="bgponies" autofire="false"/>
 	<particles effect="res/particles/bgflash.xml" name="bgflash" autofire="false"/>
