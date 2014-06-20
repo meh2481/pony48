@@ -92,6 +92,44 @@ local function drumdrop2(first, curtime, starttime, endtime)
 end
 
 local function main1(first, curtime, starttime, endtime)
+	
+end
+
+local function exitmain1(first, curtime, starttime, endtime)
+	if first == true then
+		starbgaccel = 25
+	end
+	starszz = starbgvel * 0.2
+end
+
+local function main2(first, curtime, starttime, endtime)
+	if first == true then
+		starbgaccel = 0
+		starbgvel = -maxstarspeed * 5
+	end
+	if starszz > 0.1 then
+		starszz = starszz / 1.4
+	else
+		starszz = 0
+	end
+end
+
+local function main3(first, curtime, starttime, endtime)
+	if first == true then
+		starbgvel = maxstarspeed / 2
+	end
+	--TODO change color
+end
+
+local function drumdrop3(first, curtime, starttime, endtime)
+	if first == true then
+		starbgaccel = -75
+	end
+	if starbgvel < -maxstarspeed * 3 then
+		starbgvel = -maxstarspeed * 3
+		starbgaccel = 0
+	end
+	--TODO beatbounce size
 end
 
 local timetab = {
@@ -102,7 +140,11 @@ local timetab = {
 	{func = mid3, startat = 65.903, endat = 100.207},
 	{func = mid4, startat = 100.207, endat = 131.5},
 	{func = drumdrop2, startat = 131.5, endat = 133.6},
-	{func = main1, startat = 133.6, endat = 200},
+	{func = main1, startat = 133.6, endat = 160.8},
+	{func = exitmain1, startat = 160.8, endat = 166.989},
+	{func = main2, startat = 166.989, endat = 200.381},
+	{func = main3, startat = 200.381, endat = 231.689},
+	{func = drumdrop3, startat = 231.689, endat = 233.772},
 }
 
 local function ss_update(curtime)
