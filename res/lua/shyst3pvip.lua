@@ -9,6 +9,7 @@ local maxstarspeed
 local starszx
 local starszy
 local starszz
+local wubfreq
 
 local function ss_init()
 	starbgvel = 0
@@ -18,6 +19,7 @@ local function ss_init()
 	starszx = 0.15
 	starszy = 0.15
 	starszz = 0
+	wubfreq = 30
 end
 setglobal("ss_init", ss_init)
 
@@ -33,7 +35,10 @@ local function startstars(first, curtime, starttime, endtime)
 end
 
 local function mid1(first, curtime, starttime, endtime)
-	
+	if first == true then
+		starbgvel = maxstarspeed
+	end
+	--TODO Something cool
 end
 
 --On first drop, stars slow to a stop
@@ -76,7 +81,7 @@ local function mid4(first, curtime, starttime, endtime)
 	end
 end
 
---On second drum drop, stars slow down and rocket forwards for the main beat drop
+--On second drum drop, stars slow down and rocket forwards for the main beat drop, gaining trails
 local function drumdrop2(first, curtime, starttime, endtime)
 	if first == true then
 		starbgaccel = 30
@@ -95,6 +100,7 @@ local function main1(first, curtime, starttime, endtime)
 	
 end
 
+--Exiting this, stars accelerate forwards like mad and trail size increases
 local function exitmain1(first, curtime, starttime, endtime)
 	if first == true then
 		starbgaccel = 25
@@ -102,6 +108,7 @@ local function exitmain1(first, curtime, starttime, endtime)
 	starszz = starbgvel * 0.2
 end
 
+--Stars then rocket backwards really insanely fast
 local function main2(first, curtime, starttime, endtime)
 	if first == true then
 		starbgaccel = 0
@@ -114,6 +121,7 @@ local function main2(first, curtime, starttime, endtime)
 	end
 end
 
+--Stars then go forwards pretty slow
 local function main3(first, curtime, starttime, endtime)
 	if first == true then
 		starbgvel = maxstarspeed / 2
@@ -121,15 +129,55 @@ local function main3(first, curtime, starttime, endtime)
 	--TODO change color
 end
 
+--Stars then accelerate backwards, forming trails
 local function drumdrop3(first, curtime, starttime, endtime)
 	if first == true then
+		starbgvel = 0
 		starbgaccel = -75
 	end
 	if starbgvel < -maxstarspeed * 3 then
 		starbgvel = -maxstarspeed * 3
 		starbgaccel = 0
 	end
+	starszz = -starbgvel * 0.3	--Trails face forwards, cause otherwise they look funny when appearing
 	--TODO beatbounce size
+end
+
+local function main4(first, curtime, starttime, endtime)
+	--TODO
+end
+
+--Exiting this, stars accelerate backwards and trail size increases
+local function exitmain4(first, curtime, starttime, endtime)
+	if first == true then
+		starbgaccel = -25
+	end
+	starszz = -starbgvel * 0.3
+end
+
+local function midend(first, curtime, starttime, endtime)
+	if first == true then
+		starbgaccel = 0
+		starbgvel = maxstarspeed
+	end
+	if starszz > 0.1 then
+		starszz = starszz / 1.05
+	else
+		starszz = 0
+	end
+end
+
+local function exitmidend(first, curtime, starttime, endtime)
+	if first == true then
+		starbgaccel = 0
+		starbgvel = maxstarspeed
+	end
+	starbgvel = maxstarspeed + math.sin(wubfreq * curtime) * (curtime - starttime) * 10
+end
+
+local function ending(first, curtime, starttime, endtime)
+	starbgaccel = 0
+	starbgvel = maxstarspeed / 10
 end
 
 local timetab = {
@@ -145,6 +193,11 @@ local timetab = {
 	{func = main2, startat = 166.989, endat = 200.381},
 	{func = main3, startat = 200.381, endat = 231.689},
 	{func = drumdrop3, startat = 231.689, endat = 233.772},
+	{func = main4, startat = 233.772, endat = 260.779},
+	{func = exitmain4, startat = 260.779, endat = 267.165},
+	{func = midend, startat = 267.165, endat = 294.849},
+	{func = exitmidend, startat = 296.806, endat = 300.557},
+	{func = ending, startat = 300.557, endat = 305},
 }
 
 local function ss_update(curtime)
