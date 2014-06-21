@@ -66,7 +66,7 @@ private:
 	bool m_bPauseOnKeyboardFocus;	//If the game pauses when keyboard focus is lost
 	bool m_bSoundDied;  //If tyrsound fails to load, don't try to use it
 	int m_iMSAA;		//Antialiasing (0x, 2x, 4x, 8x, etc)
-	Cursor* m_cursor;
+	myCursor* m_cursor;
 	bool m_bCursorShow;
 	bool m_bCursorOutOfWindow;	//If the cursor is outside of the window, don't draw it
 	
@@ -158,7 +158,7 @@ public:
 	bool getCursorDown(int iButtonCode);
 	void showCursor()	{m_bCursorShow = true;};
 	void hideCursor()	{m_bCursorShow = false;};
-	void setCursor(Cursor* cur)	{m_cursor = cur;};
+	void setCursor(myCursor* cur)	{m_cursor = cur;};
 	bool isMouseGrabbed()	{return SDL_GetWindowGrab(m_Window);};
 	void grabMouse(bool bGrab = true) {SDL_SetWindowGrab(m_Window, (SDL_bool)bGrab);};
 	

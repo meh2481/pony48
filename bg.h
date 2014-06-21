@@ -64,7 +64,7 @@ public:
 	
 	void init();	//Place all stars randomly to begin with
 	
-	Color gen;		//Starting color
+	Color col;		//Starting color
 	float32 speed;	//Simulation speed
 	uint32_t num;	//Maximum number of stars
 	Vec3 starSize;	//Size of stars
@@ -72,14 +72,7 @@ public:
 	Point avoidCam;	//Size of rectangle in the center that a star shouldn't be placed in to avoid hitting the camera
 	
 protected:
-	class starfieldStar
-	{
-	public:
-		Color col;
-		Vec3 pos;
-	};
-
-	list<starfieldStar> m_lStars;
+	list<Vec3> m_lStars;
 	
 	Vec3 _place(float32 z);	//Decide where to put a new star
 };

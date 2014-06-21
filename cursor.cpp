@@ -4,17 +4,17 @@
 */
 #include "cursor.h"
 
-Cursor::Cursor()
+myCursor::myCursor()
 {
 	_init();
 }
 
-Cursor::~Cursor()
+myCursor::~myCursor()
 {
 	
 }
 	
-void Cursor::_init()
+void myCursor::_init()
 {
 	pos.SetZero();
 	size.SetZero();
@@ -23,7 +23,7 @@ void Cursor::_init()
 	rot = 0;
 }
 	
-void Cursor::draw()
+void myCursor::draw()
 {
 	if(img != NULL)
 	{
@@ -40,7 +40,7 @@ void Cursor::draw()
 	}
 }
 	
-bool Cursor::fromXML(string sXMLFilename)
+bool myCursor::fromXML(string sXMLFilename)
 {
 	_init();
 	

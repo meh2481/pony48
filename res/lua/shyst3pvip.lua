@@ -10,6 +10,65 @@ local starszx
 local starszy
 local starszz
 local wubfreq
+local star_r
+local star_g
+local star_b
+local star_a
+local dest_star_r
+local dest_star_g
+local dest_star_b
+local dest_star_a
+
+local function fadecol(difftime, amt)
+	--Red
+	if star_r < dest_star_r then
+		star_r = star_r + difftime * amt
+		if star_r > dest_star_r then
+			star_r = dest_star_r
+		end
+	elseif star_r > dest_star_r then
+		star_r = star_r - difftime * amt
+		if star_r < dest_star_r then
+			star_r = dest_star_r
+		end
+	end
+	--Green
+	if star_g < dest_star_g then
+		star_g = star_g + difftime * amt
+		if star_g > dest_star_g then
+			star_g = dest_star_g
+		end
+	elseif star_g > dest_star_g then
+		star_g = star_g - difftime * amt
+		if star_g < dest_star_g then
+			star_g = dest_star_g
+		end
+	end
+	--Blue
+	if star_b < dest_star_b then
+		star_b = star_b + difftime * amt
+		if star_b > dest_star_b then
+			star_b = dest_star_b
+		end
+	elseif star_b > dest_star_b then
+		star_b = star_b - difftime * amt
+		if star_b < dest_star_b then
+			star_b = dest_star_b
+		end
+	end
+	--Alpha
+	if star_a < dest_star_a then
+		star_a = star_a + difftime * amt
+		if star_a > dest_star_a then
+			star_a = dest_star_a
+		end
+	elseif star_a > dest_star_a then
+		star_a = star_a - difftime * amt
+		if star_a < dest_star_a then
+			star_a = dest_star_a
+		end
+	end
+end
 
 local function ss_init()
 	starbgvel = 0
@@ -19,12 +78,20 @@ local function ss_init()
 	starszx = 0.15
 	starszy = 0.15
 	starszz = 0
-	wubfreq = 30
+	wubfreq = 60
+	star_r = 1
+	star_g = 1
+	star_b = 1
+	star_a = 1
+	dest_star_r = 1
+	dest_star_g = 1
+	dest_star_b = 1
+	dest_star_a = 1
 end
 setglobal("ss_init", ss_init)
 
 --At beginning of song, stars are stopped. Start them moving
-local function startstars(first, curtime, starttime, endtime)
+local function startstars(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgaccel = 20
 	end
@@ -34,15 +101,14 @@ local function startstars(first, curtime, starttime, endtime)
 	end
 end
 
-local function mid1(first, curtime, starttime, endtime)
-	if first == true then
+local function mid1(first, curtime, starttime, endtime, difftime)
+	if first == true then	--In case we've looped, start stars moving at normal speed again
 		starbgvel = maxstarspeed
 	end
-	--TODO Something cool
 end
 
 --On first drop, stars slow to a stop
-local function drumdrop1(first, curtime, starttime, endtime)
+local function drumdrop1(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgaccel = -25
 	end
@@ -53,14 +119,14 @@ local function drumdrop1(first, curtime, starttime, endtime)
 end
 
 --After first drop is done, stars immediately start moving backwards fast
-local function mid2(first, curtime, starttime, endtime)
+local function mid2(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgvel = -maxstarspeed*2
 	end
 end
 
 --On this change, stars slow down and accelerate forwards fast
-local function mid3(first, curtime, starttime, endtime)
+local function mid3(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgaccel = 50
 	end
@@ -68,21 +134,34 @@ local function mid3(first, curtime, starttime, endtime)
 		starbgvel = maxstarspeed * 2
 		starbgaccel = 0
 	end
+	if dest_star_r == star_r and 
+	   dest_star_g == star_g and
+	   dest_star_b == star_b then
+		dest_star_r = math.random()
+		dest_star_g = math.random()
+		dest_star_b = math.random()
+	end
+	fadecol(difftime, 1)
 end
 
 --On this change, stars slow down and move backwards slow
-local function mid4(first, curtime, starttime, endtime)
+local function mid4(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgaccel = -40
+		dest_star_r = 1	--Change back to white
+		dest_star_g = 1
+		dest_star_b = 1
+		dest_star_a = 1
 	end
 	if starbgvel < -maxstarspeed then
 		starbgaccel = 0
 		starbgvel = -maxstarspeed
 	end
+	fadecol(difftime, 0.75)
 end
 
 --On second drum drop, stars slow down and rocket forwards for the main beat drop, gaining trails
-local function drumdrop2(first, curtime, starttime, endtime)
+local function drumdrop2(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgaccel = 30
 	end
@@ -96,12 +175,12 @@ local function drumdrop2(first, curtime, starttime, endtime)
 	end
 end
 
-local function main1(first, curtime, starttime, endtime)
+local function main1(first, curtime, starttime, endtime, difftime)
 	
 end
 
 --Exiting this, stars accelerate forwards like mad and trail size increases
-local function exitmain1(first, curtime, starttime, endtime)
+local function exitmain1(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgaccel = 25
 	end
@@ -109,7 +188,7 @@ local function exitmain1(first, curtime, starttime, endtime)
 end
 
 --Stars then rocket backwards really insanely fast
-local function main2(first, curtime, starttime, endtime)
+local function main2(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgaccel = 0
 		starbgvel = -maxstarspeed * 5
@@ -122,60 +201,95 @@ local function main2(first, curtime, starttime, endtime)
 end
 
 --Stars then go forwards pretty slow
-local function main3(first, curtime, starttime, endtime)
+local function main3(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgvel = maxstarspeed / 2
 	end
-	--TODO change color
+	if starszx < 0.25 then
+		starszx = starszx + difftime * 0.1
+		starszy = starszx
+	else
+		starszx = 0.25
+		starszy = starszx
+	end
+	--Change stars to a random color
+	if dest_star_r == star_r and 
+	   dest_star_g == star_g and
+	   dest_star_b == star_b then
+		dest_star_r = math.random()
+		dest_star_g = math.random()
+		dest_star_b = math.random()
+	end
+	fadecol(difftime, 7.5)
 end
 
 --Stars then accelerate backwards, forming trails
-local function drumdrop3(first, curtime, starttime, endtime)
+local function drumdrop3(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgvel = 0
 		starbgaccel = -75
+		dest_star_r = 0.3490	--Stars change to blue
+		dest_star_g = 0.3882
+		dest_star_b = 1
+		dest_star_a = 1
 	end
 	if starbgvel < -maxstarspeed * 3 then
 		starbgvel = -maxstarspeed * 3
 		starbgaccel = 0
 	end
+	if starszx > 0.15 then
+		starszx = starszx - difftime * 0.1
+		starszy = starszx
+	else
+		starszx = 0.15
+		starszy = starszx
+	end
+	fadecol(difftime, 0.5)
 	starszz = -starbgvel * 0.3	--Trails face forwards, cause otherwise they look funny when appearing
 	--TODO beatbounce size
 end
 
-local function main4(first, curtime, starttime, endtime)
+local function main4(first, curtime, starttime, endtime, difftime)
 	--TODO
 end
 
 --Exiting this, stars accelerate backwards and trail size increases
-local function exitmain4(first, curtime, starttime, endtime)
+local function exitmain4(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgaccel = -25
 	end
 	starszz = -starbgvel * 0.3
 end
 
-local function midend(first, curtime, starttime, endtime)
+--Then, stars move forwards at a normal speed and change back to white
+local function midend(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgaccel = 0
 		starbgvel = maxstarspeed
+		dest_star_r = 1
+		dest_star_g = 1
+		dest_star_b = 1
+		dest_star_a = 1
 	end
 	if starszz > 0.1 then
 		starszz = starszz / 1.05
 	else
 		starszz = 0
 	end
+	fadecol(difftime, 0.75)
 end
 
-local function exitmidend(first, curtime, starttime, endtime)
+--At end-of-song wubby effect, stars step forwards in a sinusoidal pattern
+local function exitmidend(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgaccel = 0
 		starbgvel = maxstarspeed
 	end
-	starbgvel = maxstarspeed + math.sin(wubfreq * curtime) * (curtime - starttime) * 10
+	starbgvel = maxstarspeed + math.sin(wubfreq * curtime) * (curtime - starttime) * 15
 end
 
-local function ending(first, curtime, starttime, endtime)
+--At end of song, stars slow down to a crawl, to pick speed back up again on loop
+local function ending(first, curtime, starttime, endtime, difftime)
 	starbgaccel = 0
 	starbgvel = maxstarspeed / 10
 end
@@ -204,12 +318,12 @@ local function ss_update(curtime)
 	starbgvel = starbgvel + (curtime - lasttime) * starbgaccel
 	for key,val in ipairs(timetab) do
 		if curtime > val.startat and curtime < val.endat then
-			val.func(lasttime < val.startat or lasttime > val.endat, curtime, val.startat, val.endat)
+			val.func(lasttime < val.startat or lasttime > val.endat, curtime, val.startat, val.endat, curtime-lasttime)
 		end
 	end
 	setstarbgvel(starbgvel)
 	setstarbgsize(starszx, starszy, starszz)
-	
+	setstarbgcol(star_r, star_g, star_b, star_a)
 	lasttime = curtime
 end
 setglobal("ss_update", ss_update)

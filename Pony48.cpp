@@ -33,10 +33,10 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_bMouseGrabOnWindowRegain = true;
 #endif
 	hideCursor();
-	m_mCursors["sel"] = new Cursor();
+	m_mCursors["sel"] = new myCursor();
 	m_mCursors["sel"]->fromXML("res/cursor/arrowsel.xml");
 	setCursor(m_mCursors["sel"]);
-	m_mCursors["dir"] = new Cursor();
+	m_mCursors["dir"] = new myCursor();
 	m_mCursors["dir"]->fromXML("res/cursor/arrowdir.xml");
 	m_iMouseControl = 0;
 	
@@ -160,7 +160,7 @@ Pony48Engine::~Pony48Engine()
 	clearBoard();
 	if(m_bg != NULL)
 		delete m_bg;
-	for(map<string, Cursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
+	for(map<string, myCursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
 		delete i->second;
 	errlog << "delete hud" << endl;
 	delete m_hud;
@@ -368,7 +368,7 @@ void Pony48Engine::draw()
 	}
 	
 	//Set mouse cursor to proper location
-	for(map<string, Cursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
+	for(map<string, myCursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
 	{
 		i->second->pos = worldPosFromCursor(getCursorPos());
 		if(i->first == "dir")

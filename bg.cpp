@@ -78,7 +78,7 @@ Color* pinwheelBg::getWheelCol(uint32_t wheel)
 //-----------------------------------------------------------------------------
 starfieldBg::starfieldBg()
 {
-	gen.set(1,1,1,1);
+	col.set(1,1,1,1);
 	speed = 15;
 	num = 500;
 	fieldSize.set(40,40,75);
@@ -91,9 +91,7 @@ void starfieldBg::init()
 {
 	for(int i = 0; i < num; i++)
 	{
-		starfieldStar st;
-		st.col = gen;
-		st.pos = _place(randFloat(0,fieldSize.z));
+		Vec3 st = _place(randFloat(0,fieldSize.z));
 		m_lStars.push_back(st);
 	}
 }
@@ -104,11 +102,11 @@ void starfieldBg::draw()
 	glLoadIdentity();	//So camera is at z = 0
 	glBindTexture(GL_TEXTURE_2D, 0);
 	//Draw stars
-	for(list<starfieldStar>::iterator i = m_lStars.begin(); i != m_lStars.end(); i++)
+	glColor4f(col.r,col.g,col.b,col.a);
+	for(list<Vec3>::iterator i = m_lStars.begin(); i != m_lStars.end(); i++)
 	{
-		glColor4f(i->col.r,i->col.g,i->col.b,i->col.a);
 		glPushMatrix();
-		glTranslatef(i->pos.x, i->pos.y, -i->pos.z);
+		glTranslatef(i->x, i->y, -i->z);
 		
 		//Start drawing
 		glBegin(GL_QUADS);
@@ -160,17 +158,16 @@ void starfieldBg::draw()
 void starfieldBg::update(float32 dt)
 {
 	//Update all the stars here
-	for(list<starfieldStar>::iterator i = m_lStars.begin(); i != m_lStars.end(); i++)
+	for(list<Vec3>::iterator i = m_lStars.begin(); i != m_lStars.end(); i++)
 	{
-		i->pos.z -= speed*dt;	//Update position
-		if(i->pos.z < 0 || i->pos.z > fieldSize.z)	//If this particle has gone off the screen either direction
+		i->z -= speed*dt;	//Update position
+		if(i->z < 0 || i->z > fieldSize.z)	//If this particle has gone off the screen either direction
 		{
-			i->col = gen;
 			if(speed > 0)
-				i->pos.z = fieldSize.z;
+				i->z = fieldSize.z;
 			else
-				i->pos.z = 0;
-			i->pos = _place(i->pos.z);
+				i->z = 0;
+			*i = _place(i->z);
 		}
 	}
 }

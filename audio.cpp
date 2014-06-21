@@ -142,7 +142,7 @@ void Pony48Engine::loadSongXML(string sFilename)
 						elem->QueryFloatAttribute("speed", &bg->speed);
 						const char* cCol = elem->Attribute("col");
 						if(cCol && strlen(cCol))
-							bg->gen = colorFromString(cCol);
+							bg->col = colorFromString(cCol);
 						elem->QueryUnsignedAttribute("num", &bg->num);
 						const char* cSize = elem->Attribute("size");
 						if(cSize && strlen(cSize))

@@ -8,14 +8,14 @@
 #ifndef CURSOR_H
 #define CURSOR_H
  
-class Cursor
+class myCursor
 {
 protected:
 	void _init();
 	
 public:
-	Cursor();
-	~Cursor();
+	myCursor();
+	~myCursor();
 	
 	Point pos;
 	Point size;
