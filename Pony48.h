@@ -153,6 +153,7 @@ private:
 	float32 m_fVoxVolume;
 	float32 m_fLastMovedSec;
 	bool m_bHasBoredVox;
+	float32 m_fSongFxRotate;
 	uint32_t m_iSongToPlay;
 	
 	//audio.cpp stuff!

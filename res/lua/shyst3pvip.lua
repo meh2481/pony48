@@ -18,7 +18,32 @@ local dest_star_r
 local dest_star_g
 local dest_star_b
 local dest_star_a
+local boardrot
+local maxboardrot
 
+local function ss_init()
+	starbgvel = 0
+	starbgaccel = 0
+	lasttime = -0.001
+	maxstarspeed = 15
+	starszx = 0.15
+	starszy = 0.15
+	starszz = 0
+	wubfreq = 60
+	star_r = 1
+	star_g = 1
+	star_b = 1
+	star_a = 1
+	dest_star_r = 1
+	dest_star_g = 1
+	dest_star_b = 1
+	dest_star_a = 1
+	boardrot = 0
+	maxboardrot = 0
+end
+setglobal("ss_init", ss_init)
+
+--Helper function for fading one color into another
 local function fadecol(difftime, amt)
 	--Red
 	if star_r < dest_star_r then
@@ -70,30 +95,11 @@ local function fadecol(difftime, amt)
 	end
 end
 
-local function ss_init()
-	starbgvel = 0
-	starbgaccel = 0
-	lasttime = -0.001
-	maxstarspeed = 15
-	starszx = 0.15
-	starszy = 0.15
-	starszz = 0
-	wubfreq = 60
-	star_r = 1
-	star_g = 1
-	star_b = 1
-	star_a = 1
-	dest_star_r = 1
-	dest_star_g = 1
-	dest_star_b = 1
-	dest_star_a = 1
-end
-setglobal("ss_init", ss_init)
-
 --At beginning of song, stars are stopped. Start them moving
 local function startstars(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgaccel = 20
+		maxboardrot = 0
 	end
 	if starbgvel > maxstarspeed then
 		starbgvel = maxstarspeed
@@ -123,6 +129,12 @@ local function mid2(first, curtime, starttime, endtime, difftime)
 	if first == true then
 		starbgvel = -maxstarspeed*2
 	end
+	if maxboardrot < 2.5 then
+		maxboardrot = maxboardrot + difftime * 5
+		if maxboardrot > 2.5 then
+			maxboardrot = 2.5
+		end
+	end
 end
 
 --On this change, stars slow down and accelerate forwards fast
@@ -142,6 +154,12 @@ local function mid3(first, curtime, starttime, endtime, difftime)
 		dest_star_b = math.random()
 	end
 	fadecol(difftime, 1)
+	if maxboardrot < 4.5 then
+		maxboardrot = maxboardrot + difftime * 5
+		if maxboardrot > 4.5 then
+			maxboardrot = 4.5
+		end
+	end
 end
 
 --On this change, stars slow down and move backwards slow
@@ -173,6 +191,12 @@ local function drumdrop2(first, curtime, starttime, endtime, difftime)
 	if starbgvel > 0 then
 		starszz = starbgvel * 0.2
 	end
+	if maxboardrot < 5 then
+		maxboardrot = maxboardrot + difftime * 5
+		if maxboardrot > 5 then
+			maxboardrot = 5
+		end
+	end
 end
 
 local function main1(first, curtime, starttime, endtime, difftime)
@@ -185,6 +209,12 @@ local function exitmain1(first, curtime, starttime, endtime, difftime)
 		starbgaccel = 25
 	end
 	starszz = starbgvel * 0.2
+	if maxboardrot < 7.5 then
+		maxboardrot = maxboardrot + difftime * 5
+		if maxboardrot > 7.5 then
+			maxboardrot = 7.5
+		end
+	end
 end
 
 --Stars then rocket backwards really insanely fast
@@ -221,6 +251,12 @@ local function main3(first, curtime, starttime, endtime, difftime)
 		dest_star_b = math.random()
 	end
 	fadecol(difftime, 7.5)
+	if maxboardrot > 3.5 then
+		maxboardrot = maxboardrot - difftime * 5
+		if maxboardrot < 3.5 then
+			maxboardrot = 3.5
+		end
+	end
 end
 
 --Stars then accelerate backwards, forming trails
@@ -246,6 +282,12 @@ local function drumdrop3(first, curtime, starttime, endtime, difftime)
 	end
 	fadecol(difftime, 0.5)
 	starszz = -starbgvel * 0.3	--Trails face forwards, cause otherwise they look funny when appearing
+	if maxboardrot < 7.5 then
+		maxboardrot = maxboardrot + difftime * 5
+		if maxboardrot > 7.5 then
+			maxboardrot = 7.5
+		end
+	end
 	--TODO beatbounce size
 end
 
@@ -277,6 +319,12 @@ local function midend(first, curtime, starttime, endtime, difftime)
 		starszz = 0
 	end
 	fadecol(difftime, 0.75)
+	if maxboardrot > 2.5 then
+		maxboardrot = maxboardrot - difftime * 5
+		if maxboardrot < 2.5 then
+			maxboardrot = 2.5
+		end
+	end
 end
 
 --At end-of-song wubby effect, stars step forwards in a sinusoidal pattern
@@ -292,6 +340,12 @@ end
 local function ending(first, curtime, starttime, endtime, difftime)
 	starbgaccel = 0
 	starbgvel = maxstarspeed / 10
+	if maxboardrot > 0 then
+		maxboardrot = maxboardrot - difftime * 5
+		if maxboardrot < 0 then
+			maxboardrot = 0
+		end
+	end
 end
 
 local timetab = {
@@ -321,9 +375,11 @@ local function ss_update(curtime)
 			val.func(lasttime < val.startat or lasttime > val.endat, curtime, val.startat, val.endat, curtime-lasttime)
 		end
 	end
+	boardrot = math.sin(curtime) * maxboardrot
 	setstarbgvel(starbgvel)
 	setstarbgsize(starszx, starszy, starszz)
 	setstarbgcol(star_r, star_g, star_b, star_a)
+	setboardrot(boardrot)
 	lasttime = curtime
 end
 setglobal("ss_update", ss_update)

@@ -58,6 +58,11 @@ public:
 	{
 		return &g_pGlobalEngine->m_BgCol;
 	}
+	
+	static void setBoardRot(float32 fRot)
+	{
+		g_pGlobalEngine->m_fSongFxRotate = fRot;
+	}
 };
 
 luaFunc(fireparticles)	//fireparticles(string particleSysName, bool bFire)
@@ -224,6 +229,12 @@ luaFunc(setstarbgcol)	//setstarbgcol(float r, float g, float b, float a)
 	luaReturnNil();
 }
 
+luaFunc(setboardrot)	//setboardrot(float32 fAngleDeg)
+{
+	PonyLua::setBoardRot(lua_tonumber(L, 1));
+	luaReturnNil();
+}
+
 static LuaFunctions s_functab[] =
 {
 	luaRegister(fireparticles),
@@ -240,6 +251,7 @@ static LuaFunctions s_functab[] =
 	luaRegister(setstarbgvel),
 	luaRegister(setstarbgsize),
 	luaRegister(setstarbgcol),
+	luaRegister(setboardrot),
 	//luaRegister(),
 	{NULL, NULL}
 };

@@ -1,4 +1,3 @@
--Bop-It gameover sound
 -Joystick list in case multiple controllers connected - most recent one used for board-tilt-testing
 -Touchscreen support?
 -Rebindable controller - rebind axes, buttons, etc
@@ -7,7 +6,6 @@
 -Warning before resetting the game if press MMB or Y
 -SFX
 -VOX
--Test and see if 2048x64 image even works with lower-end lappy gfx card
 -Mic record people's reaction on gameover? Or remove mic?
 -Fix broken OpenCV in Windows
 -Add getting-points effect over score
@@ -16,8 +14,6 @@
 -Support other bg types in song XML
 -FX
 	-Rotate screen on z axis
-	-Star bg change size on the fly
-	-Star bg acceleration
 	-Get waveform data so can have bg bars
 	-Electric arcs?
 	-Gradient bg stuff in Lua

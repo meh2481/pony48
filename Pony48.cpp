@@ -149,6 +149,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fVoxVolume = 1.0f;
 	m_bHasBoredVox = false;
 	m_fLastMovedSec = 0.0f;
+	m_fSongFxRotate = 0.0f;
 	//TODO Song select
 	m_iSongToPlay = 0;
 }
@@ -299,8 +300,11 @@ void Pony48Engine::draw()
 			
 			//Set up OpenGL matrices
 			glLoadIdentity();
-			glTranslatef(CameraPos.x, CameraPos.y, CameraPos.z);
-			glRotatef(m_BoardRotAngle, m_BoardRot.x, m_BoardRot.y, m_BoardRot.z);
+			
+			glRotatef(m_fSongFxRotate, 0.0f, 0.0f, 1.0f);	//Rotate according to song fx
+			glTranslatef(CameraPos.x, CameraPos.y, CameraPos.z);	//Translate according to where our camera is
+			glRotatef(m_BoardRotAngle, m_BoardRot.x, m_BoardRot.y, m_BoardRot.z);	//Rotate according to what direction the player is pressing
+			
 			
 			//Draw our game info
 			drawBoard();
