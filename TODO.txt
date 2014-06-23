@@ -7,17 +7,16 @@
 -SFX
 -VOX
 -Mic record people's reaction on gameover? Or remove mic?
--Fix broken OpenCV in Windows
 -Add getting-points effect over score
 -Fix maximize-window bug in Linux?
 -Main menu with song selection
 -Support other bg types in song XML
 -FX
-	-Rotate screen on z axis
 	-Get waveform data so can have bg bars
 	-Electric arcs?
 	-Gradient bg stuff in Lua
 -Tile-appearing animations should only appear after sliding animations are done
+-record label thing in corner as songs first play
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

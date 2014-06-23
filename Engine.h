@@ -70,7 +70,7 @@ private:
 	bool m_bCursorShow;
 	bool m_bCursorOutOfWindow;	//If the cursor is outside of the window, don't draw it
 	
-	map<string, FMOD_CHANNEL*> m_channels;
+	multimap<string, FMOD_CHANNEL*> m_channels;
 	map<string, FMOD_SOUND*> m_sounds;
 	FMOD_SYSTEM* m_audioSystem;
 
@@ -141,6 +141,7 @@ public:
 	void stopMusic();
 	void seekMusic(float32 fTime);
 	bool hasMic();																		//If we have some form of mic-like input
+	void updateSound();
 	
 	//Keyboard functions
 	bool keyDown(int32_t keyCode);  //Test and see if a key is currently pressed
