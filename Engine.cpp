@@ -316,11 +316,12 @@ void Engine::createSound(string sPath, string sName)
 	if(m_bSoundDied || m_sounds.count(sName)) return;	//Don't duplicate sounds or attempt to play sounds if we can't
 	errlog << "Load sound " << sPath << endl;
 	FMOD_SOUND* handle;
-#ifdef DEBUG_REVSOUND
-	if(FMOD_System_CreateSound(m_audioSystem, sPath.c_str(), FMOD_CREATESAMPLE, 0, &handle) == FMOD_OK)
-#else
-	if(FMOD_System_CreateSound(m_audioSystem, sPath.c_str(), FMOD_CREATESTREAM, 0, &handle) == FMOD_OK)
+	FMOD_MODE open_mode = FMOD_CREATESAMPLE;
+#ifndef DEBUG_REVSOUND
+	if(sName == "music")
+		open_mode = FMOD_CREATESTREAM;	//Open music as a stream, sounds as samples (so the sounds can play multiple times at once)
 #endif
+	if(FMOD_System_CreateSound(m_audioSystem, sPath.c_str(), open_mode, 0, &handle) == FMOD_OK)
 		m_sounds[sName] = handle;
 }
 

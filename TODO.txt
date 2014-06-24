@@ -19,7 +19,7 @@
 -Tile-appearing animations should only appear after sliding animations are done
 -record label thing in corner as songs first play
 -Back button / ESC goes back to song-select menu
--Dig into FMOD for playing a sound more than once at a time
+-Reset game properly on exit/restart
 
 Linux Xbox controller rumble:
 sudo rmmod xpad
