@@ -12,6 +12,29 @@
 //For our engine functions to be able to call our Engine class functions
 Pony48Engine* g_pGlobalEngine;
 
+//Keybinding stuff!
+uint32_t JOY_BUTTON_BACK;
+uint32_t JOY_BUTTON_RESTART;
+uint32_t JOY_BUTTON_A;
+uint32_t JOY_BUTTON_B;
+uint32_t JOY_AXIS_HORIZ;
+uint32_t JOY_AXIS_VERT;
+uint32_t JOY_AXIS2_HORIZ;
+uint32_t JOY_AXIS2_VERT;
+uint32_t JOY_AXIS_LT;
+uint32_t JOY_AXIS_RT;
+int32_t JOY_AXIS_TRIP;
+SDL_Scancode KEY_UP1;
+SDL_Scancode KEY_UP2;
+SDL_Scancode KEY_DOWN1;
+SDL_Scancode KEY_DOWN2;
+SDL_Scancode KEY_LEFT1;
+SDL_Scancode KEY_LEFT2;
+SDL_Scancode KEY_RIGHT1;
+SDL_Scancode KEY_RIGHT2;
+SDL_Scancode KEY_ENTER1;
+SDL_Scancode KEY_ENTER2;
+
 void signalHandler(string sSignal)
 {
 	g_pGlobalEngine->hudSignalHandler(sSignal);
@@ -114,17 +137,31 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	JOY_AXIS_RT = 5;
 	JOY_AXIS_TRIP = 20000;
 	m_lastJoyHatMoved = 0;
+	KEY_UP1 = SDL_SCANCODE_W;
+	KEY_UP2 = SDL_SCANCODE_UP;
+	KEY_DOWN1 = SDL_SCANCODE_S;
+	KEY_DOWN2 = SDL_SCANCODE_DOWN;
+	KEY_LEFT1 = SDL_SCANCODE_A;
+	KEY_LEFT2 = SDL_SCANCODE_LEFT;
+	KEY_RIGHT1 = SDL_SCANCODE_D;
+	KEY_RIGHT2 = SDL_SCANCODE_RIGHT;
+	KEY_ENTER1 = SDL_SCANCODE_SPACE;
+	KEY_ENTER2 = SDL_SCANCODE_RETURN;
 	
 	//Apparently our Xbox drivers for different OS's can't agree on which buttons are which
 #ifdef _WIN32
 	JOY_BUTTON_BACK = 5;
 	JOY_BUTTON_RESTART = 13;
+	JOY_BUTTON_A = ;	//TODO
+	JOY_BUTTON_B = ;
 	JOY_AXIS2_HORIZ = 2;
 	JOY_AXIS2_VERT = 3;
 	JOY_AXIS_LT = 4;
 #else
 	JOY_BUTTON_BACK = 6;
 	JOY_BUTTON_RESTART = 3;
+	JOY_BUTTON_A = 0;
+	JOY_BUTTON_B = 1;
 	JOY_AXIS2_HORIZ = 3;
 	JOY_AXIS2_VERT = 4;
 	JOY_AXIS_LT = 2;
@@ -529,38 +566,37 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						if(keyDown(SDL_SCANCODE_ALT))
 							toggleFullscreen();
 						break;
-					
-					//TODO: Rebindable keys
-					case SDL_SCANCODE_W:
-					case SDL_SCANCODE_UP:
-						m_iMouseControl = 0;
-						hideCursor();
-						if(m_iCurMode == PLAYING)
-							move(UP);
-						break;
 						
-					case SDL_SCANCODE_S:
-					case SDL_SCANCODE_DOWN:
-						m_iMouseControl = 0;
-						hideCursor();
-						if(m_iCurMode == PLAYING)
-							move(DOWN);
-						break;
-						
-					case SDL_SCANCODE_A:
-					case SDL_SCANCODE_LEFT:
-						m_iMouseControl = 0;
-						hideCursor();
-						if(m_iCurMode == PLAYING)
-							move(LEFT);
-						break;
-						
-					case SDL_SCANCODE_D:
-					case SDL_SCANCODE_RIGHT:
-						m_iMouseControl = 0;
-						hideCursor();
-						if(m_iCurMode == PLAYING)
-							move(RIGHT);
+					default:
+						//GCC is derping on me and spits out "error: ‘KEY_X’ cannot appear in a constant-expression" if I add switch statements for these. Really annoying.
+						if(event.key.keysym.scancode == KEY_UP1 || event.key.keysym.scancode == KEY_UP2)
+						{
+							m_iMouseControl = 0;
+							hideCursor();
+							if(m_iCurMode == PLAYING)
+								move(UP);
+						}
+						else if(event.key.keysym.scancode == KEY_DOWN1 || event.key.keysym.scancode == KEY_DOWN2)
+						{
+							m_iMouseControl = 0;
+							hideCursor();
+							if(m_iCurMode == PLAYING)
+								move(DOWN);
+						}
+						else if(event.key.keysym.scancode == KEY_LEFT1 || event.key.keysym.scancode == KEY_LEFT2)
+						{
+							m_iMouseControl = 0;
+							hideCursor();
+							if(m_iCurMode == PLAYING)
+								move(LEFT);
+						}
+						else if(event.key.keysym.scancode == KEY_RIGHT1 || event.key.keysym.scancode == KEY_RIGHT2)
+						{
+							m_iMouseControl = 0;
+							hideCursor();
+							if(m_iCurMode == PLAYING)
+								move(RIGHT);
+						}
 						break;
 				}
 				break;
@@ -1015,12 +1051,49 @@ bool Pony48Engine::loadConfig(string sFilename)
 		joystick->QueryIntAttribute("axistripthreshold", &JOY_AXIS_TRIP);
 		joystick->QueryUnsignedAttribute("backbutton", &JOY_BUTTON_BACK);
 		joystick->QueryUnsignedAttribute("restartbutton", &JOY_BUTTON_RESTART);
+		joystick->QueryUnsignedAttribute("button1", &JOY_BUTTON_A);
+		joystick->QueryUnsignedAttribute("button2", &JOY_BUTTON_B);
 		joystick->QueryUnsignedAttribute("horizontalaxis1", &JOY_AXIS_HORIZ);
 		joystick->QueryUnsignedAttribute("verticalaxis1", &JOY_AXIS_VERT);
 		joystick->QueryUnsignedAttribute("horizontalaxis2", &JOY_AXIS2_HORIZ);
 		joystick->QueryUnsignedAttribute("verticalaxis2", &JOY_AXIS2_VERT);
 		joystick->QueryUnsignedAttribute("ltaxis", &JOY_AXIS_LT);
 		joystick->QueryUnsignedAttribute("rtaxis", &JOY_AXIS_RT);
+	}
+	
+	XMLElement* keyboard = root->FirstChildElement("keyboard");
+	if(keyboard != NULL)
+	{
+		const char* cUpKey1 = keyboard->Attribute("upkey1");
+		const char* cUpKey2 = keyboard->Attribute("upkey2");
+		const char* cDownKey1 = keyboard->Attribute("downkey1");
+		const char* cDownKey2 = keyboard->Attribute("downkey2");
+		const char* cLeftKey1 = keyboard->Attribute("leftkey1");
+		const char* cLeftKey2 = keyboard->Attribute("leftkey2");
+		const char* cRightKey1 = keyboard->Attribute("rightkey1");
+		const char* cRightKey2 = keyboard->Attribute("rightkey2");
+		const char* cEnter1 = keyboard->Attribute("enter1");
+		const char* cEnter2 = keyboard->Attribute("enter2");
+		if(cUpKey1)
+			KEY_UP1 = SDL_GetScancodeFromName(cUpKey1);
+		if(cUpKey2)
+			KEY_UP2 = SDL_GetScancodeFromName(cUpKey2);
+		if(cDownKey1)
+			KEY_DOWN1 = SDL_GetScancodeFromName(cDownKey1);
+		if(cDownKey2)
+			KEY_DOWN2 = SDL_GetScancodeFromName(cDownKey2);
+		if(cLeftKey1)
+			KEY_LEFT1 = SDL_GetScancodeFromName(cLeftKey1);
+		if(cLeftKey2)
+			KEY_LEFT2 = SDL_GetScancodeFromName(cLeftKey2);
+		if(cRightKey1)
+			KEY_RIGHT1 = SDL_GetScancodeFromName(cRightKey1);
+		if(cRightKey2)
+			KEY_RIGHT2 = SDL_GetScancodeFromName(cRightKey2);
+		if(cEnter1)
+			KEY_ENTER1 = SDL_GetScancodeFromName(cEnter1);
+		if(cEnter2)
+			KEY_ENTER2 = SDL_GetScancodeFromName(cEnter2);
 	}
 	
 	XMLElement* webcam = root->FirstChildElement("cam");
@@ -1074,6 +1147,8 @@ void Pony48Engine::saveConfig(string sFilename)
 	joystick->SetAttribute("axistripthreshold", JOY_AXIS_TRIP);
 	joystick->SetAttribute("backbutton", JOY_BUTTON_BACK);
 	joystick->SetAttribute("restartbutton", JOY_BUTTON_RESTART);
+	joystick->SetAttribute("button1", JOY_BUTTON_A);
+	joystick->SetAttribute("button2", JOY_BUTTON_B);
 	joystick->SetAttribute("horizontalaxis1", JOY_AXIS_HORIZ);
 	joystick->SetAttribute("verticalaxis1", JOY_AXIS_VERT);
 	joystick->SetAttribute("horizontalaxis2", JOY_AXIS2_HORIZ);
@@ -1081,6 +1156,19 @@ void Pony48Engine::saveConfig(string sFilename)
 	joystick->SetAttribute("ltaxis", JOY_AXIS_LT);
 	joystick->SetAttribute("rtaxis", JOY_AXIS_RT);
 	root->InsertEndChild(joystick);
+	
+	XMLElement* keyboard = doc->NewElement("keyboard");
+	keyboard->SetAttribute("upkey1", SDL_GetScancodeName(KEY_UP1));
+	keyboard->SetAttribute("upkey2", SDL_GetScancodeName(KEY_UP2));
+	keyboard->SetAttribute("downkey1", SDL_GetScancodeName(KEY_DOWN1));
+	keyboard->SetAttribute("downkey2", SDL_GetScancodeName(KEY_DOWN2));
+	keyboard->SetAttribute("leftkey1", SDL_GetScancodeName(KEY_LEFT1));
+	keyboard->SetAttribute("leftkey2", SDL_GetScancodeName(KEY_LEFT2));
+	keyboard->SetAttribute("rightkey1", SDL_GetScancodeName(KEY_RIGHT1));
+	keyboard->SetAttribute("rightkey2", SDL_GetScancodeName(KEY_RIGHT2));
+	keyboard->SetAttribute("enter1", SDL_GetScancodeName(KEY_ENTER1));
+	keyboard->SetAttribute("enter2", SDL_GetScancodeName(KEY_ENTER2));
+	root->InsertEndChild(keyboard);
 	
 	XMLElement* webcam = doc->NewElement("cam");
 	webcam->SetAttribute("device", m_iCAM);

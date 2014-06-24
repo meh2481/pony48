@@ -158,6 +158,13 @@ public:
 
 class HUDMenu : public HUDItem
 {
+protected:
+	bool bJoyMoved;
+	
+	void _moveUp();
+	void _moveDown();
+	void _enter();
+	
 public:
 	HUDMenu(string sName);
 	~HUDMenu();

@@ -4,10 +4,12 @@
 */
 
 #include "hud.h"
+#include "Pony48.h"
 #include <sstream>
 
 extern int screenDrawWidth;
 extern int screenDrawHeight;
+extern Pony48Engine* g_pGlobalEngine;
 
 //-------------------------------------------------------------------------------------
 // HUDItem class functions
@@ -278,6 +280,7 @@ HUDMenu::HUDMenu(string sName) : HUDItem(sName)
 	m_selected = m_menu.end();
 	pt = 1;
 	vspacing = 0;
+	bJoyMoved = false;
 }
 
 HUDMenu::~HUDMenu()
@@ -285,40 +288,88 @@ HUDMenu::~HUDMenu()
 	
 }
 
+void HUDMenu::_moveUp()
+{
+	if(m_selected == m_menu.begin())
+		m_selected = m_menu.end();
+	if(m_selected != m_menu.begin())
+		m_selected--;
+}
+
+void HUDMenu::_moveDown()
+{
+	if(m_selected != m_menu.end())
+		m_selected++;
+	if(m_selected == m_menu.end())
+		m_selected = m_menu.begin();
+}
+
+void HUDMenu::_enter()
+{
+	if(m_selected != m_menu.end())
+		m_signalHandler(m_selected->signal);
+}
+
 void HUDMenu::event(SDL_Event event)
 {
+	if(hidden) return;
+    HUDItem::event(event);
+	
 	switch(event.type)
 	{
 		case SDL_KEYDOWN:
+			if(event.key.keysym.scancode == KEY_UP1 || event.key.keysym.scancode == KEY_UP2)
+				_moveUp();
+			else if(event.key.keysym.scancode == KEY_DOWN1 || event.key.keysym.scancode == KEY_DOWN2)
+				_moveDown();
+			else if(event.key.keysym.scancode == KEY_ENTER1 || event.key.keysym.scancode == KEY_ENTER2)
+				_enter();
 			break;
 		
 		case SDL_MOUSEBUTTONDOWN:
+			//TODO
 			break;
 			
 		case SDL_MOUSEMOTION:
+		{
+			Point ptMousePos = g_pGlobalEngine->worldPosFromCursor(Point(event.motion.x, event.motion.y));
 			break;
+		}
 		
 		case SDL_JOYBUTTONDOWN:
-			if(m_selected != m_menu.end())
-				m_signalHandler(m_selected->signal);
+			if(event.jbutton.button == JOY_BUTTON_A)
+				_enter();
 			break;
 			
 		case SDL_JOYAXISMOTION:
+			if(event.jaxis.axis == JOY_AXIS_VERT)	//Vertical axis
+			{
+				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Up
+				{
+					if(!bJoyMoved)
+						_moveUp();
+					bJoyMoved = true;
+				}
+				else if(event.jaxis.value > JOY_AXIS_TRIP)	//Down
+				{
+					if(!bJoyMoved)
+						_moveDown();
+					bJoyMoved = true;
+				}
+				else
+					bJoyMoved = false;
+			}
 			break;
 			
 		case SDL_JOYHATMOTION:
 			switch(event.jhat.value)
 			{
 				case SDL_HAT_UP:
-					if(m_selected == m_menu.begin())
-						m_selected = m_menu.end();
-					m_selected--;
+					_moveUp();
 					break;
 					
 				case SDL_HAT_DOWN:
-					m_selected++;
-					if(m_selected == m_menu.end())
-						m_selected = m_menu.begin();
+					_moveDown();
 					break;
 			}
 			break;

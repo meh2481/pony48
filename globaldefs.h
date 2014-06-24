@@ -31,6 +31,34 @@ using namespace tinyxml2;
 #include <GL/glu.h>
 #endif
 
+//Defined by SDL
+#define JOY_AXIS_MIN	-32768
+#define JOY_AXIS_MAX	32767
+//Keybinding stuff!
+extern uint32_t JOY_BUTTON_BACK;
+extern uint32_t JOY_BUTTON_RESTART;
+extern uint32_t JOY_BUTTON_A;
+extern uint32_t JOY_BUTTON_B;
+extern uint32_t JOY_AXIS_HORIZ;
+extern uint32_t JOY_AXIS_VERT;
+extern uint32_t JOY_AXIS2_HORIZ;
+extern uint32_t JOY_AXIS2_VERT;
+extern uint32_t JOY_AXIS_LT;
+extern uint32_t JOY_AXIS_RT;
+extern int32_t JOY_AXIS_TRIP;
+extern SDL_Scancode KEY_UP1;
+extern SDL_Scancode KEY_UP2;
+extern SDL_Scancode KEY_DOWN1;
+extern SDL_Scancode KEY_DOWN2;
+extern SDL_Scancode KEY_LEFT1;
+extern SDL_Scancode KEY_LEFT2;
+extern SDL_Scancode KEY_RIGHT1;
+extern SDL_Scancode KEY_RIGHT2;
+extern SDL_Scancode KEY_ENTER1;
+extern SDL_Scancode KEY_ENTER2;
+#define JOY_MINMOVE_TRIP	3000
+#define MOUSE_MOVE_TRIP_AMT	20
+
 
 #define Point b2Vec2	//Our point structure
 #define Vec2 Point
@@ -75,6 +103,7 @@ public:
 	void	scale(float32 fScale) {left*=fScale;right*=fScale;top*=fScale;bottom*=fScale;};
 	void	scale(float32 fScalex, float32 fScaley) {left*=fScalex;right*=fScalex;top*=fScaley;bottom*=fScaley;};
 	void	set(float32 fleft,float32 ftop,float32 fright,float32 fbottom)  {left=fleft;top=ftop;right=fright;bottom=fbottom;};
+	bool    inside(Point p)	{return(p.x >= left && p.x <= right && p.y <= top && p.y >= bottom);};
 };
 
 class Vec3

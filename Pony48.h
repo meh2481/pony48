@@ -30,13 +30,6 @@
 
 #define MAX_TILE_VALUE	4096	//Above this, the game would crash, so cap it here
 
-//Defined by SDL
-#define JOY_AXIS_MIN	-32768
-#define JOY_AXIS_MAX	32767
-
-#define JOY_MINMOVE_TRIP	3000
-#define MOUSE_MOVE_TRIP_AMT	20
-
 #define INTRO_FADEIN_TIME	2.0	//How long the intro fadein takes
 #define INTRO_FADEIN_DELAY	2.0	//How long before the intro fadein starts
 
@@ -167,17 +160,6 @@ private:
 	float32 maxCamz;				//The maximum value for the camera's z axis
 	float32 m_fCamBounceBack;
 	map<string, ParticleSystem*> songParticles;
-	
-	//Keybinding stuff!
-	uint32_t JOY_BUTTON_BACK;
-	uint32_t JOY_BUTTON_RESTART;
-	uint32_t JOY_AXIS_HORIZ;
-	uint32_t JOY_AXIS_VERT;
-	uint32_t JOY_AXIS2_HORIZ;
-	uint32_t JOY_AXIS2_VERT;
-	uint32_t JOY_AXIS_LT;
-	uint32_t JOY_AXIS_RT;
-	int32_t JOY_AXIS_TRIP;
 	
 	//Random gameover stuff!
 	TilePiece* m_highestTile;
