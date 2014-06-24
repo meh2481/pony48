@@ -18,8 +18,7 @@
 	-Gradient bg stuff in Lua
 -Tile-appearing animations should only appear after sliding animations are done
 -record label thing in corner as songs first play
--Back button / ESC goes back to song-select menu
--Reset game properly on exit/restart
+-Back button / ESC goes back to song-select menu when in gameover state
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

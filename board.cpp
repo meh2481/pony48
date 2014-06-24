@@ -53,6 +53,10 @@ void Pony48Engine::clearBoard()
 			}
 		}
 	}
+	//Clean up animations
+	for(list<TilePiece*>::iterator i = m_lSlideJoinAnimations.begin(); i != m_lSlideJoinAnimations.end(); i++)
+		delete *i;
+	m_lSlideJoinAnimations.clear();
 }
 
 void Pony48Engine::resetBoard()

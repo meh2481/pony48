@@ -210,6 +210,7 @@ public:
 	void scrubPause();					//Pauses music with a decreasing-frequency effect
 	void scrubResume();					//Resumes music with an increasing-frequency effect
 	void soundUpdate(float32 dt);		//Updates audio fx
+	void cleanupSongGfx();				//Clear all memory associated with the board we're playing
 	
 	//board.cpp functions
 	void updateBoard(float32 dt);			//Update sliding pieces on the board

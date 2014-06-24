@@ -59,6 +59,9 @@ void Pony48Engine::beatDetect()
 
 void Pony48Engine::loadSongXML(string sFilename)
 {
+	//Clean up old data
+	cleanupSongGfx();
+	
 	XMLDocument* doc = new XMLDocument();
     int iErr = doc->LoadFile(sFilename.c_str());
 	if(iErr != XML_NO_ERROR)
@@ -275,7 +278,25 @@ void Pony48Engine::soundUpdate(float32 dt)
 		i->second->update(dt);
 }
 
-
+void Pony48Engine::cleanupSongGfx()
+{
+	for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
+		delete (i->second);
+	songParticles.clear();
+	m_fSongFxRotate = 0.0f;
+	if(m_bg)
+		delete m_bg;
+	m_bg = NULL;
+	
+	m_BoardBg.set(0.7,0.7,0.7,.5);
+	for(int i = 0; i < BOARD_HEIGHT; i++)
+	{
+		for(int j = 0; j < BOARD_WIDTH; j++)
+			m_TileBg[j][i].set(0.5,0.5,0.5,.5);
+	}
+	m_BgCol.set(0,0,0,1.0);
+	CameraPos.z = m_fDefCameraZ;
+}
 
 
 

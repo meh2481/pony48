@@ -124,9 +124,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	}
 	m_BgCol.set(0,0,0,1.0);
 	m_iHighScore = 0;
-	starfieldBg* bg = new starfieldBg();
-	bg->init();
-	m_bg = (Background*) bg;
+	m_bg = NULL;
 	bJoyVerticalMove = bJoyHorizontalMove = false;
 	
 	m_fLastFrame = 0.0f;
@@ -188,8 +186,6 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_bHasBoredVox = false;
 	m_fLastMovedSec = 0.0f;
 	m_fSongFxRotate = 0.0f;
-	//TODO Song select
-	//m_iSongToPlay = 0;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -197,8 +193,7 @@ Pony48Engine::~Pony48Engine()
 	errlog << "~Pony48Engine()" << endl;
 	saveConfig(getSaveLocation() + "config.xml");
 	clearBoard();
-	if(m_bg != NULL)
-		delete m_bg;
+	cleanupSongGfx();
 	for(map<string, myCursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
 		delete i->second;
 	errlog << "delete hud" << endl;
@@ -1328,7 +1323,10 @@ void Pony48Engine::changeMode(gameMode gm)
 				scrubResume();
 			}
 			else if(m_iCurMode == SONGSELECT)	//Start playing a song
+			{
+				resetBoard();
 				loadSongXML(m_sSongToPlay);
+			}
 			m_hud->setScene("playing");
 			break;
 			
