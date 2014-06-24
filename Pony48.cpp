@@ -1353,8 +1353,9 @@ void Pony48Engine::changeMode(gameMode gm)
 		}
 		
 		case SONGSELECT:
-			if(m_iCurMode == PLAYING)
-				stopMusic();
+			playMusic("res/mus/SleeplessNight.mp3", m_fMusicVolume);
+			seekMusic(76.389f);
+			musicLoop(76.389f, 120.025f);
 			m_hud->setScene("songselect");
 			break;
 	}
