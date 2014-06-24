@@ -197,46 +197,6 @@ void Pony48Engine::loadSongXML(string sFilename)
 	}
 }
 
-void Pony48Engine::loadSongs(string sFilename)
-{
-	m_vSongs.clear();
-	XMLDocument* doc = new XMLDocument();
-    int iErr = doc->LoadFile(sFilename.c_str());
-	if(iErr != XML_NO_ERROR)
-	{
-		errlog << "Error parsing XML file " << sFilename << ": Error " << iErr << endl;
-		delete doc;
-		return;
-	}
-
-    XMLElement* root = doc->FirstChildElement("music");
-    if(root == NULL)
-	{
-		errlog << "Error: No toplevel \"music\" item in XML file " << sFilename << endl;
-		delete doc;
-		return;
-	}
-	
-	for(XMLElement* song = root->FirstChildElement("song"); song != NULL; song = song->NextSiblingElement("song"))
-	{
-		Song s;
-		const char* cPath = song->Attribute("path");
-		if(cPath && strlen(cPath))
-			s.filename = cPath;
-		const char* cArtist = song->Attribute("artist");
-		if(cArtist && strlen(cArtist))
-			s.artist = cArtist;
-		const char* cTitle = song->Attribute("title");
-		if(cTitle && strlen(cTitle))
-			s.title = cTitle;
-		const char* cGenre = song->Attribute("genre");
-		if(cGenre && strlen(cGenre))
-			s.genre = cGenre;
-		
-		m_vSongs.push_back(s);
-	}
-}
-
 static float startedDecay = 0;
 
 void Pony48Engine::scrubPause()

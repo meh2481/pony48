@@ -16,6 +16,7 @@
 		<textbox name="scorebox" font="cmr" text="SCORE: 0" pos="-5,6" pt="1.5" col="255,255,255,255" />
 		<textbox name="hiscorebox" font="cmr" text="BEST: 0" pos="5,6" pt="1.5" col="255,255,255,255" />
 	</scene>
+	<!-- gameover HUD -->
 	<scene name="gameover">
 		<geom name="gameovertextbg" col="128,128,128,200">
 			<quad p1="-8, 5.5, 0" p2="8, 5.5, 0" p3="8, 1.5, 0" p4="-8, 1.5, 0" />
@@ -28,6 +29,7 @@
 		<textbox name="finalscore" font="cmr" text="FINAL SCORE: 0" pos="0,2.25" pt="1.5" col="255,255,255,255" />
 		<textbox name="restart" font="cmr" text="Press any key to play again" pos="0,-5" pt="1.0" col="255,255,255,255" />
 	</scene>
+	<!-- "plug all the stuff in" HUD -->
 	<scene name="intro">
 		<textbox name="plugitallin" font="cmr" text="PLUG_MSG_STR" pos="0,4" pt="1.25" col="255,255,255,255" />
 		<textbox name="retest" font="cmr" text="(Press Spacebar to re-test, any other button to continue as-is)" pos="0,-4.25" pt="0.6" col="255,255,255,255" />
@@ -42,5 +44,13 @@
 		<geom name="coverintro" col="0,0,0,0">
 			<quad p1="-8, 6, 0" p2="8, 6, 0" p3="8, -6, 0" p4="-8, -6, 0" />
 		</geom>
+	</scene>
+	<!-- song selection HUD -->
+	<scene name="songselect">
+		<textbox name="choosesong" font="cmr" text="Choose a song!" pos="0,4" pt="1.25" />
+		<menu name="songmenu" font="cmr" pos="0,0" pt="1" vspacing="0.25" textcol="255,255,255,255" selectcol="255,255,0,255">
+			<menuitem signal="res/mus/justfluttershy.xml" text="Just... Fluttershy"/>
+			<menuitem signal="res/mus/shyst3pvip.xml" text="ShySt3p [VIP]"/>
+		</menu>
 	</scene>
 </hud>

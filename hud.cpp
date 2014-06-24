@@ -17,7 +17,6 @@ HUDItem::HUDItem(string sName)
     m_ptPos.SetZero();
     m_sName = sName;
     m_signalHandler = stubSignal;
-    m_iSCALE_FAC = 1;
 	hidden = false;
 }
 
@@ -56,7 +55,7 @@ void HUDItem::addChild(HUDItem* hiChild)
 {
     if(hiChild == NULL)
         return;
-    //hiChild->setSignalHandler(m_signalHandler);	//TODO: Why not?
+    hiChild->setSignalHandler(m_signalHandler);	//TODO: Why not?
     m_lChildren.push_back(hiChild);
 }
 
@@ -177,7 +176,6 @@ void HUDToggle::draw(float32 fCurTime)
         if(m_imgEnabled != NULL)
         {
             glColor4f(col.r,col.g,col.b,col.a);
-            //TODO m_imgEnabled->draw(m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC);
 			glColor4f(1.0f,1.0f,1.0f,1.0f);
         }
     }
@@ -186,7 +184,6 @@ void HUDToggle::draw(float32 fCurTime)
         if(m_imgDisabled != NULL)
         {
             glColor4f(col.r,col.g,col.b,col.a);
-            //TODO m_imgDisabled->draw(m_ptPos.x*m_iSCALE_FAC, m_ptPos.y*m_iSCALE_FAC);
 			glColor4f(1.0f,1.0f,1.0f,1.0f);
         }
     }
@@ -271,6 +268,83 @@ void HUDGeom::draw(float32 fCurTime)
 	}
 	glEnd();
 }
+
+//-------------------------------------------------------------------------------------
+// HUDmenu class functions
+//-------------------------------------------------------------------------------------
+HUDMenu::HUDMenu(string sName) : HUDItem(sName)
+{
+	m_txtFont = NULL;
+	m_selected = m_menu.end();
+	pt = 1;
+	vspacing = 0;
+}
+
+HUDMenu::~HUDMenu()
+{
+	
+}
+
+void HUDMenu::event(SDL_Event event)
+{
+	switch(event.type)
+	{
+		case SDL_KEYDOWN:
+			break;
+		
+		case SDL_MOUSEBUTTONDOWN:
+			break;
+			
+		case SDL_MOUSEMOTION:
+			break;
+		
+		case SDL_JOYBUTTONDOWN:
+			if(m_selected != m_menu.end())
+				m_signalHandler(m_selected->signal);
+			break;
+			
+		case SDL_JOYAXISMOTION:
+			break;
+			
+		case SDL_JOYHATMOTION:
+			switch(event.jhat.value)
+			{
+				case SDL_HAT_UP:
+					if(m_selected == m_menu.begin())
+						m_selected = m_menu.end();
+					m_selected--;
+					break;
+					
+				case SDL_HAT_DOWN:
+					m_selected++;
+					if(m_selected == m_menu.end())
+						m_selected = m_menu.begin();
+					break;
+			}
+			break;
+	}
+}
+
+void HUDMenu::draw(float32 fCurTime)
+{
+	if(hidden) return;
+    HUDItem::draw(fCurTime);
+    if(m_txtFont == NULL) return;
+    float32 fTotalY = m_menu.size() * pt + (m_menu.size()-1) * vspacing;
+	float32 fCurY = m_ptPos.y + fTotalY/2.0f;
+	for(list<menuItem>::iterator i = m_menu.begin(); i != m_menu.end(); i++)
+	{
+		if(m_selected == i)
+			m_txtFont->col = m_sSelected;
+		else
+			m_txtFont->col = m_sNormal;
+			
+		//Render the text
+		m_txtFont->render(i->text, m_ptPos.x, fCurY, pt);
+		fCurY -= pt + vspacing;
+	}
+}
+
 
 //-------------------------------------------------------------------------------------
 // HUD class functions
@@ -455,6 +529,40 @@ HUDItem* HUD::_getItem(XMLElement* elem)
 			}
 		}
 		return geom;
+	}
+	else if(sName == "menu")
+	{
+		const char* cMenuName = elem->Attribute("name");
+        if(cMenuName == NULL) return NULL;
+        const char* cMenuFont = elem->Attribute("font");
+        if(cMenuFont == NULL) return NULL;
+        HUDMenu* hm = new HUDMenu(cMenuName);
+        hm->m_txtFont = m_mFonts[cMenuFont];
+        const char* cPos = elem->Attribute("pos");
+        if(cPos != NULL)
+            hm->setPos(pointFromString(cPos));
+		const char* cTextColor = elem->Attribute("textcol");
+		if(cTextColor != NULL)
+			hm->m_sNormal = colorFromString(cTextColor);
+		const char* cSelectColor = elem->Attribute("selectcol");
+		if(cSelectColor != NULL)
+			hm->m_sSelected = colorFromString(cSelectColor);
+		elem->QueryFloatAttribute("pt", &hm->pt);
+		elem->QueryFloatAttribute("vspacing", &hm->vspacing);
+		elem->QueryBoolAttribute("hidden", &hm->hidden);
+		for(XMLElement* menuitem = elem->FirstChildElement("menuitem"); menuitem != NULL; menuitem = menuitem->NextSiblingElement("menuitem"))
+		{
+			HUDMenu::menuItem it;
+			const char* cSignal = menuitem->Attribute("signal");
+			if(cSignal)
+				it.signal = cSignal;
+			const char* cText = menuitem->Attribute("text");
+			if(cText)
+				it.text = cText;
+			hm->addMenuItem(it);
+		}
+		hm->m_selected = hm->m_menu.begin();
+        return(hm);
 	}
     
 	else

@@ -97,6 +97,9 @@ typedef enum
 	PLAYING,
 	GAMEOVER,
 	INTRO,
+	SONGSELECT,
+	MAINMENU,
+	OPTIONSMENU,
 } gameMode;
 
 class Pony48Engine : public Engine
@@ -154,7 +157,7 @@ private:
 	float32 m_fLastMovedSec;
 	bool m_bHasBoredVox;
 	float32 m_fSongFxRotate;
-	uint32_t m_iSongToPlay;
+	string m_sSongToPlay;
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;
@@ -164,7 +167,6 @@ private:
 	float32 maxCamz;				//The maximum value for the camera's z axis
 	float32 m_fCamBounceBack;
 	map<string, ParticleSystem*> songParticles;
-	vector<Song> m_vSongs;		//Info for each song
 	
 	//Keybinding stuff!
 	uint32_t JOY_BUTTON_BACK;
@@ -222,7 +224,6 @@ public:
 	
 	//audio.cpp functions
 	void beatDetect();					//Bounce to da beat
-	void loadSongs(string sFilename);	//Load songs to play into memory
 	void loadSongXML(string sFilename);	//Load a song + playback stuff from XML
 	void scrubPause();					//Pauses music with a decreasing-frequency effect
 	void scrubResume();					//Resumes music with an increasing-frequency effect

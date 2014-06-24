@@ -1,7 +1,7 @@
 -Joystick list in case multiple controllers connected - most recent one used for board-tilt-testing
 -Touchscreen support?
 -Rebindable controller - rebind axes, buttons, etc
--Lua-controlled menu thing
+-Rebindable keys
 -Menu screens shouldn't just appear; make them more flashy
 -Warning before resetting the game if press MMB or Y
 -SFX
@@ -9,7 +9,8 @@
 -Mic record people's reaction on gameover? Or remove mic?
 -Add getting-points effect over score
 -Fix maximize-window bug in Linux?
--Main menu with song selection
+-Main menu
+-Options menu
 -Support other bg types in song XML
 -FX
 	-Get waveform data so can have bg bars

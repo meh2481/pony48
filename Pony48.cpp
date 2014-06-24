@@ -43,6 +43,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_hud = new HUD("hud");
 	m_hud->create("res/hud.xml");
 	m_hud->setScene("intro");
+	m_hud->setSignalHandler(signalHandler);
 	
 	HUDTextbox* txtbox = (HUDTextbox*)m_hud->getChild("plugitallin");
 	if(txtbox)
@@ -151,7 +152,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fLastMovedSec = 0.0f;
 	m_fSongFxRotate = 0.0f;
 	//TODO Song select
-	m_iSongToPlay = 0;
+	//m_iSongToPlay = 0;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -426,9 +427,6 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	
 	m_imgMouseMoveArrow = getImage("res/movearrow.png");
 	
-	//Load all the songs
-	loadSongs("res/mus/music.xml");
-	
 	//Create sounds up front
 	createSound("res/sfx/jointile.ogg", "jointile");
 	createSound("res/vox/nowhacking_theyreponies.ogg", "nowhacking_theyreponies");
@@ -437,6 +435,12 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 
 void Pony48Engine::hudSignalHandler(string sSignal)
 {
+	//TODO
+	if(m_iCurMode == SONGSELECT)
+	{
+		m_sSongToPlay = sSignal;
+		changeMode(PLAYING);
+	}
 }
 
 void Pony48Engine::handleEvent(SDL_Event event)
@@ -469,6 +473,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					m_hud = new HUD("hud");
 					m_hud->create("res/hud.xml");
 					m_hud->setScene(sScene);
+					m_hud->setSignalHandler(signalHandler);
 					//Reload particles
 					for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
 					{
@@ -506,6 +511,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						m_hud = new HUD("hud");
 						m_hud->create("res/hud.xml");
 						m_hud->setScene(sScene);
+						m_hud->setSignalHandler(signalHandler);
 						//Reload particles
 						for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
 						{
@@ -524,6 +530,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 							toggleFullscreen();
 						break;
 					
+					//TODO: Rebindable keys
 					case SDL_SCANCODE_W:
 					case SDL_SCANCODE_UP:
 						m_iMouseControl = 0;
@@ -582,10 +589,11 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					m_hud = new HUD("hud");
 					m_hud->create("res/hud.xml");
 					m_hud->setScene(sScene);
+					m_hud->setSignalHandler(signalHandler);
 				}
 #endif
 				else
-					changeMode(PLAYING);
+					changeMode(SONGSELECT);
 			}
 		}
 		
@@ -604,8 +612,10 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				resetBoard();
 			else if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT && m_iCurMode == PLAYING)
 				move(getDirOfVec2(worldPosFromCursor(getCursorPos())));	//Nested functions much?
-			if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
+			if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
+			else if(m_iCurMode == INTRO)
+				changeMode(SONGSELECT);
 			m_iMouseControl = MOUSE_MOVE_TRIP_AMT;
 			showCursor();
 			m_bJoyControl = false;
@@ -719,8 +729,10 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			m_bJoyControl = true;
 			if(event.jbutton.button == JOY_BUTTON_BACK)
 				quit();
-			else if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
+			else if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
+			else if(m_iCurMode == INTRO)
+				changeMode(SONGSELECT);
 			else if(event.jbutton.button == JOY_BUTTON_RESTART)
 				resetBoard();
 			break;
@@ -789,8 +801,10 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			{
 				if(event.jaxis.value > 0)	//Pressed more than halfway; behave like button
 				{
-					if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
+					if(m_iCurMode == GAMEOVER)
 						changeMode(PLAYING);
+					else if(m_iCurMode == INTRO)
+						changeMode(SONGSELECT);
 				}
 #ifdef DEBUG	//DEBUG: right trigger fast-forwards music
 				FMOD_CHANNEL* channel = getChannel("music");
@@ -805,8 +819,10 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			{
 				if(event.jaxis.value > 0)	//Pressed more than halfway; behave like button
 				{
-					if(m_iCurMode == GAMEOVER || m_iCurMode == INTRO)
+					if(m_iCurMode == GAMEOVER)
 						changeMode(PLAYING);
+					else if(m_iCurMode == INTRO)
+						changeMode(SONGSELECT);
 				}
 #ifdef DEBUG_REVSOUND	//DEBUG: left trigger rewinds music
 				FMOD_CHANNEL* channel = getChannel("music");
@@ -824,8 +840,10 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			cout << "Joystick " << (int)event.jhat.which << " moved hat " << (int)event.jhat.hat << " to " << (int)event.jhat.value << endl;
 #endif
 			m_lastJoyHatMoved = event.jhat.which;
-			if((m_iCurMode == GAMEOVER || m_iCurMode == INTRO) && event.jhat.value && getSeconds() - m_fGameoverKeyDelay >= GAMEOVER_KEY_DELAY)
+			if(m_iCurMode == GAMEOVER && event.jhat.value && getSeconds() - m_fGameoverKeyDelay >= GAMEOVER_KEY_DELAY)
 				changeMode(PLAYING);
+			else if(m_iCurMode == INTRO && event.jhat.value)
+				changeMode(SONGSELECT);
 			else if(m_iCurMode == PLAYING)
 			{
 				switch(event.jhat.value)
@@ -1211,9 +1229,8 @@ void Pony48Engine::changeMode(gameMode gm)
 				resetBoard();
 				scrubResume();
 			}
-			else if(m_iCurMode == INTRO)	//Start playing a song
-				loadSongXML(m_vSongs[m_iSongToPlay].filename);
-			m_iCurMode = PLAYING;
+			else if(m_iCurMode == SONGSELECT)	//Start playing a song
+				loadSongXML(m_sSongToPlay);
 			m_hud->setScene("playing");
 			break;
 			
@@ -1232,14 +1249,18 @@ void Pony48Engine::changeMode(gameMode gm)
 			if(txt != NULL)
 				txt->setText(oss.str());
 			m_hud->setScene("gameover");
-			m_iCurMode = GAMEOVER;
 			scrubPause();
 			m_fGameoverKeyDelay = getSeconds();
 			m_fGameoverWebcamFreeze = getSeconds() + GAMEOVER_FREEZE_CAM_TIME;
 			m_bSavedFacepic = false;
 			break;
 		}
+		
+		case SONGSELECT:
+			m_hud->setScene("songselect");
+			break;
 	}
+	m_iCurMode = gm;
 }
 
 void Pony48Engine::rumbleController(float32 strength, float32 sec, bool priority)
