@@ -501,7 +501,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					break;
 				}
 				else if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-					quit();
+					changeMode(SONGSELECT);
 #ifdef DEBUG
 				else if(event.key.keysym.scancode == SDL_SCANCODE_F5)
 				{
@@ -530,7 +530,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				switch(event.key.keysym.scancode)
 				{
 					case SDL_SCANCODE_ESCAPE:
-						quit();
+						changeMode(SONGSELECT);
 						break;
 					
 					case SDL_SCANCODE_F10:
@@ -630,6 +630,11 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #endif
 				else
 					changeMode(SONGSELECT);
+			}
+			else if(m_iCurMode == SONGSELECT)
+			{
+				if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+					quit();
 			}
 		}
 		
@@ -764,7 +769,12 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			hideCursor();
 			m_bJoyControl = true;
 			if(event.jbutton.button == JOY_BUTTON_BACK)
-				quit();
+			{
+				if(m_iCurMode == PLAYING)
+					changeMode(SONGSELECT);
+				else
+					quit();
+			}
 			else if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
 			else if(m_iCurMode == INTRO)
@@ -1345,6 +1355,8 @@ void Pony48Engine::changeMode(gameMode gm)
 		}
 		
 		case SONGSELECT:
+			if(m_iCurMode == PLAYING)
+				stopMusic();
 			m_hud->setScene("songselect");
 			break;
 	}

@@ -18,6 +18,8 @@
 	-Gradient bg stuff in Lua
 -Tile-appearing animations should only appear after sliding animations are done
 -record label thing in corner as songs first play
+-Back button / ESC goes back to song-select menu
+-Dig into FMOD for playing a sound more than once at a time
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

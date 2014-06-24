@@ -384,8 +384,13 @@ void Engine::seekMusic(float32 fTime)
 void Engine::playMusic(string sName, float32 volume, float32 pan, float32 pitch)
 {
 	if(m_bSoundDied) return;
-	if(!m_sounds.count("music"))
-		createSound(sName, "music");
+	if(m_sounds.count("music"))
+	{
+		stopMusic();
+		m_sounds.erase("music");
+		m_channels.erase("music");
+	}
+	createSound(sName, "music");
 	playSound("music", volume, pan, pitch);
 	if(m_channels.count("music"))
 	{

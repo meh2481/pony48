@@ -327,12 +327,26 @@ void HUDMenu::event(SDL_Event event)
 			break;
 		
 		case SDL_MOUSEBUTTONDOWN:
-			//TODO
+			if(m_selected != m_menu.end() && event.button.button == SDL_BUTTON_LEFT)
+				_enter();
 			break;
 			
 		case SDL_MOUSEMOTION:
 		{
 			Point ptMousePos = g_pGlobalEngine->worldPosFromCursor(Point(event.motion.x, event.motion.y));
+			float32 fTotalY = m_menu.size() * pt + (m_menu.size()-1) * vspacing;
+			float32 fCurY = m_ptPos.y + fTotalY/2.0f;
+			for(list<menuItem>::iterator i = m_menu.begin(); i != m_menu.end(); i++)
+			{
+				float32 fWidth = m_txtFont->size(i->text, pt);
+				Rect rcTest(m_ptPos.x - fWidth/2.0f, fCurY + pt/2.0f, m_ptPos.x + fWidth/2.0f, fCurY - pt/2.0f);
+				if(rcTest.inside(ptMousePos))
+				{
+					m_selected = i;
+					break;
+				}
+				fCurY -= pt + vspacing;
+			}
 			break;
 		}
 		
