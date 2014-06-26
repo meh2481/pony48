@@ -14,7 +14,8 @@ Pony48Engine* g_pGlobalEngine;
 
 //Keybinding stuff!
 uint32_t JOY_BUTTON_BACK;
-uint32_t JOY_BUTTON_RESTART;
+uint32_t JOY_BUTTON_START;
+uint32_t JOY_BUTTON_Y;
 uint32_t JOY_BUTTON_A;
 uint32_t JOY_BUTTON_B;
 uint32_t JOY_AXIS_HORIZ;
@@ -149,15 +150,17 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	//Apparently our Xbox drivers for different OS's can't agree on which buttons are which
 #ifdef _WIN32
 	JOY_BUTTON_BACK = 5;
-	JOY_BUTTON_RESTART = 13;
-	JOY_BUTTON_A = ;	//TODO
+	JOY_BUTTON_START = ;	//TODO
+	JOY_BUTTON_Y = 13;
+	JOY_BUTTON_A = ;
 	JOY_BUTTON_B = ;
 	JOY_AXIS2_HORIZ = 2;
 	JOY_AXIS2_VERT = 3;
 	JOY_AXIS_LT = 4;
 #else
 	JOY_BUTTON_BACK = 6;
-	JOY_BUTTON_RESTART = 3;
+	JOY_BUTTON_START = 7;
+	JOY_BUTTON_Y = 3;
 	JOY_BUTTON_A = 0;
 	JOY_BUTTON_B = 1;
 	JOY_AXIS2_HORIZ = 3;
@@ -770,9 +773,9 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			m_iMouseControl = 0;
 			hideCursor();
 			m_bJoyControl = true;
-			if(event.jbutton.button == JOY_BUTTON_BACK)
+			if(event.jbutton.button == JOY_BUTTON_START)
 			{
-				if(m_iCurMode == PLAYING)
+				if(m_iCurMode == PLAYING || m_iCurMode == GAMEOVER)
 					changeMode(SONGSELECT);
 				else
 					quit();
@@ -781,7 +784,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				changeMode(PLAYING);
 			else if(m_iCurMode == INTRO)
 				changeMode(SONGSELECT);
-			else if(event.jbutton.button == JOY_BUTTON_RESTART)
+			else if(event.jbutton.button == JOY_BUTTON_Y)
 				resetBoard();
 			break;
 			
@@ -808,13 +811,13 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				{
 					if(m_iCurMode == PLAYING && !bJoyHorizontalMove)
 						move(LEFT);
-					//bJoyHorizontalMove = true;
+					bJoyHorizontalMove = true;
 				}
 				else if(event.jaxis.value > JOY_AXIS_TRIP)	//Right
 				{
 					if(m_iCurMode == PLAYING && !bJoyHorizontalMove)
 						move(RIGHT);
-					//bJoyHorizontalMove = true;
+					bJoyHorizontalMove = true;
 				}
 				else
 					bJoyHorizontalMove = false;
@@ -825,13 +828,13 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				{
 					if(m_iCurMode == PLAYING && !bJoyVerticalMove)
 						move(UP);
-					//bJoyVerticalMove = true;
+					bJoyVerticalMove = true;
 				}
 				else if(event.jaxis.value > JOY_AXIS_TRIP)	//Down
 				{
 					if(m_iCurMode == PLAYING && !bJoyVerticalMove)
 						move(DOWN);
-					//bJoyVerticalMove = true;
+					bJoyVerticalMove = true;
 				}
 				else
 					bJoyVerticalMove = false;
@@ -1062,7 +1065,8 @@ bool Pony48Engine::loadConfig(string sFilename)
 	{
 		joystick->QueryIntAttribute("axistripthreshold", &JOY_AXIS_TRIP);
 		joystick->QueryUnsignedAttribute("backbutton", &JOY_BUTTON_BACK);
-		joystick->QueryUnsignedAttribute("restartbutton", &JOY_BUTTON_RESTART);
+		joystick->QueryUnsignedAttribute("startbutton", &JOY_BUTTON_START);
+		joystick->QueryUnsignedAttribute("restartbutton", &JOY_BUTTON_Y);
 		joystick->QueryUnsignedAttribute("button1", &JOY_BUTTON_A);
 		joystick->QueryUnsignedAttribute("button2", &JOY_BUTTON_B);
 		joystick->QueryUnsignedAttribute("horizontalaxis1", &JOY_AXIS_HORIZ);
@@ -1158,7 +1162,8 @@ void Pony48Engine::saveConfig(string sFilename)
 	XMLElement* joystick = doc->NewElement("joystick");
 	joystick->SetAttribute("axistripthreshold", JOY_AXIS_TRIP);
 	joystick->SetAttribute("backbutton", JOY_BUTTON_BACK);
-	joystick->SetAttribute("restartbutton", JOY_BUTTON_RESTART);
+	joystick->SetAttribute("startbutton", JOY_BUTTON_START);
+	joystick->SetAttribute("restartbutton", JOY_BUTTON_Y);
 	joystick->SetAttribute("button1", JOY_BUTTON_A);
 	joystick->SetAttribute("button2", JOY_BUTTON_B);
 	joystick->SetAttribute("horizontalaxis1", JOY_AXIS_HORIZ);

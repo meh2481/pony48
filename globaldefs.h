@@ -36,7 +36,8 @@ using namespace tinyxml2;
 #define JOY_AXIS_MAX	32767
 //Keybinding stuff!
 extern uint32_t JOY_BUTTON_BACK;
-extern uint32_t JOY_BUTTON_RESTART;
+extern uint32_t JOY_BUTTON_START;
+extern uint32_t JOY_BUTTON_Y;
 extern uint32_t JOY_BUTTON_A;
 extern uint32_t JOY_BUTTON_B;
 extern uint32_t JOY_AXIS_HORIZ;
