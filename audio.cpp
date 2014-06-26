@@ -212,12 +212,14 @@ void Pony48Engine::scrubResume()
 	startedDecay = -getSeconds();
 }
 
-const float timeToDecay = 0.5f;
+const float timeToDecay = 0.75f;
+static bool bPaused = false;
 
 void Pony48Engine::soundUpdate(float32 dt)
 {
 	if(startedDecay < 0)	//Resuming
 	{
+		bPaused = false;
 		float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
 		float freq = getMusicFrequency();
 		freq += amt;
@@ -227,9 +229,11 @@ void Pony48Engine::soundUpdate(float32 dt)
 			startedDecay = 0;
 		}
 		setMusicFrequency(freq);
+		dt *= freq / soundFreqDefault;
 	}
 	else if(startedDecay > 0)	//Pausing
 	{
+		bPaused = false;
 		float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
 		float freq = getMusicFrequency();
 		freq -= amt;
@@ -237,13 +241,24 @@ void Pony48Engine::soundUpdate(float32 dt)
 		{
 			freq = 0;
 			startedDecay = 0;
+			bPaused = true;
 		}
 		setMusicFrequency(freq);
+		dt *= freq / soundFreqDefault;
 	}
-	if(sLuaUpdateFunc.size())
-		Lua->call(sLuaUpdateFunc.c_str(), getMusicPos());
-	for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
-		i->second->update(dt);
+	
+	if(!bPaused)
+	{
+		if(sLuaUpdateFunc.size())
+			Lua->call(sLuaUpdateFunc.c_str(), getMusicPos());
+		
+		for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
+			i->second->update(dt);
+		
+		//Update background
+		if(m_bg != NULL)
+			m_bg->update(dt);
+	}
 }
 
 void Pony48Engine::cleanupSongGfx()

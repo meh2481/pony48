@@ -242,10 +242,6 @@ void Pony48Engine::frame(float32 dt)
 			//Handle key presses
 			handleKeys();
 			
-			//Update background
-			if(m_bg != NULL)
-				m_bg->update(dt);
-			
 			//Check if game is now over
 			if(m_iCurMode == PLAYING && !movePossible())
 				changeMode(GAMEOVER);
@@ -812,13 +808,13 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				{
 					if(m_iCurMode == PLAYING && !bJoyHorizontalMove)
 						move(LEFT);
-					bJoyHorizontalMove = true;
+					//bJoyHorizontalMove = true;
 				}
 				else if(event.jaxis.value > JOY_AXIS_TRIP)	//Right
 				{
 					if(m_iCurMode == PLAYING && !bJoyHorizontalMove)
 						move(RIGHT);
-					bJoyHorizontalMove = true;
+					//bJoyHorizontalMove = true;
 				}
 				else
 					bJoyHorizontalMove = false;
@@ -829,13 +825,13 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				{
 					if(m_iCurMode == PLAYING && !bJoyVerticalMove)
 						move(UP);
-					bJoyVerticalMove = true;
+					//bJoyVerticalMove = true;
 				}
 				else if(event.jaxis.value > JOY_AXIS_TRIP)	//Down
 				{
 					if(m_iCurMode == PLAYING && !bJoyVerticalMove)
 						move(DOWN);
-					bJoyVerticalMove = true;
+					//bJoyVerticalMove = true;
 				}
 				else
 					bJoyVerticalMove = false;
