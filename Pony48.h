@@ -147,6 +147,9 @@ private:
 	float32 m_fMusicVolume;
 	float32 m_fSoundVolume;
 	float32 m_fVoxVolume;
+	float32 m_fMusicFadeInVolume;
+	float32 m_fMusicScrubSpeed;
+	map<string, float32> m_fMusicPos;
 	float32 m_fLastMovedSec;
 	bool m_bHasBoredVox;
 	float32 m_fSongFxRotate;

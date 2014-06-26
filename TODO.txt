@@ -19,6 +19,12 @@
 -Tile-appearing animations should only appear after sliding animations are done
 -record label thing in corner as songs first play
 -Back button / ESC goes back to song-select menu when in gameover state
+-Change mouse cursor back when exiting playing
+-Start music from the same spot again when going back to song select (/ playing song again?)
+-Change selected menu item size / have something else besides color to show that it's selected
+-Fade into/out of song select and fade music so it isn't abrupt
+-Some kind of lead-in for main menu music
+
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

@@ -216,64 +216,32 @@ const float timeToDecay = 0.5f;
 
 void Pony48Engine::soundUpdate(float32 dt)
 {
-	FMOD_CHANNEL* channel = getChannel("music");
-	if(channel != NULL)
+	if(startedDecay < 0)	//Resuming
 	{
-		if(startedDecay < 0)	//Resuming
+		float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
+		float freq = getMusicFrequency();
+		freq += amt;
+		if(freq >= soundFreqDefault)
 		{
-			float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
-			float freq;
-			FMOD_Channel_GetFrequency(channel, &freq);
-			freq += amt;
-			if(freq >= soundFreqDefault)
-			{
-				freq = soundFreqDefault;
-				startedDecay = 0;
-			}
-			FMOD_Channel_SetFrequency(channel, freq);
+			freq = soundFreqDefault;
+			startedDecay = 0;
 		}
-		else if(startedDecay > 0)	//Pausing
-		{
-			float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
-			float freq;
-			FMOD_Channel_GetFrequency(channel, &freq);
-			freq -= amt;
-			if(freq <= 0)
-			{
-				freq = 0;
-				startedDecay = 0;
-			}
-			FMOD_Channel_SetFrequency(channel, freq);
-		}
-#ifdef DEBUG
-		else if(keyDown(SDL_SCANCODE_2))
-			FMOD_Channel_SetFrequency(channel, soundFreqDefault*2);
-		else if(keyDown(SDL_SCANCODE_3))
-			FMOD_Channel_SetFrequency(channel, soundFreqDefault*3);
-		else if(keyDown(SDL_SCANCODE_4))
-			FMOD_Channel_SetFrequency(channel, soundFreqDefault*4);
-		else if(keyDown(SDL_SCANCODE_5))
-			FMOD_Channel_SetFrequency(channel, soundFreqDefault*5);
-	#ifdef DEBUG_REVSOUND
-		else if(keyDown(SDL_SCANCODE_6))
-			FMOD_Channel_SetFrequency(channel, soundFreqDefault*-1);
-		else if(keyDown(SDL_SCANCODE_7))
-			FMOD_Channel_SetFrequency(channel, soundFreqDefault*-2);
-		else if(keyDown(SDL_SCANCODE_8))
-			FMOD_Channel_SetFrequency(channel, soundFreqDefault*-3);
-		else if(keyDown(SDL_SCANCODE_9))
-			FMOD_Channel_SetFrequency(channel, soundFreqDefault*-4);
-		else if(keyDown(SDL_SCANCODE_0))
-			FMOD_Channel_SetFrequency(channel, soundFreqDefault*-5);
-	#endif
-#endif
-		if(sLuaUpdateFunc.size())
-		{
-			unsigned int ms;
-			FMOD_Channel_GetPosition(channel, &ms, FMOD_TIMEUNIT_MS);
-			Lua->call(sLuaUpdateFunc.c_str(), (float)ms/1000.0);
-		}
+		setMusicFrequency(freq);
 	}
+	else if(startedDecay > 0)	//Pausing
+	{
+		float amt = soundFreqDefault / timeToDecay * dt;	//How much we should change by
+		float freq = getMusicFrequency();
+		freq -= amt;
+		if(freq <= 0)
+		{
+			freq = 0;
+			startedDecay = 0;
+		}
+		setMusicFrequency(freq);
+	}
+	if(sLuaUpdateFunc.size())
+		Lua->call(sLuaUpdateFunc.c_str(), getMusicPos());
 	for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
 		i->second->update(dt);
 }

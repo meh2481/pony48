@@ -381,7 +381,19 @@ void Engine::seekMusic(float32 fTime)
 	if(!m_channels.count("music")) return;
 	FMOD_Channel_SetPosition(getChannel("music"), fTime * 1000.0, FMOD_TIMEUNIT_MS);
 }
-//multimap<string, FMOD_CHANNEL*>
+
+float32 Engine::getMusicPos()
+{
+	if(m_channels.count("music"))
+	{
+		FMOD_CHANNEL* mus = getChannel("music");
+		unsigned int ms;
+		FMOD_Channel_GetPosition(mus, &ms, FMOD_TIMEUNIT_MS);
+		return (float32)ms / 1000.0f;
+	}
+	return -1;
+}
+
 void Engine::playMusic(string sName, float32 volume, float32 pan, float32 pitch)
 {
 	if(m_bSoundDied) return;
@@ -415,6 +427,32 @@ void Engine::musicLoop(float32 startSec, float32 endSec)
 		FMOD_Channel_GetPosition(mus, &ms, FMOD_TIMEUNIT_MS);
 		FMOD_Channel_SetPosition(mus, ms, FMOD_TIMEUNIT_MS);
 	}
+}
+
+void Engine::volumeMusic(float32 fVol)
+{
+	if(m_channels.count("music"))
+	{
+		FMOD_CHANNEL* mus = getChannel("music");
+		FMOD_Channel_SetVolume(mus, fVol);
+	}
+}
+
+float32 Engine::getMusicFrequency()
+{
+	if(m_channels.count("music"))
+	{
+		float freq;
+		FMOD_Channel_GetFrequency(getChannel("music"), &freq);
+		return freq;
+	}
+	return -1;
+}
+
+void Engine::setMusicFrequency(float32 freq)
+{
+	if(m_channels.count("music"))
+		FMOD_Channel_SetFrequency(getChannel("music"), freq);
 }
 
 bool Engine::keyDown(int32_t keyCode)

@@ -134,13 +134,17 @@ public:
 	virtual void playSound(string sName, float32 volume = 1.0f, float32 pan = 0.0f, float32 pitch = 1.0f);	 //Play a sound
 	FMOD_CHANNEL* getChannel(string sSoundName);	//Return the channel of this sound
 	void playMusic(string sName, float32 volume = 1.0f, float32 pan = 0.0f, float32 pitch = 1.0f);	 //Play looping music, or resume paused music
-	void musicLoop(float32 startSec, float32 endSec);									//Set the starting and ending loop points for the currently-playing song
-	void pauseMusic();																	 //Pause music that's currently playing
-	void resumeMusic();																		//Resume music that was paused
+	void musicLoop(float32 startSec, float32 endSec);	//Set the starting and ending loop points for the currently-playing song
+	void pauseMusic();									//Pause music that's currently playing
+	void resumeMusic();									//Resume music that was paused
 	void restartMusic();
 	void stopMusic();
 	void seekMusic(float32 fTime);
-	bool hasMic();																		//If we have some form of mic-like input
+	float32 getMusicPos();								//Opposite of seekMusic() -- get where we currently are
+	void volumeMusic(float32 fVol);						//Set the music to a particular volume
+	void setMusicFrequency(float32 freq);
+	float32 getMusicFrequency();
+	bool hasMic();										//If we have some form of mic-like input
 	void updateSound();
 	
 	//Keyboard functions

@@ -181,6 +181,8 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fArrowAdd = 0;
 	m_bJoyControl = false;
 	m_fMusicVolume = 0.5f;
+	m_fMusicFadeInVolume = 0.0f;
+	m_fMusicScrubSpeed = soundFreqDefault;
 	m_fSoundVolume = 1.0f;
 	m_fVoxVolume = 1.0f;
 	m_bHasBoredVox = false;
@@ -204,6 +206,8 @@ Pony48Engine::~Pony48Engine()
 		SDL_JoystickClose(m_joy);
 	delete m_cam;
 }
+
+const float32 MUSIC_SCRUBIN_SPEED = soundFreqDefault * 2.0f;
 
 void Pony48Engine::frame(float32 dt)
 {
@@ -284,6 +288,13 @@ void Pony48Engine::frame(float32 dt)
 				hIt->col.a = 1.0-alpha;
 			break;
 		}
+		
+		case SONGSELECT:
+			m_fMusicScrubSpeed += dt * MUSIC_SCRUBIN_SPEED;
+			if(m_fMusicScrubSpeed > soundFreqDefault)
+				m_fMusicScrubSpeed = soundFreqDefault;
+			setMusicFrequency(m_fMusicScrubSpeed);
+			break;
 	}
 }
 
@@ -1324,8 +1335,11 @@ void Pony48Engine::changeMode(gameMode gm)
 			}
 			else if(m_iCurMode == SONGSELECT)	//Start playing a song
 			{
+				m_fMusicPos["songselect"] = getMusicPos();
 				resetBoard();
 				loadSongXML(m_sSongToPlay);
+				//if(m_fMusicPos.count(m_sSongToPlay))
+				//	seekMusic(m_fMusicPos[m_sSongToPlay]);
 			}
 			m_hud->setScene("playing");
 			break;
@@ -1353,9 +1367,17 @@ void Pony48Engine::changeMode(gameMode gm)
 		}
 		
 		case SONGSELECT:
+			m_fMusicPos[m_sSongToPlay] = getMusicPos();
 			playMusic("res/mus/SleeplessNight.mp3", m_fMusicVolume);
-			seekMusic(76.389f);
-			musicLoop(76.389f, 120.025f);
+			if(m_iCurMode == INTRO)
+				m_fMusicScrubSpeed = soundFreqDefault;
+			else
+				m_fMusicScrubSpeed = 0;
+			if(m_fMusicPos.count("songselect"))
+				seekMusic(m_fMusicPos["songselect"]);
+			else
+				seekMusic(28.622f);
+			//musicLoop(76.389f, 120.025f);
 			m_hud->setScene("songselect");
 			break;
 	}
