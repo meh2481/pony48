@@ -1363,6 +1363,7 @@ void Pony48Engine::changeMode(gameMode gm)
 		}
 		
 		case SONGSELECT:
+			setCursor(m_mCursors["sel"]);
 			m_fMusicPos[m_sSongToPlay] = getMusicPos();
 			playMusic("res/mus/SleeplessNight.mp3", m_fMusicVolume);
 			if(m_iCurMode == INTRO)
