@@ -37,9 +37,14 @@ using namespace tinyxml2;
 //Keybinding stuff!
 extern uint32_t JOY_BUTTON_BACK;
 extern uint32_t JOY_BUTTON_START;
+extern uint32_t JOY_BUTTON_X;
 extern uint32_t JOY_BUTTON_Y;
 extern uint32_t JOY_BUTTON_A;
 extern uint32_t JOY_BUTTON_B;
+extern uint32_t JOY_BUTTON_LB;
+extern uint32_t JOY_BUTTON_RB;
+extern uint32_t JOY_BUTTON_LSTICK;
+extern uint32_t JOY_BUTTON_RSTICK;
 extern uint32_t JOY_AXIS_HORIZ;
 extern uint32_t JOY_AXIS_VERT;
 extern uint32_t JOY_AXIS2_HORIZ;
