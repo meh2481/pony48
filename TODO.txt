@@ -21,9 +21,9 @@
 -Fade out of song select / into song and fade music so it isn't abrupt
 -Some kind of lead-in for main menu music
 -Remove current intro screen; replace with something better
--Get Windows SDL joycodes for A and B buttons
--Use START instead of BACK for menu
+-Get Windows SDL joycodes for xbox buttons
 -Ingame pause menu with ESC/START - can resume or exit back to song select
+-Pressing key in main menu should hide mouse
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

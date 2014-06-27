@@ -486,17 +486,24 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	
 	//Create sounds up front
 	createSound("res/sfx/jointile.ogg", "jointile");
+	createSound("res/sfx/select.ogg", "select");
 	createSound("res/vox/nowhacking_theyreponies.ogg", "nowhacking_theyreponies");
 }
 
 
 void Pony48Engine::hudSignalHandler(string sSignal)
 {
-	//TODO
 	if(m_iCurMode == SONGSELECT)
 	{
-		m_sSongToPlay = sSignal;
-		changeMode(PLAYING);
+		if(sSignal.find("load ") == 0)
+		{
+			m_sSongToPlay = sSignal.substr(5);
+			changeMode(PLAYING);
+		}
+		else if(sSignal == "select")
+		{
+			playSound("select", m_fSoundVolume);
+		}
 	}
 }
 
@@ -588,7 +595,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						break;
 						
 					default:
-						//GCC is derping on me and spits out "error: ‘KEY_X’ cannot appear in a constant-expression" if I add switch statements for these. Really annoying.
+						//Deal with movement
 						if(event.key.keysym.scancode == KEY_UP1 || event.key.keysym.scancode == KEY_UP2)
 						{
 							m_iMouseControl = 0;

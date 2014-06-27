@@ -173,6 +173,7 @@ public:
 	float vspacing;
 	Color m_sSelected, m_sNormal;
 	Text* m_txtFont;
+	string selectsignal;
 	typedef struct
 	{
 		string signal;

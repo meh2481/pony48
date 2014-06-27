@@ -294,6 +294,8 @@ void HUDMenu::_moveUp()
 		m_selected = m_menu.end();
 	if(m_selected != m_menu.begin())
 		m_selected--;
+	if(selectsignal.size())
+		m_signalHandler(selectsignal);
 }
 
 void HUDMenu::_moveDown()
@@ -302,6 +304,8 @@ void HUDMenu::_moveDown()
 		m_selected++;
 	if(m_selected == m_menu.end())
 		m_selected = m_menu.begin();
+	if(selectsignal.size())
+		m_signalHandler(selectsignal);
 }
 
 void HUDMenu::_enter()
@@ -342,6 +346,8 @@ void HUDMenu::event(SDL_Event event)
 				Rect rcTest(m_ptPos.x - fWidth/2.0f, fCurY + pt/2.0f, m_ptPos.x + fWidth/2.0f, fCurY - pt/2.0f);
 				if(rcTest.inside(ptMousePos))
 				{
+					if(i != m_selected && selectsignal.size())
+						m_signalHandler(selectsignal);
 					m_selected = i;
 					break;
 				}
@@ -612,6 +618,9 @@ HUDItem* HUD::_getItem(XMLElement* elem)
 		const char* cSelectColor = elem->Attribute("selectcol");
 		if(cSelectColor != NULL)
 			hm->m_sSelected = colorFromString(cSelectColor);
+		const char* cSelectSignal = elem->Attribute("selectsignal");
+		if(cSelectSignal != NULL)
+			hm->selectsignal = cSelectSignal;
 		elem->QueryFloatAttribute("pt", &hm->pt);
 		elem->QueryFloatAttribute("vspacing", &hm->vspacing);
 		elem->QueryBoolAttribute("hidden", &hm->hidden);
