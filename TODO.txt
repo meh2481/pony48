@@ -17,14 +17,11 @@
 	-Gradient bg stuff in Lua
 -Tile-appearing animations should only appear after sliding animations are done
 -record label thing in corner as songs first play
--Change selected menu item size / have something else besides color to show that it's selected
 -Fade out of song select / into song and fade music so it isn't abrupt
 -Some kind of lead-in for main menu music
 -Remove current intro screen; replace with something better
 -Get Windows SDL joycodes for xbox buttons
 -Ingame pause menu with ESC/START - can resume or exit back to song select
--Pressing key in main menu should hide mouse
--Remove color.o stuff or use it
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

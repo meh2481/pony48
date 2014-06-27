@@ -542,6 +542,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 		case SDL_KEYDOWN:
 		{
 			m_bJoyControl = false;
+			m_iMouseControl = 0;
+			hideCursor();
 			if(m_iCurMode == GAMEOVER)
 			{
 				if(!(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE
@@ -626,29 +628,21 @@ void Pony48Engine::handleEvent(SDL_Event event)
 						//Deal with movement
 						if(event.key.keysym.scancode == KEY_UP1 || event.key.keysym.scancode == KEY_UP2)
 						{
-							m_iMouseControl = 0;
-							hideCursor();
 							if(m_iCurMode == PLAYING)
 								move(UP);
 						}
 						else if(event.key.keysym.scancode == KEY_DOWN1 || event.key.keysym.scancode == KEY_DOWN2)
 						{
-							m_iMouseControl = 0;
-							hideCursor();
 							if(m_iCurMode == PLAYING)
 								move(DOWN);
 						}
 						else if(event.key.keysym.scancode == KEY_LEFT1 || event.key.keysym.scancode == KEY_LEFT2)
 						{
-							m_iMouseControl = 0;
-							hideCursor();
 							if(m_iCurMode == PLAYING)
 								move(LEFT);
 						}
 						else if(event.key.keysym.scancode == KEY_RIGHT1 || event.key.keysym.scancode == KEY_RIGHT2)
 						{
-							m_iMouseControl = 0;
-							hideCursor();
 							if(m_iCurMode == PLAYING)
 								move(RIGHT);
 						}
