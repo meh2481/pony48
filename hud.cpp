@@ -631,6 +631,9 @@ HUDItem* HUD::_getItem(XMLElement* elem)
 		const char* cSelectColor = elem->Attribute("selectcol");
 		if(cSelectColor != NULL)
 			hm->m_sSelected = colorFromString(cSelectColor);
+		const char* cSelectColor2 = elem->Attribute("selectcol2");
+		if(cSelectColor2 != NULL)
+			hm->m_sSelected2 = colorFromString(cSelectColor2);
 		const char* cSelectSignal = elem->Attribute("selectsignal");
 		if(cSelectSignal != NULL)
 			hm->selectsignal = cSelectSignal;

@@ -173,7 +173,7 @@ public:
 	float32 vspacing;
 	float32 selectedY;	//Y drawing position of selected menu item
 	float32 selectedX;	//Width of selected menu item
-	Color m_sSelected, m_sNormal;
+	Color m_sSelected, m_sSelected2, m_sNormal;
 	Text* m_txtFont;
 	string selectsignal;
 	typedef struct

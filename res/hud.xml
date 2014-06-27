@@ -48,7 +48,7 @@
 	<!-- song selection HUD -->
 	<scene name="songselect">
 		<textbox name="choosesong" font="cmr" text="Choose a song!" pos="0,4" pt="1.25" />
-		<menu name="songmenu" font="cmr" pos="0,0" pt="1" selectpt="1.25" vspacing="0.25" textcol="255,255,255,255" selectcol="255,255,0,255" selectsignal="select">
+		<menu name="songmenu" font="cmr" pos="0,0" pt="1" selectpt="1.25" vspacing="0.25" textcol="255,255,255,255" selectcol="255,0,0,255" selectcol2="255,200,200,255" selectsignal="select">
 			<menuitem signal="load res/mus/justfluttershy.xml" text="Just... Fluttershy"/>
 			<menuitem signal="load res/mus/shyst3pvip.xml" text="ShySt3p [VIP]"/>
 		</menu>

@@ -38,7 +38,8 @@ void Pony48Engine::updateColors(float32 dt)
 				if(!i->pingpong)
 				{
 					i = m_ColorsChanging.erase(i);
-					i--;
+					if(i != m_ColorsChanging.begin())
+						i--;
 				}
 				else
 					i->dir = false;
@@ -62,7 +63,8 @@ void Pony48Engine::updateColors(float32 dt)
 				if(!i->pingpong)
 				{
 					i = m_ColorsChanging.erase(i);
-					i--;
+					if(i != m_ColorsChanging.begin())
+						i--;
 				}
 				else
 					i->dir = true;

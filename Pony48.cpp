@@ -74,6 +74,13 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_hud->setScene("intro");
 	m_hud->setSignalHandler(signalHandler);
 	
+	HUDItem* hIt = m_hud->getChild("songmenu");
+	if(hIt != NULL)
+	{
+		HUDMenu* hMen = (HUDMenu*)hIt;
+		phaseColor(&hMen->m_sSelected, hMen->m_sSelected2, 0.13f, true);
+	}
+	
 	HUDTextbox* txtbox = (HUDTextbox*)m_hud->getChild("plugitallin");
 	if(txtbox)
 	{
@@ -207,7 +214,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fLastMovedSec = 0.0f;
 	m_fSongFxRotate = 0.0f;
 	m_selectedSongArc = new arc(64, getImage("res/particles/rainbowblur.png"));
-	m_selectedSongArc->col.a = 0.75;
+	m_selectedSongArc->col.a = 0.65;
 	m_selectedSongArc->add = 0.4;
 	m_selectedSongArc->max = 0.4;
 	m_selectedSongArc->height = 0.2;
@@ -223,6 +230,7 @@ Pony48Engine::~Pony48Engine()
 	cleanupSongGfx();
 	for(map<string, myCursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
 		delete i->second;
+	clearColors();
 	errlog << "delete hud" << endl;
 	delete m_hud;
 	if(m_rumble != NULL)
@@ -314,6 +322,7 @@ void Pony48Engine::frame(float32 dt)
 			m_selectedSongArc->update(dt);
 			break;
 	}
+	updateColors(dt);
 }
 
 void Pony48Engine::draw()
@@ -550,6 +559,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				else if(event.key.keysym.scancode == SDL_SCANCODE_F5)
 				{
 					string sScene = m_hud->getScene();
+					clearColors();
 					delete m_hud;
 					m_hud = new HUD("hud");
 					m_hud->create("res/hud.xml");
@@ -588,6 +598,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					case SDL_SCANCODE_F5:
 					{
 						string sScene = m_hud->getScene();
+						clearColors();
 						delete m_hud;
 						m_hud = new HUD("hud");
 						m_hud->create("res/hud.xml");
@@ -665,6 +676,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				else if(event.key.keysym.scancode == SDL_SCANCODE_F5)
 				{
 					string sScene = m_hud->getScene();
+					clearColors();
 					delete m_hud;
 					m_hud = new HUD("hud");
 					m_hud->create("res/hud.xml");
