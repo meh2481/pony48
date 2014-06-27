@@ -35,6 +35,8 @@
 #define INTRO_FADEIN_DELAY	2.0	//How long before the intro fadein starts
 
 #define BORED_VOX_TIME		300.0	//5mins until bored sfx
+#define TITLE_DISPLAY_TIME	5.0f
+#define TITLE_FADE_TIME		1.0f
 
 class ColorPhase
 {
@@ -156,6 +158,7 @@ private:
 	float32 m_fSongFxRotate;
 	string m_sSongToPlay;
 	arc* m_selectedSongArc;
+	float32 m_fFadeoutTitleTime;	//Time into the song we'll fade the artist and title out to transparent
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;

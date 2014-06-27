@@ -81,11 +81,12 @@ public:
 
 	void draw(float32 fCurTime);
 
-	void	setFont(Text* txt)		  {m_txtFont = txt;};	 //Set the font used by this textbox
-	Text*   getFont()				   {return m_txtFont;};
-	void	setText(string s)		   {m_sValue = s;};		//Set the text to display
+	void	setFont(Text* txt)			{m_txtFont = txt;};	 //Set the font used by this textbox
+	Text*   getFont()					{return m_txtFont;};
+	void	setText(string s)			{m_sValue = s;};		//Set the text to display
 	void	setText(uint32_t iNum);							 //Set the text from an integer
-	string  getText()				   {return m_sValue;};
+	string  getText()					{return m_sValue;};
+	float32 getWidth()					{if(m_txtFont)return m_txtFont->size(m_sValue, pt);return 0;};
 
 };
 

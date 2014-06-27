@@ -220,6 +220,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_selectedSongArc->height = 0.2;
 	m_selectedSongArc->avg = 1;
 	m_selectedSongArc->init();
+	m_fFadeoutTitleTime = getSeconds();
 }
 
 Pony48Engine::~Pony48Engine()
@@ -390,9 +391,15 @@ void Pony48Engine::draw()
 			txt = (HUDTextbox*)m_hud->getChild("hiscorebox");
 			oss << "BEST: " << m_iHighScore;
 			txt->setText(oss.str());
-			//oss.str("");
-			//float32 fSec = getSeconds();
-			//txt = (HUDTextbox*)m_hud->getChild("fps");
+			
+			float32 fSec = getSeconds();
+			txt = (HUDTextbox*)m_hud->getChild("title");
+			if(fSec > m_fFadeoutTitleTime)
+			{
+				txt->col.a = max((TITLE_FADE_TIME - (fSec - m_fFadeoutTitleTime)), 0.0f);
+				txt = (HUDTextbox*)m_hud->getChild("artist");
+				txt->col.a = max((TITLE_FADE_TIME - (fSec - m_fFadeoutTitleTime)), 0.0f);
+			}
 			//oss << 1.0 / (fSec - m_fLastFrame);
 			//txt->setText(oss.str());
 			//m_fLastFrame = fSec;

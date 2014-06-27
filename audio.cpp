@@ -123,6 +123,42 @@ void Pony48Engine::loadSongXML(string sFilename)
 		return;
 	}
 	
+	
+	Rect rcCam = getCameraView();
+	const char* cArtist = root->Attribute("artist");
+	if(cArtist && strlen(cArtist))
+	{
+		HUDItem* hIt = m_hud->getChild("artist");
+		if(hIt != NULL)
+		{
+			HUDTextbox* txt = (HUDTextbox*)hIt;
+			string s = "by ";
+			s += cArtist;
+			txt->setText(s);
+			txt->col.a = 1.0f;
+			
+			Point ptPos = txt->getPos();
+			ptPos.x = rcCam.left + txt->getWidth() / 2.0f + 0.8f;
+			txt->setPos(ptPos);
+		}
+	}
+	const char* cTitle = root->Attribute("title");
+	if(cTitle && strlen(cTitle))
+	{
+		HUDItem* hIt = m_hud->getChild("title");
+		if(hIt != NULL)
+		{
+			HUDTextbox* txt = (HUDTextbox*)hIt;
+			txt->setText(cTitle);
+			txt->col.a = 1.0f;
+			
+			Point ptPos = txt->getPos();
+			ptPos.x = rcCam.left + txt->getWidth() / 2.0f + 0.5f;
+			txt->setPos(ptPos);
+		}
+	}
+	m_fFadeoutTitleTime = getSeconds() + TITLE_DISPLAY_TIME;
+	
 	beatThresholdVolume = 0.75;
 	beatThresholdBar = 0;
 	beatMul = 45;
