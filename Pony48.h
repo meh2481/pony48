@@ -11,6 +11,7 @@
 #include <set>
 #include "webcam.h"
 #include "luainterface.h"
+#include "arc.h"
 
 #define DEFAULT_WIDTH	800
 #define DEFAULT_HEIGHT	600
@@ -33,7 +34,7 @@
 #define INTRO_FADEIN_TIME	2.0	//How long the intro fadein takes
 #define INTRO_FADEIN_DELAY	2.0	//How long before the intro fadein starts
 
-#define BORED_VOX_TIME		120.0	//2mins until bored sfx
+#define BORED_VOX_TIME		300.0	//5mins until bored sfx
 
 class ColorPhase
 {
@@ -154,6 +155,7 @@ private:
 	bool m_bHasBoredVox;
 	float32 m_fSongFxRotate;
 	string m_sSongToPlay;
+	arc* m_selectedSongArc;
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;

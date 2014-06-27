@@ -40,6 +40,7 @@ public:
 	void render(Point size);				//Render at 0,0 with specified texel size
 	void render(Point size, Rect rcImg);
 	void render(Point size, Point shear);	//Render at 0,0 with specified size and shear amount
+	void render4V(Point ul, Point ur, Point bl, Point br);
 };
 
 //Image reloading handler functions

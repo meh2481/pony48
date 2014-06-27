@@ -169,8 +169,10 @@ public:
 	HUDMenu(string sName);
 	~HUDMenu();
 	
-	float pt;
-	float vspacing;
+	float32 pt, selectedpt;
+	float32 vspacing;
+	float32 selectedY;	//Y drawing position of selected menu item
+	float32 selectedX;	//Width of selected menu item
 	Color m_sSelected, m_sNormal;
 	Text* m_txtFont;
 	string selectsignal;

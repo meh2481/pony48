@@ -75,6 +75,8 @@ void Pony48Engine::beatDetect()
 					hMen->pt = startMenuPt + maxCamz;
 			}
 		}
+		m_selectedSongArc->max = 0.5 * spec[beatThresholdBar];
+		m_selectedSongArc->add = 0.5;
 	}
 	else
 	{

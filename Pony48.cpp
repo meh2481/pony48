@@ -206,6 +206,13 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_bHasBoredVox = false;
 	m_fLastMovedSec = 0.0f;
 	m_fSongFxRotate = 0.0f;
+	m_selectedSongArc = new arc(64, getImage("res/particles/rainbowblur.png"));
+	m_selectedSongArc->col.a = 0.75;
+	m_selectedSongArc->add = 0.4;
+	m_selectedSongArc->max = 0.4;
+	m_selectedSongArc->height = 0.2;
+	m_selectedSongArc->avg = 1;
+	m_selectedSongArc->init();
 }
 
 Pony48Engine::~Pony48Engine()
@@ -222,6 +229,7 @@ Pony48Engine::~Pony48Engine()
 		SDL_HapticClose(m_rumble);
 	if(SDL_JoystickGetAttached(m_joy))
 		SDL_JoystickClose(m_joy);
+	delete m_selectedSongArc;
 	delete m_cam;
 }
 
@@ -303,6 +311,7 @@ void Pony48Engine::frame(float32 dt)
 			if(m_fMusicScrubSpeed > soundFreqDefault)
 				m_fMusicScrubSpeed = soundFreqDefault;
 			setMusicFrequency(m_fMusicScrubSpeed);
+			m_selectedSongArc->update(dt);
 			break;
 	}
 }
@@ -378,8 +387,21 @@ void Pony48Engine::draw()
 			//oss << 1.0 / (fSec - m_fLastFrame);
 			//txt->setText(oss.str());
 			//m_fLastFrame = fSec;
+			break;
 		}
-		break;
+		
+		case SONGSELECT:
+		{
+			HUDItem* hIt = m_hud->getChild("songmenu");
+			if(hIt != NULL)
+			{
+				HUDMenu* hMen = (HUDMenu*)hIt;
+				m_selectedSongArc->p1.Set(-hMen->selectedX-1, -hMen->selectedY + m_selectedSongArc->height / 2.0f);
+				m_selectedSongArc->p2.Set(hMen->selectedX+1, -hMen->selectedY + m_selectedSongArc->height / 2.0f);
+			}
+			m_selectedSongArc->draw();
+			break;
+		}
 	}
 	
 	//Draw HUD always at this depth, on top of everything else

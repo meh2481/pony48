@@ -278,9 +278,10 @@ HUDMenu::HUDMenu(string sName) : HUDItem(sName)
 {
 	m_txtFont = NULL;
 	m_selected = m_menu.end();
-	pt = 1;
+	pt = selectedpt = 1;
 	vspacing = 0;
 	bJoyMoved = false;
+	selectedY = FLT_MIN;
 }
 
 HUDMenu::~HUDMenu()
@@ -402,17 +403,29 @@ void HUDMenu::draw(float32 fCurTime)
     HUDItem::draw(fCurTime);
     if(m_txtFont == NULL) return;
     float32 fTotalY = m_menu.size() * pt + (m_menu.size()-1) * vspacing;
+	if(m_selected != m_menu.end())
+		fTotalY += selectedpt - pt;
 	float32 fCurY = m_ptPos.y + fTotalY/2.0f;
+	selectedY = FLT_MIN;
 	for(list<menuItem>::iterator i = m_menu.begin(); i != m_menu.end(); i++)
 	{
+		float curpt = pt;
 		if(m_selected == i)
+		{
 			m_txtFont->col = m_sSelected;
+			fCurY -= (selectedpt - pt) / 2.0f;
+			selectedY = fCurY;
+			selectedX = m_txtFont->size(i->text, selectedpt)/2.0f;
+			curpt = selectedpt;
+		}
 		else
 			m_txtFont->col = m_sNormal;
 			
 		//Render the text
-		m_txtFont->render(i->text, m_ptPos.x, fCurY, pt);
+		m_txtFont->render(i->text, m_ptPos.x, fCurY, curpt);
 		fCurY -= pt + vspacing;
+		if(m_selected == i)
+			fCurY -= (selectedpt - pt) / 2.0f;
 	}
 }
 
@@ -622,6 +635,7 @@ HUDItem* HUD::_getItem(XMLElement* elem)
 		if(cSelectSignal != NULL)
 			hm->selectsignal = cSelectSignal;
 		elem->QueryFloatAttribute("pt", &hm->pt);
+		elem->QueryFloatAttribute("selectpt", &hm->selectedpt);
 		elem->QueryFloatAttribute("vspacing", &hm->vspacing);
 		elem->QueryBoolAttribute("hidden", &hm->hidden);
 		for(XMLElement* menuitem = elem->FirstChildElement("menuitem"); menuitem != NULL; menuitem = menuitem->NextSiblingElement("menuitem"))

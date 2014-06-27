@@ -24,6 +24,7 @@
 -Get Windows SDL joycodes for xbox buttons
 -Ingame pause menu with ESC/START - can resume or exit back to song select
 -Pressing key in main menu should hide mouse
+-Remove color.o stuff or use it
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

@@ -259,6 +259,37 @@ void Image::render(Point size, Rect rcImg)
   
 }
 
+void Image::render4V(Point ul, Point ur, Point bl, Point br)
+{
+	float maxx, maxy;
+#ifdef __BIG_ENDIAN__
+	maxx = (float)m_iWidth/(float)m_iRealWidth;
+	maxy = (float)m_iHeight/(float)m_iRealHeight;
+#else
+	maxx = maxy = 1.0;
+#endif
+	// tell opengl to use the generated texture
+	glBindTexture(GL_TEXTURE_2D, m_hTex);
+	
+	const GLfloat vertexData[] =
+    {
+        ul.x, ul.y, // upper left
+        ur.x, ur.y, // upper right
+        bl.x, bl.y, // lower left
+        br.x, br.y, // lower right
+    };
+    const GLfloat texCoords[] =
+    {
+        0.0, maxy, // upper left
+        maxx, maxy, // upper right
+        0.0, 0.0, // lower left
+        maxx, 0.0, // lower right
+    };
+    glVertexPointer(2, GL_FLOAT, 0, &vertexData);
+    glTexCoordPointer(2, GL_FLOAT, 0, &texCoords);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
 void Image::_reload()
 {
 	_load(m_sFilename);
