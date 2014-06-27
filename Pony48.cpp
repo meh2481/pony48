@@ -248,13 +248,7 @@ void Pony48Engine::frame(float32 dt)
 			soundUpdate(dt);
 			updateBoard(dt);
 			
-			//First half of camera bounce; move back a bit every frame in an attempt to get back to default position
-			if(CameraPos.z > m_fDefCameraZ)
-				CameraPos.z -= m_fCamBounceBack;
-			if(CameraPos.z < m_fDefCameraZ)
-				CameraPos.z = m_fDefCameraZ;
-			
-			//Second half of camera bounce; move forward on every bass kick
+			//Bounce camera forward on every bass kick
 			beatDetect();
 			
 			//Handle key presses
@@ -304,6 +298,7 @@ void Pony48Engine::frame(float32 dt)
 		}
 		
 		case SONGSELECT:
+			beatDetect();	//Bounce some menu stuff to the beat
 			m_fMusicScrubSpeed += dt * MUSIC_SCRUBIN_SPEED;
 			if(m_fMusicScrubSpeed > soundFreqDefault)
 				m_fMusicScrubSpeed = soundFreqDefault;

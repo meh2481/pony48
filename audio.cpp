@@ -6,6 +6,7 @@
 #include "Pony48.h"
 
 const int sampleSize = 64;
+static float32 startMenuPt = 0.0f;
 
 void Pony48Engine::beatDetect()
 {
@@ -30,26 +31,67 @@ void Pony48Engine::beatDetect()
 		spec[i] = (specLeft[i] + specRight[i]) / 2.0;
 	
 #ifdef DEBUG
+	/*const int printLen = 150;
 	//Print out a sort of audio-level thing
-	/*printf("\033[2J\033[1;1H");
-	for(int i = 0; i < 10; i++)
+	printf("\033[2J\033[1;1H");
+	for(int i = 0; i < 32; i++)
 	{
-		int num = spec[i] * 20;
+		int num = spec[i] * printLen;
 		for(int j = 0; j < num; j++)
 			printf("*");
-		for(int rest = num; rest < 20; rest++)
+		for(int rest = num; rest < printLen; rest++)
 			printf(" ");
 		printf("|\n");
 	}*/
 #endif
 
-
-	//Test for threshold volume being exceeded and bounce camera
-	if(spec[beatThresholdBar] >= beatThresholdVolume)
+	if(m_iCurMode == SONGSELECT)
 	{
-		CameraPos.z += beatMul * spec[beatThresholdBar];
-		if(CameraPos.z > m_fDefCameraZ + maxCamz)
-			CameraPos.z = m_fDefCameraZ + maxCamz;
+		beatThresholdVolume = 0.95;
+		beatThresholdBar = 0;
+		beatMul = 0.05f;
+		maxCamz = 3.5f;
+		m_fCamBounceBack = 0.02f;
+		
+		//
+		HUDItem* hIt = m_hud->getChild("choosesong");
+		if(hIt != NULL)
+		{
+			HUDTextbox* hMen = (HUDTextbox*)hIt;
+			if(!startMenuPt)
+				startMenuPt = hMen->pt;
+			
+			//Bounce back
+			if(hMen->pt > startMenuPt)
+				hMen->pt -= m_fCamBounceBack;
+			if(hMen->pt < startMenuPt)
+				hMen->pt = startMenuPt;
+			
+			//Bounce forward
+			if(spec[beatThresholdBar] >= beatThresholdVolume)
+			{
+				hMen->pt += beatMul * spec[beatThresholdBar];
+				if(hMen->pt > startMenuPt + maxCamz)
+					hMen->pt = startMenuPt + maxCamz;
+			}
+		}
+	}
+	else
+	{
+		//First half of camera bounce; move back a bit every frame in an attempt to get back to default position
+		if(CameraPos.z > m_fDefCameraZ)
+			CameraPos.z -= m_fCamBounceBack;
+		if(CameraPos.z < m_fDefCameraZ)
+			CameraPos.z = m_fDefCameraZ;
+
+
+		//Second half: test for threshold volume being exceeded and bounce camera forward
+		if(spec[beatThresholdBar] >= beatThresholdVolume)
+		{
+			CameraPos.z += beatMul * spec[beatThresholdBar];
+			if(CameraPos.z > m_fDefCameraZ + maxCamz)
+				CameraPos.z = m_fDefCameraZ + maxCamz;
+		}
 	}
 	
 	delete [] spec;
