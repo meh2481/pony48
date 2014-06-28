@@ -214,7 +214,6 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fLastMovedSec = 0.0f;
 	m_fSongFxRotate = 0.0f;
 	m_selectedSongArc = new arc(64, getImage("res/particles/rainbowblur.png"));
-	m_selectedSongArc->col.a = 0.65;
 	m_selectedSongArc->add = 0.4;
 	m_selectedSongArc->max = 0.4;
 	m_selectedSongArc->height = 0.2;
@@ -233,6 +232,8 @@ Pony48Engine::~Pony48Engine()
 		delete i->second;
 	for(map<string, ParticleSystem*>::iterator i = m_ScoreParticles.begin(); i != m_ScoreParticles.end(); i++)
 		delete i->second;
+	for(vector<ParticleSystem*>::iterator i = m_selectedSongParticles.begin(); i != m_selectedSongParticles.end(); i++)
+		delete *i;
 	clearColors();
 	errlog << "delete hud" << endl;
 	delete m_hud;
@@ -323,8 +324,10 @@ void Pony48Engine::frame(float32 dt)
 			m_fMusicScrubSpeed += dt * MUSIC_SCRUBIN_SPEED;
 			if(m_fMusicScrubSpeed > soundFreqDefault)
 				m_fMusicScrubSpeed = soundFreqDefault;
-			setMusicFrequency(m_fMusicScrubSpeed);
+			//setMusicFrequency(m_fMusicScrubSpeed);
 			m_selectedSongArc->update(dt);
+			for(vector<ParticleSystem*>::iterator i = m_selectedSongParticles.begin(); i != m_selectedSongParticles.end(); i++)
+				(*i)->update(dt);
 			break;
 	}
 	updateColors(dt);
@@ -350,6 +353,8 @@ void Pony48Engine::draw()
 				m_bg->screenDiag = sqrt(rcView.width()*rcView.width()+rcView.height()*rcView.height());	//HACK: Update every frame to handle screen resize
 				m_bg->draw();
 			}
+			
+			glClear(GL_DEPTH_BUFFER_BIT);
 			
 			//Draw particle system
 			for(map<string, ParticleSystem*>::iterator i = songParticles.begin(); i != songParticles.end(); i++)
@@ -416,10 +421,13 @@ void Pony48Engine::draw()
 			if(hIt != NULL)
 			{
 				HUDMenu* hMen = (HUDMenu*)hIt;
-				m_selectedSongArc->p1.Set(-hMen->selectedX-1, -hMen->selectedY + m_selectedSongArc->height / 2.0f);
-				m_selectedSongArc->p2.Set(hMen->selectedX+1, -hMen->selectedY + m_selectedSongArc->height / 2.0f);
+				glTranslatef(0, hMen->selectedY, 0);
+				m_selectedSongArc->p1.Set(-hMen->selectedX-3, m_selectedSongArc->height / 2.0f);
+				m_selectedSongArc->p2.Set(hMen->selectedX+3, m_selectedSongArc->height / 2.0f);
 			}
 			m_selectedSongArc->draw();
+			for(vector<ParticleSystem*>::iterator i = m_selectedSongParticles.begin(); i != m_selectedSongParticles.end(); i++)
+				(*i)->draw();
 			break;
 		}
 	}
@@ -530,6 +538,42 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	createSound("res/sfx/jointile.ogg", "jointile");
 	createSound("res/sfx/select.ogg", "select");
 	createSound("res/vox/nowhacking_theyreponies.ogg", "nowhacking_theyreponies");
+	
+	ParticleSystem* pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/selectsong0.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_selectedSongParticles.push_back(pSys);
+	m_selectedSongParticlesRateMul.push_back(1500);
+	m_selectedSongParticlesThresh.push_back(0.25);
+	pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/selectsong1.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_selectedSongParticles.push_back(pSys);
+	m_selectedSongParticlesRateMul.push_back(3000);
+	m_selectedSongParticlesThresh.push_back(0.1);
+	pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/selectsong2.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_selectedSongParticles.push_back(pSys);
+	m_selectedSongParticlesRateMul.push_back(6000);
+	m_selectedSongParticlesThresh.push_back(0.1);
+	pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/selectsong3.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_selectedSongParticles.push_back(pSys);
+	m_selectedSongParticlesRateMul.push_back(8000);
+	m_selectedSongParticlesThresh.push_back(0.1);
+	pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/selectsong4.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_selectedSongParticles.push_back(pSys);
+	m_selectedSongParticlesRateMul.push_back(9001);	//IT'S OVER NINE THOU- *shot*
+	m_selectedSongParticlesThresh.push_back(0.1);
 }
 
 

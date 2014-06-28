@@ -160,6 +160,9 @@ private:
 	arc* m_selectedSongArc;
 	float32 m_fFadeoutTitleTime;	//Time into the song we'll fade the artist and title out to transparent
 	map<string, ParticleSystem*> m_ScoreParticles;	//Particle systems for when we score points
+	vector<ParticleSystem*> m_selectedSongParticles;	//Particle systems for main menu/selected song stuff
+	vector<float32> m_selectedSongParticlesRateMul;		//Rate multiplication for above for fine-tweaking
+	vector<float32> m_selectedSongParticlesThresh;		//Threshold for above for fine-tweaking
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;

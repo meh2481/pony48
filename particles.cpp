@@ -22,6 +22,7 @@ ParticleSystem::ParticleSystem()
 	m_normalAccel = NULL;
 	m_lifetime = NULL;
 	m_created = NULL;
+	m_rotAxis = NULL;
 	m_num = 0;
 	
 	_initValues();
@@ -67,6 +68,8 @@ void ParticleSystem::_deleteAll()
 		delete [] m_lifetime;
 	if(m_created != NULL)
 		delete [] m_created;
+	if(m_rotAxis != NULL)
+		delete [] m_rotAxis;
 	
 	m_imgRect = NULL;
 	m_pos = NULL;
@@ -83,6 +86,7 @@ void ParticleSystem::_deleteAll()
 	m_normalAccel = NULL;
 	m_lifetime = NULL;
 	m_created = NULL;
+	m_rotAxis = NULL;
 	m_num = 0;
 }
 
@@ -160,6 +164,9 @@ void ParticleSystem::_newParticle()
 	m_normalAccel[m_num] = normalAccel + randFloat(-normalAccelVar,normalAccelVar);
 	m_lifetime[m_num] = lifetime + randFloat(-lifetimeVar,lifetimeVar);
 	m_created[m_num] = curTime;
+	m_rotAxis[m_num].x = rotAxis.x + randFloat(-rotAxisVar.x,rotAxisVar.x);
+	m_rotAxis[m_num].y = rotAxis.y + randFloat(-rotAxisVar.y,rotAxisVar.y);
+	m_rotAxis[m_num].z = rotAxis.z + randFloat(-rotAxisVar.z,rotAxisVar.z);
 	
 	m_num++;
 }
@@ -182,6 +189,7 @@ void ParticleSystem::_rmParticle(uint32_t idx)
 	m_normalAccel[idx] = m_normalAccel[m_num-1];
 	m_lifetime[idx] = m_lifetime[m_num-1];
 	m_created[idx] = m_created[m_num-1];
+	m_rotAxis[idx] = m_rotAxis[m_num-1];
 	
 	m_num--;
 }
@@ -212,6 +220,8 @@ void ParticleSystem::_initValues()
 	lifetimeVar = 0;
 	decay = FLT_MAX;
 	startedFiring = 0.0f;
+	rotAxis.set(0.0f, 0.0f, 1.0f);
+	rotAxisVar.setZero();
 	
 	img = NULL;
 	max = 100;
@@ -341,7 +351,7 @@ void ParticleSystem::draw()
 		glColor4f(drawcol.r, drawcol.g, drawcol.b, drawcol.a);
 		glTranslatef(m_pos[i].x, m_pos[i].y, 0);
 		if(!velRotate)
-			glRotatef(m_rot[i], 0, 0, 1);
+			glRotatef(m_rot[i], m_rotAxis[i].x, m_rotAxis[i].y, m_rotAxis[i].z);
 		else
 			glRotatef(RAD2DEG*atan2(m_vel[i].y, m_vel[i].x), 0, 0, 1);
 		img->render(drawsz, m_imgRect[i]);
@@ -375,6 +385,7 @@ void ParticleSystem::init()
 	m_normalAccel = new float32[max];
 	m_lifetime = new float32[max];
 	m_created = new float32[max];
+	m_rotAxis = new Vec3[max];
 }
 
 void ParticleSystem::fromXML(string sXMLFilename)
@@ -486,6 +497,15 @@ void ParticleSystem::fromXML(string sXMLFilename)
 		{
 			elem->QueryFloatAttribute("value", &rotAccel);
 			elem->QueryFloatAttribute("var", &rotAccelVar);
+		}
+		else if(sName == "rotaxis")
+		{
+			const char* cAxis = elem->Attribute("value");
+			if(cAxis && strlen(cAxis))
+				rotAxis = vec3FromString(cAxis);
+			const char* cAxisVar = elem->Attribute("var");
+			if(cAxisVar && strlen(cAxisVar))
+				rotAxisVar = vec3FromString(cAxisVar);			
 		}
 		else if(sName == "col")
 		{

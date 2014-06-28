@@ -1,0 +1,10 @@
+<particlesystem emitfrom="-5,0.1,5,-0.1" fireonstart="true" blend="additive" rate="0" max="3000">
+	<img path="res/particles/particlesheet1.png">
+		<rect val="128,0,255,127"/>
+	</img>
+	<emit angle="90" var="10"/>
+	<size start="0.75,0.75" end="0.4,0.4"/>
+	<speed value="0" var="4"/>
+	<col start="128,128,128,80" end="128,128,128,0" var="128,128,128,0"/>
+	<life value="0.15"/>
+</particlesystem>

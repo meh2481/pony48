@@ -38,6 +38,7 @@ protected:
 	float32*	m_normalAccel;		//Normal acceleration (acceleration away from the emission point)
 	float32*	m_lifetime;			//How long this particle is alive for
 	float32*	m_created;			//When this particle was created/spawned
+	Vec3*		m_rotAxis;			//What axis this particle rotates around when it rotates
 	
 	uint32_t m_num;					//How many actual particles there are active (i.e. size of above arrays)
 	void _deleteAll();				//Delete all memory associated with particles
@@ -80,6 +81,8 @@ public:
 	float32 		lifetime;			//How many seconds the particles stay alive
 	float32 		lifetimeVar;
 	float32			decay;				//How many seconds after firing to stop firing
+	Vec3			rotAxis;			//What axis these particles rotate around
+	Vec3			rotAxisVar;
 	
 	//Particle system variables
 	Image*				img;				//Image to use for all of these particles

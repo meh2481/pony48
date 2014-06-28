@@ -53,7 +53,7 @@ void Pony48Engine::beatDetect()
 		maxCamz = 3.5f;
 		m_fCamBounceBack = 0.02f;
 		
-		//
+		//Bounce parta da menu to da beat
 		HUDItem* hIt = m_hud->getChild("choosesong");
 		if(hIt != NULL)
 		{
@@ -75,8 +75,19 @@ void Pony48Engine::beatDetect()
 					hMen->pt = startMenuPt + maxCamz;
 			}
 		}
+		
+		//Also make electric arc bounce to da beat
 		m_selectedSongArc->max = 0.5 * spec[beatThresholdBar];
 		m_selectedSongArc->add = 0.5;
+		
+		//Also have some particle systems; make them fire according to beat too
+		for(int i = 0; i < m_selectedSongParticles.size(); i++)
+		{
+			if(m_selectedSongParticlesRateMul.size() > i && m_selectedSongParticlesThresh.size() > i && spec[i] >= m_selectedSongParticlesThresh[i])
+				m_selectedSongParticles[i]->rate = m_selectedSongParticlesRateMul[i] * spec[i];
+			else
+				m_selectedSongParticles[i]->rate = 0;
+		}
 	}
 	else
 	{
