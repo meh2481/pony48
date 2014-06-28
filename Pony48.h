@@ -32,7 +32,6 @@
 #define MAX_TILE_VALUE	4096	//Above this, the game would crash, so cap it here
 
 #define INTRO_FADEIN_TIME	2.0	//How long the intro fadein takes
-#define INTRO_FADEIN_DELAY	2.0	//How long before the intro fadein starts
 
 #define BORED_VOX_TIME		300.0	//5mins until bored sfx
 #define TITLE_DISPLAY_TIME	5.0f
@@ -163,6 +162,7 @@ private:
 	vector<ParticleSystem*> m_selectedSongParticles;	//Particle systems for main menu/selected song stuff
 	vector<float32> m_selectedSongParticlesRateMul;		//Rate multiplication for above for fine-tweaking
 	vector<float32> m_selectedSongParticlesThresh;		//Threshold for above for fine-tweaking
+	float32 INTRO_FADEIN_DELAY;
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;

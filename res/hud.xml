@@ -3,12 +3,7 @@
 		<font name="cmr" path="res/font/CelestiaMediumRedux.xml" />
 	</fonts>
 	<images>
-		<image name="phones" path="res/intro/headphones.png" />
-		<image name="mic" path="res/intro/microphone.png" />
 		<image name="pad" path="res/intro/controller.png" />
-		<image name="cam" path="res/intro/webcam.png" />
-		<image name="yes" path="res/intro/yes.png" />
-		<image name="no" path="res/intro/no.png" />
 	</images>
 	
 	<!-- playing HUD -->
@@ -33,16 +28,9 @@
 	</scene>
 	<!-- "plug all the stuff in" HUD -->
 	<scene name="intro">
-		<textbox name="plugitallin" font="cmr" text="PLUG_MSG_STR" pos="0,4" pt="1.25" col="255,255,255,255" />
-		<textbox name="retest" font="cmr" text="(Press Spacebar to re-test, any other button to continue as-is)" pos="0,-4.25" pt="0.6" col="255,255,255,255" />
-		<bgimage name="phones" img="phones" pos="-1.5,1.5" size="2,2" />
-		<bgimage name="mic" img="mic" pos="1.5,1.55" size="2,2" />
-		<bgimage name="pad" img="pad" pos="-1.5,-1.5" size="2,2" />
-		<bgimage name="cam" img="cam" pos="1.5,-1.5" size="2,2" />
-		<bgimage name="yespad" img="yes" pos="-2.25,-2.25" size="0.8,0.8" />
-		<bgimage name="nopad" img="no" pos="-2.25,-2.25" size="0.8,0.8" />
-		<bgimage name="yescam" img="yes" pos=".75,-2.25" size="0.8,0.8" />
-		<bgimage name="nocam" img="no" pos=".75,-2.25" size="0.8,0.8" />
+		<textbox name="plugitallin" font="cmr" text="A controller isn't required, but neither is breathing." pos="0,4" pt="0.8" col="255,255,255,255" />
+		<textbox name="plugitallin2" font="cmr" text="Think about it." pos="0,-4.25" pt="1" col="255,255,255,255" />
+		<bgimage name="pad" img="pad" pos="0,0" size="4,4" />
 		<geom name="coverintro" col="0,0,0,0">
 			<quad p1="-8, 6, 0" p2="8, 6, 0" p3="8, -6, 0" p4="-8, -6, 0" />
 		</geom>

@@ -81,7 +81,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 		phaseColor(&hMen->m_sSelected, hMen->m_sSelected2, 0.13f, true);
 	}
 	
-	HUDTextbox* txtbox = (HUDTextbox*)m_hud->getChild("plugitallin");
+	/*HUDTextbox* txtbox = (HUDTextbox*)m_hud->getChild("plugitallin");
 	if(txtbox)
 	{
 		switch(rand() % 8)
@@ -118,7 +118,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 				txtbox->setText("If you haz these, insert cord!");
 				break;
 		}
-	}
+	}*/
 	
 	setTimeScale(DEFAULT_TIMESCALE);
 	
@@ -128,6 +128,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	
 	//Game stuff!
 	m_iCurMode = INTRO;//PLAYING;
+	INTRO_FADEIN_DELAY = 10.0;	//temporarily set this until init()
 	m_fGameoverKeyDelay = 0;
 	m_BoardBg.set(0.7,0.7,0.7,.5);
 	for(int i = 0; i < BOARD_HEIGHT; i++)
@@ -292,28 +293,12 @@ void Pony48Engine::frame(float32 dt)
 			break;
 		
 		case INTRO:
-		{
-			//Set icon if user has/doesn't have gamepad
-			HUDItem* hIt = m_hud->getChild("yespad");
-			if(hIt != NULL)
-				hIt->hidden = (m_joy == NULL);
-			hIt = m_hud->getChild("nopad");
-			if(hIt != NULL)
-				hIt->hidden = (m_joy != NULL);
-				
-			//Set icon if user has/doesn't have webcam
-			hIt = m_hud->getChild("yescam");
-			if(hIt != NULL)
-				hIt->hidden = !m_cam->isOpen();
-			hIt = m_hud->getChild("nocam");
-			if(hIt != NULL)
-				hIt->hidden = m_cam->isOpen();
-			
+		{			
 			//Calculate the proper alpha value for the black cover-up-intro graphic for our fadein time
-			float alpha = (getSeconds()-INTRO_FADEIN_DELAY) / INTRO_FADEIN_TIME;
+			float alpha = (getSeconds() - INTRO_FADEIN_DELAY) / INTRO_FADEIN_TIME;
 			if(alpha < 0) alpha = 0;
 			if(alpha > 1) alpha = 1;
-			hIt = m_hud->getChild("coverintro");
+			HUDItem* hIt = m_hud->getChild("coverintro");
 			if(hIt != NULL)
 				hIt->col.a = 1.0-alpha;
 			break;
@@ -574,6 +559,8 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	m_selectedSongParticles.push_back(pSys);
 	m_selectedSongParticlesRateMul.push_back(9001);	//IT'S OVER NINE THOU- *shot*
 	m_selectedSongParticlesThresh.push_back(0.1);
+	
+	INTRO_FADEIN_DELAY = 1.0 + getSeconds();
 }
 
 

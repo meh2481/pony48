@@ -14,10 +14,7 @@
 -Credits with vectors used / font used / music / etc
 -Load everything up front so there aren't cache misses that cause noticable lag
 	-Save tile XML data so it can be accessed quickly rather than hitting the disk each time
--Don't start intro fadein until you can actually see the window
--Finish song select menu fx and such
--Don't move right after clicking on song select menu item
--Pressing ESC shouldn't hide mouse
+-Song select menu bg
 
 Linux Xbox controller rumble:
 sudo rmmod xpad
