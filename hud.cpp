@@ -28,12 +28,14 @@ HUDItem::~HUDItem()
         delete (*i);    //Clean up all children also
 }
 
-void HUDItem::event(SDL_Event event)
+bool HUDItem::event(SDL_Event event)
 {
-	if(hidden) return;
+	if(hidden) return false;
+	bool bRet = false;
     //Base class does nothing with this, except pass on
     for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
-        (*i)->event(event);
+        bRet = (*i)->event(event) || bRet;
+	return bRet;
 }
 
 void HUDItem::draw(float32 fCurTime)
@@ -157,15 +159,17 @@ HUDToggle::~HUDToggle()
 
 }
 
-void HUDToggle::event(SDL_Event event)
+bool HUDToggle::event(SDL_Event event)
 {
-	if(hidden) return;
-    HUDItem::event(event);
+	if(hidden) return false;
+	bool bRet = HUDItem::event(event);
     if(event.type == SDL_KEYDOWN && event.key.keysym.sym == m_iKey)
     {
         m_signalHandler(m_sSignal); //Generate signal
         m_bValue = !m_bValue;   //Toggle
+        return true;
     }
+    return bRet;
 }
 
 void HUDToggle::draw(float32 fCurTime)
@@ -233,15 +237,16 @@ void HUDGroup::draw(float32 fCurTime)
         HUDItem::draw(fCurTime);
 }
 
-void HUDGroup::event(SDL_Event event)
+bool HUDGroup::event(SDL_Event event)
 {
-	if(hidden) return;
-    HUDItem::event(event);
+	if(hidden) return false;
+    bool bRet = HUDItem::event(event);
 
     if(event.type == SDL_KEYDOWN && m_mKeys.find(event.key.keysym.sym) != m_mKeys.end())
     {
         m_fStartTime = FLT_MIN; //Cause this to reset
     }
+    return bRet;
 }
 
 //-------------------------------------------------------------------------------------
@@ -315,25 +320,37 @@ void HUDMenu::_enter()
 		m_signalHandler(m_selected->signal);
 }
 
-void HUDMenu::event(SDL_Event event)
+bool HUDMenu::event(SDL_Event event)
 {
-	if(hidden) return;
-    HUDItem::event(event);
+	if(hidden) return false;
+	bool bRet = HUDItem::event(event);
 	
 	switch(event.type)
 	{
 		case SDL_KEYDOWN:
 			if(event.key.keysym.scancode == KEY_UP1 || event.key.keysym.scancode == KEY_UP2)
+			{
 				_moveUp();
+				bRet = true;
+			}
 			else if(event.key.keysym.scancode == KEY_DOWN1 || event.key.keysym.scancode == KEY_DOWN2)
+			{
 				_moveDown();
+				bRet = true;
+			}
 			else if(event.key.keysym.scancode == KEY_ENTER1 || event.key.keysym.scancode == KEY_ENTER2)
+			{
 				_enter();
+				bRet = true;
+			}
 			break;
 		
 		case SDL_MOUSEBUTTONDOWN:
 			if(m_selected != m_menu.end() && event.button.button == SDL_BUTTON_LEFT)
+			{
 				_enter();
+				bRet = true;
+			}
 			break;
 			
 		case SDL_MOUSEMOTION:
@@ -350,6 +367,7 @@ void HUDMenu::event(SDL_Event event)
 					if(i != m_selected && selectsignal.size())
 						m_signalHandler(selectsignal);
 					m_selected = i;
+					bRet = true;
 					break;
 				}
 				fCurY -= pt + vspacing;
@@ -359,7 +377,10 @@ void HUDMenu::event(SDL_Event event)
 		
 		case SDL_JOYBUTTONDOWN:
 			if(event.jbutton.button == JOY_BUTTON_A)
+			{
 				_enter();
+				bRet = true;
+			}
 			break;
 			
 		case SDL_JOYAXISMOTION:
@@ -368,13 +389,19 @@ void HUDMenu::event(SDL_Event event)
 				if(event.jaxis.value < -JOY_AXIS_TRIP)	//Up
 				{
 					if(!bJoyMoved)
+					{
 						_moveUp();
+						bRet = true;
+					}
 					bJoyMoved = true;
 				}
 				else if(event.jaxis.value > JOY_AXIS_TRIP)	//Down
 				{
 					if(!bJoyMoved)
+					{
 						_moveDown();
+						bRet = true;
+					}
 					bJoyMoved = true;
 				}
 				else
@@ -387,14 +414,17 @@ void HUDMenu::event(SDL_Event event)
 			{
 				case SDL_HAT_UP:
 					_moveUp();
+					bRet = true;
 					break;
 					
 				case SDL_HAT_DOWN:
 					_moveDown();
+					bRet = true;
 					break;
 			}
 			break;
 	}
+	return bRet;
 }
 
 void HUDMenu::draw(float32 fCurTime)

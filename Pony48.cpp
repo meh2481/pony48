@@ -595,15 +595,18 @@ void Pony48Engine::hudSignalHandler(string sSignal)
 
 void Pony48Engine::handleEvent(SDL_Event event)
 {
-	m_hud->event(event);	//Let our HUD handle any events it needs to
+	if(m_hud->event(event)) return;	//Let our HUD handle any events it needs to, and back out if it got handled
 	switch(event.type)
 	{
 		//Key pressed
 		case SDL_KEYDOWN:
 		{
-			m_bJoyControl = false;
-			m_iMouseControl = 0;
-			hideCursor();
+			if(event.key.keysym.scancode != SDL_SCANCODE_ESCAPE)
+			{
+				m_bJoyControl = false;
+				m_iMouseControl = 0;
+				hideCursor();
+			}
 			if(m_iCurMode == GAMEOVER)
 			{
 				if(!(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE

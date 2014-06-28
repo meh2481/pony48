@@ -33,7 +33,7 @@ public:
 	HUDItem(string sName);
 	~HUDItem();
 
-	virtual void	event(SDL_Event event);						 //For handling input events as they come in
+	virtual bool	event(SDL_Event event);						 //For handling input events as they come in
 	virtual void	draw(float32 fCurTime);						   //For drawing to the screen
 	void			addChild(HUDItem* hiChild);						 //Add this child to this HUDItem
 	HUDItem*		getChild(string sName);							 //Get the first child that has this name (return NULL if none)
@@ -103,7 +103,7 @@ public:
 	HUDToggle(string sName);
 	~HUDToggle();
 
-	void event(SDL_Event event);						//This will create a signal if the event matches our set key
+	bool event(SDL_Event event);						//This will create a signal if the event matches our set key
 	void draw(float32 fCurTime);						//Draws the enabled or disabled image
 
 	void setEnabled(bool bValue)		{m_bValue = bValue;};
@@ -146,7 +146,7 @@ public:
 	HUDGroup(string sName);
 	~HUDGroup();
 
-	void event(SDL_Event event);						//If this event matches any of our keys, set alpha to 255
+	bool event(SDL_Event event);						//If this event matches any of our keys, set alpha to 255
 	void draw(float32 fCurTime);						//Override draw so can draw members with low alpha and such
 
 	void	setFadeDelay(float32 fDelay)	{m_fFadeDelay = fDelay;};
@@ -185,7 +185,7 @@ public:
 	list<menuItem> m_menu;
 	list<menuItem>::iterator m_selected;
 	
-	void event(SDL_Event event);
+	bool event(SDL_Event event);
 	void draw(float32 fCurTime);
 	void addMenuItem(menuItem it) {m_menu.push_back(it);};
 	
