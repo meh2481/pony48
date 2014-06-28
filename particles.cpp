@@ -313,7 +313,7 @@ void ParticleSystem::draw()
 	switch(blend)
 	{
 		case ADDITIVE:
-			glBlendFunc(GL_DST_COLOR, GL_ONE);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 			break;
 			
 		case NORMAL:
@@ -321,7 +321,7 @@ void ParticleSystem::draw()
 			break;
 			
 		case SUBTRACTIVE:
-			glBlendFunc(GL_ZERO, GL_SRC_ALPHA); 
+			glBlendFunc(GL_DST_COLOR, GL_ONE); 
 			break;
 	}
 	
