@@ -127,7 +127,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_cam = new Webcam;
 	
 	//Game stuff!
-	m_iCurMode = INTRO;//PLAYING;
+	m_iCurMode = INTRO;
 	INTRO_FADEIN_DELAY = 10.0;	//temporarily set this until init()
 	m_fGameoverKeyDelay = 0;
 	m_BoardBg.set(0.7,0.7,0.7,.5);
@@ -163,15 +163,15 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	//Apparently our Xbox drivers for different OS's can't agree on which buttons are which
 #ifdef _WIN32
 	JOY_BUTTON_BACK = 5;
-	JOY_BUTTON_START = ;	//TODO
-	JOY_BUTTON_X = ;
+	JOY_BUTTON_START = 4;	//TODO
+	JOY_BUTTON_X = 12;
 	JOY_BUTTON_Y = 13;
-	JOY_BUTTON_A = ;
-	JOY_BUTTON_B = ;
-	JOY_BUTTON_LB = ;
-	JOY_BUTTON_RB = ;
-	JOY_BUTTON_LSTICK = ;
-	JOY_BUTTON_RSTICK = ;
+	JOY_BUTTON_A = 10;
+	JOY_BUTTON_B = 11;
+	JOY_BUTTON_LB = 8;
+	JOY_BUTTON_RB = 9;
+	JOY_BUTTON_LSTICK = 6;
+	JOY_BUTTON_RSTICK = 7;
 	JOY_AXIS2_HORIZ = 2;
 	JOY_AXIS2_VERT = 3;
 	JOY_AXIS_LT = 4;
@@ -201,7 +201,6 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fWebcamDrawSize = 4;
 	m_ptWebcamDrawPos.Set(-6.2,5);
 	m_bDrawFacecam = false;
-	m_bSavedFacepic = false;
 	
 	//Other stuff!
 	m_fArrowAdd = 0;
@@ -280,16 +279,6 @@ void Pony48Engine::frame(float32 dt)
 			//Check if game is now over
 			if(m_iCurMode == PLAYING && !movePossible())
 				changeMode(GAMEOVER);
-			
-			//Save screenshot if we should
-			if(m_cam->isOpen() && m_iCurMode == GAMEOVER)
-			{
-				if(!m_bSavedFacepic && getSeconds() > m_fGameoverWebcamFreeze + 0.5)
-				{
-					m_bSavedFacepic = true;
-					m_cam->saveFrame(getSaveLocation() + "face.jpg");
-				}
-			}
 			break;
 		
 		case INTRO:
@@ -702,22 +691,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			}
 			else if(m_iCurMode == INTRO)
 			{
-				if(event.key.keysym.scancode == SDL_SCANCODE_SPACE)
-				{
-					//Re-test joystick
-					if(m_rumble)
-						SDL_HapticClose(m_rumble);
-					if(SDL_JoystickGetAttached(m_joy))
-						SDL_JoystickClose(m_joy);
-					SDL_QuitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
-					m_joy = NULL;
-					m_rumble = NULL;
-					SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC);
-					//Re-test webcam
-					m_cam->open(m_iCAM);
-				}
 #ifdef DEBUG
-				else if(event.key.keysym.scancode == SDL_SCANCODE_F5)
+				if(event.key.keysym.scancode == SDL_SCANCODE_F5)
 				{
 					string sScene = m_hud->getScene();
 					clearColors();
@@ -727,8 +702,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					m_hud->setScene(sScene);
 					m_hud->setSignalHandler(signalHandler);
 				}
-#endif
 				else
+#endif
 					changeMode(SONGSELECT);
 			}
 			else if(m_iCurMode == SONGSELECT)
@@ -1464,7 +1439,6 @@ void Pony48Engine::changeMode(gameMode gm)
 			scrubPause();
 			m_fGameoverKeyDelay = getSeconds();
 			m_fGameoverWebcamFreeze = getSeconds() + GAMEOVER_FREEZE_CAM_TIME;
-			m_bSavedFacepic = false;
 			break;
 		}
 		
