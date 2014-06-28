@@ -210,6 +210,8 @@ void ParticleSystem::_initValues()
 	normalAccelVar = 0;
 	lifetime = 4;
 	lifetimeVar = 0;
+	decay = FLT_MAX;
+	startedFiring = 0.0f;
 	
 	img = NULL;
 	max = 100;
@@ -227,6 +229,16 @@ void ParticleSystem::update(float32 dt)
 {
 	if(!show) return;
 	curTime += dt;
+	if(startedFiring)
+	{
+		if(curTime - startedFiring > decay)
+		{
+			firing = false;
+			startedFiring = 0.0f;
+		}
+	}
+	else if(firing)
+		startedFiring = curTime;
 	
 	spawnCounter += dt * rate;
 	int iSpawnAmt = floor(spawnCounter);
@@ -409,6 +421,7 @@ void ParticleSystem::fromXML(string sXMLFilename)
 	root->QueryUnsignedAttribute("max", &max);
 	root->QueryFloatAttribute("rate", &rate);
 	root->QueryBoolAttribute("velrotate", &velRotate);
+	root->QueryFloatAttribute("decay", &decay);
 	
 	for(XMLElement* elem = root->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
 	{

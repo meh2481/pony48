@@ -777,12 +777,30 @@ void Pony48Engine::placenew()
 	}
 }
 
+void Pony48Engine::spawnScoreParticles(uint32_t amt)
+{
+	ostringstream oss;
+	oss << "res/particles/" << amt << ".xml";
+	if(m_ScoreParticles.count(oss.str()))
+	{
+		m_ScoreParticles[oss.str()]->firing = true;
+	}
+	else if(ttvfs::FileExists(oss.str().c_str()))
+	{
+		ParticleSystem* pSys = new ParticleSystem();
+		pSys->fromXML(oss.str());
+		pSys->init();
+		pSys->firing = true;
+		m_ScoreParticles[oss.str()] = pSys;
+	}
+}
+
 void Pony48Engine::addScore(uint32_t amt)
 {
 	m_iScore += amt;
 	if(m_iScore > m_iHighScore)
 		m_iHighScore = m_iScore;
-	//TODO: Anim stuffs
+	spawnScoreParticles(amt);
 }
 
 

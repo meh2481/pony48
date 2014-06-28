@@ -231,6 +231,8 @@ Pony48Engine::~Pony48Engine()
 	cleanupSongGfx();
 	for(map<string, myCursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
 		delete i->second;
+	for(map<string, ParticleSystem*>::iterator i = m_ScoreParticles.begin(); i != m_ScoreParticles.end(); i++)
+		delete i->second;
 	clearColors();
 	errlog << "delete hud" << endl;
 	delete m_hud;
@@ -264,6 +266,8 @@ void Pony48Engine::frame(float32 dt)
 			
 			soundUpdate(dt);
 			updateBoard(dt);
+			for(map<string, ParticleSystem*>::iterator i = m_ScoreParticles.begin(); i != m_ScoreParticles.end(); i++)
+				i->second->update(dt);
 			
 			//Bounce camera forward on every bass kick
 			beatDetect();
@@ -460,6 +464,11 @@ void Pony48Engine::draw()
 			m_highestTile->seg->draw();
 			glPopMatrix();
 		}
+	}
+	else if(m_iCurMode == PLAYING)
+	{
+		for(map<string, ParticleSystem*>::iterator i = m_ScoreParticles.begin(); i != m_ScoreParticles.end(); i++)
+			i->second->draw();
 	}
 	
 	//Set mouse cursor to proper location
@@ -706,9 +715,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #ifdef DEBUG_INPUT
 			cout << "Mouse button " << (int)event.button.button << " pressed." << endl;
 #endif
-			if(event.button.button == SDL_BUTTON_MIDDLE && m_iCurMode == PLAYING)
-				resetBoard();
-			else if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT && m_iCurMode == PLAYING)
+			if(m_iMouseControl >= MOUSE_MOVE_TRIP_AMT && m_iCurMode == PLAYING)
 				move(getDirOfVec2(worldPosFromCursor(getCursorPos())));	//Nested functions much?
 			if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
@@ -836,8 +843,6 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				changeMode(PLAYING);
 			else if(m_iCurMode == INTRO)
 				changeMode(SONGSELECT);
-			else if(event.jbutton.button == JOY_BUTTON_Y)
-				resetBoard();
 			break;
 			
 		case SDL_JOYBUTTONUP:

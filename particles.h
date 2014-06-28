@@ -47,6 +47,7 @@ protected:
 	
 	float32 curTime;
 	float32 spawnCounter;
+	float32 startedFiring;			//When we started firing (to keep track of decay)
 	
 	string m_sXMLFrom;	//So we know what XML file we should reload from
 	
@@ -78,6 +79,7 @@ public:
 	float32 		normalAccelVar;
 	float32 		lifetime;			//How many seconds the particles stay alive
 	float32 		lifetimeVar;
+	float32			decay;				//How many seconds after firing to stop firing
 	
 	//Particle system variables
 	Image*				img;				//Image to use for all of these particles

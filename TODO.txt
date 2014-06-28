@@ -1,27 +1,24 @@
 -Joystick list in case multiple controllers connected - most recent one used for board-tilt-testing
--Touchscreen support?
 -Rebindable controller - rebind axes, buttons, etc
 -Rebindable keys
 -Menu screens shouldn't just appear; make them more flashy
--Warning before resetting the game if press MMB or Y?
 -SFX
 -VOX
 -Add getting-points effect over score
+	-Add decay field to particle systems
 -Fix maximize-window bug in Linux?
 -Main menu
 -Options menu
--Support other bg types in song XML
--FX
-	-Get waveform data so can have bg bars
-	-Electric arcs?
-	-Gradient bg stuff in Lua
 -Tile-appearing animations should only appear after sliding animations are done
--record label thing in corner as songs first play
 -Fade out of song select / into song and fade music so it isn't abrupt
 -Some kind of lead-in for main menu music
 -Remove current intro screen; replace with something better
 -Get Windows SDL joycodes for xbox buttons
--Ingame pause menu with ESC/START - can resume or exit back to song select
+-Ingame pause menu with ESC/START - can resume, restart, or exit back to song select
+-Credits with vectors used / font used / music / etc
+-Load everything up front so there aren't cache misses that cause noticable lag
+	-Save tile XML data so it can be accessed quickly rather than hitting the disk each time
+-Don't start intro fadein until you can actually see the window
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

@@ -159,6 +159,7 @@ private:
 	string m_sSongToPlay;
 	arc* m_selectedSongArc;
 	float32 m_fFadeoutTitleTime;	//Time into the song we'll fade the artist and title out to transparent
+	map<string, ParticleSystem*> m_ScoreParticles;	//Particle systems for when we score points
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;
@@ -235,7 +236,8 @@ public:
 	void clearBoard();						//Clears memory associated with the game board
 	void addScore(uint32_t amt);			//Add a value to the score (in function so we can have cool anim stuff)
 	void pieceSlid(int startx, int starty, int endx, int endy);	//Called when a piece slides, to update animations
-	direction getDirOfVec2(Point ptVec);		//Get direction (UP, DOWN, LEFT, RIGHT) that given vector is mostly pointing towards
+	direction getDirOfVec2(Point ptVec);	//Get direction (UP, DOWN, LEFT, RIGHT) that given vector is mostly pointing towards
+	void spawnScoreParticles(uint32_t amt);	//Generate getting-points particle effect
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to the engine

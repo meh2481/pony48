@@ -1,0 +1,8 @@
+<particlesystem emitfrom="-4,5.7,-3,5.7" fireonstart="false" blend="normal" rate="1000" max="1" decay="0.5">
+	<img path="res/particles/8.png"/>
+	<size start="0.704545454545,1" end="2.11363636363,3"/>
+	<col start="255,255,255,255" end="255,255,255,0" var="128,128,128,0"/>
+	<life value="1"/>
+	<emit angle="90"/>
+	<speed value="1"/>
+</particlesystem>
