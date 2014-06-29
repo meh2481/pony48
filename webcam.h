@@ -31,6 +31,8 @@ protected:
 	void _clear();	//Clear memory associated with webcam objects
 	
 public:
+	bool use;	//Set to false to ignore all webcam stuff (cause some people may want it off entirely)
+	
 	Webcam();
 	~Webcam();
 	

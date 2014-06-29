@@ -16,6 +16,7 @@ Webcam::Webcam()
 	m_curFrame = NULL;
 	m_iWidth = m_iHeight = -1;
 	mirror = true;
+	use = true;
 }
 
 Webcam::~Webcam()
@@ -25,6 +26,7 @@ Webcam::~Webcam()
 
 void Webcam::draw(float32 height, Point ptCenter)
 {
+	if(!use) return;
 	if(m_hTex)
 	{
 		// tell opengl to use the generated texture
@@ -77,6 +79,7 @@ void Webcam::draw(float32 height, Point ptCenter)
 
 void Webcam::getNewFrame()
 {
+	if(!use) return;
 #ifdef USE_VIDEOINPUT
 	if(m_curFrame == NULL)
 		m_curFrame = new unsigned char [VI.getSize(m_device)];
@@ -140,6 +143,7 @@ void Webcam::getNewFrame()
 
 void Webcam::open(int device)
 {
+	if(!use) return;
 	_clear();
 #ifdef USE_VIDEOINPUT
 	m_device = device;
@@ -208,6 +212,7 @@ void Webcam::_clear()
 
 bool Webcam::isOpen()
 {
+	if(!use) return false;
 #ifdef USE_VIDEOINPUT
 	return (VI.isDeviceSetup(m_device));
 #else
@@ -217,6 +222,7 @@ bool Webcam::isOpen()
 
 bool Webcam::saveFrame(string sFilename, bool bMirror)
 {
+	if(!use) return false;
 	if(!m_curFrame) return false;
 #ifdef USE_VIDEOINPUT
 	FIBITMAP* bmp = FreeImage_ConvertFromRawBits(m_curFrame, m_iWidth, m_iHeight, m_iWidth * 3, 24, 0x0000FF, 0x00FF00, 0xFF0000, true);

@@ -460,7 +460,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	
 	//Load our last screen position and such
 	if(!loadConfig(getSaveLocation() + "config.xml"))
-		m_cam->open(m_iCAM);	//Open webcam even if config loading fails
+		m_cam->open(m_iCAM);	//Open webcam if config loading fails
 	
 	//Set gravity to 0
 	getWorld()->SetGravity(b2Vec2(0,0));
@@ -1162,6 +1162,7 @@ bool Pony48Engine::loadConfig(string sFilename)
 			m_ptWebcamDrawPos = pointFromString(facepos);
 		webcam->QueryFloatAttribute("facesz", &m_fWebcamDrawSize);
 		webcam->QueryBoolAttribute("drawfacecam", &m_bDrawFacecam);
+		webcam->QueryBoolAttribute("use", &m_cam->use);
 	}
 	m_cam->open(m_iCAM);
 	
@@ -1238,6 +1239,7 @@ void Pony48Engine::saveConfig(string sFilename)
 	webcam->SetAttribute("facepos", pointToString(m_ptWebcamDrawPos).c_str());
 	webcam->SetAttribute("facesz", m_fWebcamDrawSize);
 	webcam->SetAttribute("drawfacecam", m_bDrawFacecam);
+	webcam->SetAttribute("use", m_cam->use);
 	root->InsertEndChild(webcam);
 	
 	doc->InsertFirstChild(root);
