@@ -1,15 +1,48 @@
--SFX
--Fix maximize-window bug in Linux?
--Main menu
--Options menu
--Key config menu
--Some kind of lead-in for main menu music
+-camera-taking-photo SFX
 -Ingame pause menu with ESC/START - can resume, restart, or exit back to song select
--Credits with vectors used / font used / music / etc
--Load everything up front so there aren't cache misses that cause noticable lag
-	-Save tile XML data so it can be accessed quickly rather than hitting the disk each time
+-Some kind of lead-in for main menu music
+-Credits on game quit with vectors used / font used / music / etc
 -Song select menu bg
 -FX for going between modes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Linux Xbox controller rumble:
 sudo rmmod xpad

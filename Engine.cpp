@@ -824,7 +824,7 @@ bool Engine::isMaximized()
 	
 	return IsZoomed(info.info.win.window);
 #else
-	return (SDL_GetWindowFlags(m_Window) & SDL_WINDOW_MAXIMIZED);	//TODO: Test other OS's to see if this is true for them as well
+	return (SDL_GetWindowFlags(m_Window) & SDL_WINDOW_MAXIMIZED);	//TODO: This is borked in Linux, also. Fix or wait for SDL patch
 #endif
 }
 

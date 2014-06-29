@@ -118,6 +118,7 @@ private:
 	float32 m_fWebcamDrawSize;
 	Point m_ptWebcamDrawPos;
 	bool m_bDrawFacecam;
+	bool m_bSavedFacepic;
 	int m_iCAM;
 #ifndef USE_VIDEOINPUT
 	int m_iCurCamFrameSkip;

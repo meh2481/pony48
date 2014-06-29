@@ -181,6 +181,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_selectedSongArc->avg = 1;
 	m_selectedSongArc->init();
 	m_fFadeoutTitleTime = getSeconds();
+	m_bSavedFacepic = false;
 	
 	m_gameoverTileRot = 0;	//Happy now, Valgrind?
 	m_gameoverTileVel = 30;
@@ -246,6 +247,16 @@ void Pony48Engine::frame(float32 dt)
 			//Check if game is now over
 			if(m_iCurMode == PLAYING && !movePossible())
 				changeMode(GAMEOVER);
+			
+			//Make photo-taking noise if we should
+			if(m_cam->isOpen() && m_iCurMode == GAMEOVER)
+			{
+				if(!m_bSavedFacepic && getSeconds() > m_fGameoverWebcamFreeze + 0.5)
+				{
+					m_bSavedFacepic = true;
+					playSound("camera", m_fSoundVolume);
+				}
+			}
 			break;
 		
 		case INTRO:
@@ -478,6 +489,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	//Create sounds up front
 	createSound("res/sfx/jointile.ogg", "jointile");
 	createSound("res/sfx/select.ogg", "select");
+	createSound("res/sfx/camera_shutter.ogg", "camera");
 	createSound("res/vox/nowhacking_theyreponies.ogg", "nowhacking_theyreponies");
 	
 	ParticleSystem* pSys = new ParticleSystem();
@@ -1408,6 +1420,7 @@ void Pony48Engine::changeMode(gameMode gm)
 			scrubPause();
 			m_fGameoverKeyDelay = getSeconds();
 			m_fGameoverWebcamFreeze = getSeconds() + GAMEOVER_FREEZE_CAM_TIME;
+			m_bSavedFacepic = false;
 			break;
 		}
 		
