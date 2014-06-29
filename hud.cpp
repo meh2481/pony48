@@ -287,6 +287,7 @@ HUDMenu::HUDMenu(string sName) : HUDItem(sName)
 	vspacing = 0;
 	bJoyMoved = false;
 	selectedY = FLT_MIN;
+	selectedX = 0.0f;
 }
 
 HUDMenu::~HUDMenu()
@@ -753,11 +754,6 @@ void HUD::destroy()
   //And all fonts
   for(map<string, Text*>::iterator i = m_mFonts.begin(); i != m_mFonts.end(); i++)
     delete i->second;
-  
-  for(list<HUDItem*>::iterator i = m_lChildren.begin(); i != m_lChildren.end(); i++)
-    delete (*i);
-
-  m_lChildren.clear();
 }
 
 void HUD::setScene(string sScene)

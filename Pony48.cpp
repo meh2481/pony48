@@ -81,45 +81,6 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 		phaseColor(&hMen->m_sSelected, hMen->m_sSelected2, 0.13f, true);
 	}
 	
-	/*HUDTextbox* txtbox = (HUDTextbox*)m_hud->getChild("plugitallin");
-	if(txtbox)
-	{
-		switch(rand() % 8)
-		{
-			case 0:
-				txtbox->setText("Plug in all the things!");
-				break;
-				
-			case 1:
-				txtbox->setText("These make your life better!");
-				break;
-				
-			case 2:
-				txtbox->setText("You\'ll want all these!");
-				break;
-				
-			case 3:
-				txtbox->setText("Plz plug these in dood!");
-				break;
-				
-			case 4:
-				txtbox->setText("Your life is incomplete without these!");
-				break;
-				
-			case 5:
-				txtbox->setText("It\'s dangerous in there without these!");
-				break;
-				
-			case 6:
-				txtbox->setText("All the cool kids plug in these!");
-				break;
-				
-			case 7:
-				txtbox->setText("If you haz these, insert cord!");
-				break;
-		}
-	}*/
-	
 	setTimeScale(DEFAULT_TIMESCALE);
 	
 	m_joy = NULL;
@@ -220,6 +181,10 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_selectedSongArc->avg = 1;
 	m_selectedSongArc->init();
 	m_fFadeoutTitleTime = getSeconds();
+	
+	m_gameoverTileRot = 0;	//Happy now, Valgrind?
+	m_gameoverTileVel = 30;
+	m_gameoverTileAccel = 16;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -228,6 +193,8 @@ Pony48Engine::~Pony48Engine()
 	saveConfig(getSaveLocation() + "config.xml");
 	clearBoard();
 	cleanupSongGfx();
+	if(m_bg)
+		delete m_bg;
 	for(map<string, myCursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
 		delete i->second;
 	for(map<string, ParticleSystem*>::iterator i = m_ScoreParticles.begin(); i != m_ScoreParticles.end(); i++)
@@ -298,7 +265,7 @@ void Pony48Engine::frame(float32 dt)
 			m_fMusicScrubSpeed += dt * MUSIC_SCRUBIN_SPEED;
 			if(m_fMusicScrubSpeed > soundFreqDefault)
 				m_fMusicScrubSpeed = soundFreqDefault;
-			//setMusicFrequency(m_fMusicScrubSpeed);
+			setMusicFrequency(m_fMusicScrubSpeed);
 			m_selectedSongArc->update(dt);
 			for(vector<ParticleSystem*>::iterator i = m_selectedSongParticles.begin(); i != m_selectedSongParticles.end(); i++)
 				(*i)->update(dt);

@@ -1,20 +1,15 @@
--Rebindable controller - rebind axes, buttons, etc
--Rebindable keys
--Menu screens shouldn't just appear; make them more flashy
 -SFX
--VOX
 -Fix maximize-window bug in Linux?
 -Main menu
 -Options menu
--Fade out of song select / into song and fade music so it isn't abrupt
+-Key config menu
 -Some kind of lead-in for main menu music
--Remove current intro screen; replace with something better
--Get Windows SDL joycodes for xbox buttons
 -Ingame pause menu with ESC/START - can resume, restart, or exit back to song select
 -Credits with vectors used / font used / music / etc
 -Load everything up front so there aren't cache misses that cause noticable lag
 	-Save tile XML data so it can be accessed quickly rather than hitting the disk each time
 -Song select menu bg
+-FX for going between modes
 
 Linux Xbox controller rumble:
 sudo rmmod xpad
