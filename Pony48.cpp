@@ -566,13 +566,28 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	
 	//Add bg spinning 2048 tile particle system
 	pSys = new ParticleSystem();
-	pSys->fromXML("res/particles/bg2048.xml");
+	pSys->fromXML("res/particles/bg2048ul.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_selectedSongParticlesBg.push_back(pSys);
+	pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/bg2048ur.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_selectedSongParticlesBg.push_back(pSys);
+	pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/bg2048bl.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_selectedSongParticlesBg.push_back(pSys);
+	pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/bg2048br.xml");
 	pSys->init();
 	pSys->firing = true;
 	m_selectedSongParticlesBg.push_back(pSys);
 	//HACK Make this look ok on the first frame by fake-updating it for a bit
-	for(int i = 0; i < 60; i++)
-		pSys->update(0.25);
+	//for(int i = 0; i < 60; i++)
+	//	pSys->update(0.25);
 	
 	INTRO_FADEIN_DELAY = 1.0 + getSeconds();
 }
