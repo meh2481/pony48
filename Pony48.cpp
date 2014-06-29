@@ -202,6 +202,8 @@ Pony48Engine::~Pony48Engine()
 		delete i->second;
 	for(vector<ParticleSystem*>::iterator i = m_selectedSongParticles.begin(); i != m_selectedSongParticles.end(); i++)
 		delete *i;
+	for(list<ParticleSystem*>::iterator i = m_selectedSongParticlesBg.begin(); i != m_selectedSongParticlesBg.end(); i++)
+		delete *i;	
 	clearColors();
 	errlog << "delete hud" << endl;
 	delete m_hud;
@@ -280,6 +282,35 @@ void Pony48Engine::frame(float32 dt)
 			m_selectedSongArc->update(dt);
 			for(vector<ParticleSystem*>::iterator i = m_selectedSongParticles.begin(); i != m_selectedSongParticles.end(); i++)
 				(*i)->update(dt);
+			for(list<ParticleSystem*>::iterator i = m_selectedSongParticlesBg.begin(); i != m_selectedSongParticlesBg.end(); i++)
+				(*i)->update(dt);
+			
+			//Check and see if we should change bg colors
+			if(m_bg != NULL && m_bg->type == GRADIENT)
+			{
+				gradientBg* bg = (gradientBg*)m_bg;
+				bool ur, br, bl, ul;
+				ur = br = bl = ul = false;
+				for(list<ColorPhase>::iterator i = m_ColorsChanging.begin(); i != m_ColorsChanging.end(); i++)
+				{
+					if(i->colorToChange == &bg->ur)
+						ur = true;
+					if(i->colorToChange == &bg->br)
+						br = true;
+					if(i->colorToChange == &bg->ul)
+						ul = true;
+					if(i->colorToChange == &bg->bl)
+						bl = true;
+				}
+				if(!ur)
+					phaseColor(&bg->ur, Color(randFloat(0,1),randFloat(0,1),randFloat(0,1),0), randFloat(0.15,0.35));
+				if(!br)
+					phaseColor(&bg->br, Color(randFloat(0,1),randFloat(0,1),randFloat(0,1),0), randFloat(0.15,0.35));
+				if(!ul)
+					phaseColor(&bg->ul, Color(randFloat(0,1),randFloat(0,1),randFloat(0,1),0), randFloat(0.15,0.35));
+				if(!bl)
+					phaseColor(&bg->bl, Color(randFloat(0,1),randFloat(0,1),randFloat(0,1),0), randFloat(0.15,0.35));
+			}
 			break;
 	}
 	updateColors(dt);
@@ -369,6 +400,11 @@ void Pony48Engine::draw()
 		
 		case SONGSELECT:
 		{
+			if(m_bg)
+				m_bg->draw();
+			glClear(GL_DEPTH_BUFFER_BIT);
+			for(list<ParticleSystem*>::iterator i = m_selectedSongParticlesBg.begin(); i != m_selectedSongParticlesBg.end(); i++)
+				(*i)->draw();
 			HUDItem* hIt = m_hud->getChild("songmenu");
 			if(hIt != NULL)
 			{
@@ -527,6 +563,16 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	m_selectedSongParticles.push_back(pSys);
 	m_selectedSongParticlesRateMul.push_back(9001);	//IT'S OVER NINE THOU- *shot*
 	m_selectedSongParticlesThresh.push_back(0.1);
+	
+	//Add bg spinning 2048 tile particle system
+	pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/bg2048.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_selectedSongParticlesBg.push_back(pSys);
+	//HACK Make this look ok on the first frame by fake-updating it for a bit
+	for(int i = 0; i < 60; i++)
+		pSys->update(0.25);
 	
 	INTRO_FADEIN_DELAY = 1.0 + getSeconds();
 }
@@ -1425,6 +1471,14 @@ void Pony48Engine::changeMode(gameMode gm)
 		}
 		
 		case SONGSELECT:
+		{
+			gradientBg* bg = new gradientBg();
+			bg->ul = Color(1,0,0,0.35);
+			bg->ur = Color(0,1,0,0.35);
+			bg->bl = Color(0,0,1,0.35);
+			bg->br = Color(1,1,1,0.35);
+			if(m_bg) delete m_bg;
+			m_bg = (Background*) bg;
 			setCursor(m_mCursors["sel"]);
 			m_fMusicPos[m_sSongToPlay] = getMusicPos();
 			playMusic("res/mus/SleeplessNight.mp3", m_fMusicVolume);
@@ -1439,6 +1493,7 @@ void Pony48Engine::changeMode(gameMode gm)
 			//musicLoop(76.389f, 120.025f);
 			m_hud->setScene("songselect");
 			break;
+		}
 	}
 	m_iCurMode = gm;
 }

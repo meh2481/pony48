@@ -928,7 +928,7 @@ void Engine::updateObjects(float32 dt)
 	}
 }
 
-string Engine::getSaveLocation()
+string Engine::getSaveLocation()	//TODO: Allow for user-specified save dir
 {
 	string s = ttvfs::GetAppDir(m_sAppName.c_str());
 	s += "/";

@@ -163,6 +163,7 @@ private:
 	vector<float32> m_selectedSongParticlesRateMul;		//Rate multiplication for above for fine-tweaking
 	vector<float32> m_selectedSongParticlesThresh;		//Threshold for above for fine-tweaking
 	float32 INTRO_FADEIN_DELAY;
+	list<ParticleSystem*> m_selectedSongParticlesBg;	//Aaand background particle effects
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;

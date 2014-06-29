@@ -351,7 +351,11 @@ void ParticleSystem::draw()
 		glColor4f(drawcol.r, drawcol.g, drawcol.b, drawcol.a);
 		glTranslatef(m_pos[i].x, m_pos[i].y, 0);
 		if(!velRotate)
+		{
 			glRotatef(m_rot[i], m_rotAxis[i].x, m_rotAxis[i].y, m_rotAxis[i].z);
+			if(m_rotAxis[i].x || m_rotAxis[i].y)
+				glClear(GL_DEPTH_BUFFER_BIT);	//Rotating intersecting particles is a pain
+		}
 		else
 			glRotatef(RAD2DEG*atan2(m_vel[i].y, m_vel[i].x), 0, 0, 1);
 		img->render(drawsz, m_imgRect[i]);
