@@ -192,9 +192,10 @@ Pony48Engine::~Pony48Engine()
 {
 	errlog << "~Pony48Engine()" << endl;
 	saveConfig(getSaveLocation() + "config.xml");
-	clearBoard();
+	clearBoard();	
+	clearColors();
 	cleanupSongGfx();
-	if(m_bg)
+	if(m_bg != NULL)
 		delete m_bg;
 	for(map<string, myCursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
 		delete i->second;
@@ -203,8 +204,7 @@ Pony48Engine::~Pony48Engine()
 	for(vector<ParticleSystem*>::iterator i = m_selectedSongParticles.begin(); i != m_selectedSongParticles.end(); i++)
 		delete *i;
 	for(list<ParticleSystem*>::iterator i = m_selectedSongParticlesBg.begin(); i != m_selectedSongParticlesBg.end(); i++)
-		delete *i;	
-	clearColors();
+		delete *i;
 	errlog << "delete hud" << endl;
 	delete m_hud;
 	if(m_rumble != NULL)
@@ -400,7 +400,7 @@ void Pony48Engine::draw()
 		
 		case SONGSELECT:
 		{
-			if(m_bg)
+			if(m_bg != NULL)
 				m_bg->draw();
 			glClear(GL_DEPTH_BUFFER_BIT);
 			for(list<ParticleSystem*>::iterator i = m_selectedSongParticlesBg.begin(); i != m_selectedSongParticlesBg.end(); i++)
@@ -1428,6 +1428,7 @@ void Pony48Engine::handleKeys()
 
 void Pony48Engine::changeMode(gameMode gm)
 {
+	clearColors();
 	switch(gm)
 	{
 		case PLAYING:
@@ -1477,7 +1478,8 @@ void Pony48Engine::changeMode(gameMode gm)
 			bg->ur = Color(0,1,0,0.35);
 			bg->bl = Color(0,0,1,0.35);
 			bg->br = Color(1,1,1,0.35);
-			if(m_bg) delete m_bg;
+			if(m_bg != NULL) 
+				delete m_bg;
 			m_bg = (Background*) bg;
 			setCursor(m_mCursors["sel"]);
 			m_fMusicPos[m_sSongToPlay] = getMusicPos();

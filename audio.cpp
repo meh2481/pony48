@@ -230,7 +230,7 @@ void Pony48Engine::loadSongXML(string sFilename)
 					else if(sBgType == "starfield")
 					{
 						starfieldBg* bg = new starfieldBg();
-						if(m_bg)
+						if(m_bg != NULL)
 							delete m_bg;
 						m_bg = (Background*) bg;
 						elem->QueryFloatAttribute("speed", &bg->speed);
@@ -358,7 +358,7 @@ void Pony48Engine::cleanupSongGfx()
 		delete (i->second);
 	songParticles.clear();
 	m_fSongFxRotate = 0.0f;
-	if(m_bg)
+	if(m_bg != NULL)
 		delete m_bg;
 	m_bg = NULL;
 	
