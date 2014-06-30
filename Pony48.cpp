@@ -585,6 +585,11 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	pSys->init();
 	pSys->firing = true;
 	m_selectedSongParticlesBg.push_back(pSys);
+	pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/bgflash.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_selectedSongParticlesBg.push_back(pSys);
 	//HACK Make this look ok on the first frame by fake-updating it for a bit
 	//for(int i = 0; i < 60; i++)
 	//	pSys->update(0.25);
@@ -1489,10 +1494,10 @@ void Pony48Engine::changeMode(gameMode gm)
 		case SONGSELECT:
 		{
 			gradientBg* bg = new gradientBg();
-			bg->ul = Color(1,0,0,0.35);
-			bg->ur = Color(0,1,0,0.35);
-			bg->bl = Color(0,0,1,0.35);
-			bg->br = Color(1,1,1,0.35);
+			bg->ul = Color(1,0,0,0.5);
+			bg->ur = Color(0,1,0,0.5);
+			bg->bl = Color(0,0,1,0.5);
+			bg->br = Color(1,1,1,0.5);
 			if(m_bg != NULL) 
 				delete m_bg;
 			m_bg = (Background*) bg;
