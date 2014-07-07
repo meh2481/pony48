@@ -383,6 +383,11 @@ void Pony48Engine::draw()
 			txt = (HUDTextbox*)m_hud->getChild("hiscorebox");
 			oss << "BEST: " << m_iHighScore;
 			txt->setText(oss.str());
+			txt = (HUDTextbox*)m_hud->getChild("restart");
+			if(m_bJoyControl)
+				txt->setText("Press Start to quit, any other button to play again");
+			else
+				txt->setText("Press Esc to quit, any other key to play again");
 			
 			float32 fSec = getSeconds();
 			txt = (HUDTextbox*)m_hud->getChild("title");
@@ -412,6 +417,15 @@ void Pony48Engine::draw()
 				glTranslatef(0, hMen->selectedY, 0);
 				m_selectedSongArc->p1.Set(-hMen->selectedX-3, m_selectedSongArc->height / 2.0f);
 				m_selectedSongArc->p2.Set(hMen->selectedX+3, m_selectedSongArc->height / 2.0f);
+			}
+			hIt = m_hud->getChild("escquit");
+			if(hIt != NULL)
+			{
+				HUDTextbox* txt = (HUDTextbox*)hIt;
+				if(m_bJoyControl)
+					txt->setText("Press Start to quit");
+				else
+					txt->setText("Press Esc to quit");
 			}
 			m_selectedSongArc->draw();
 			for(vector<ParticleSystem*>::iterator i = m_selectedSongParticles.begin(); i != m_selectedSongParticles.end(); i++)
@@ -585,14 +599,6 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	pSys->init();
 	pSys->firing = true;
 	m_selectedSongParticlesBg.push_back(pSys);
-	pSys = new ParticleSystem();
-	pSys->fromXML("res/particles/bgflash.xml");
-	pSys->init();
-	pSys->firing = true;
-	m_selectedSongParticlesBg.push_back(pSys);
-	//HACK Make this look ok on the first frame by fake-updating it for a bit
-	//for(int i = 0; i < 60; i++)
-	//	pSys->update(0.25);
 	
 	INTRO_FADEIN_DELAY = 1.0 + getSeconds();
 }
@@ -753,6 +759,19 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			}
 			else if(m_iCurMode == SONGSELECT)
 			{
+				#ifdef DEBUG
+				if(event.key.keysym.scancode == SDL_SCANCODE_F5)
+				{
+					string sScene = m_hud->getScene();
+					clearColors();
+					delete m_hud;
+					m_hud = new HUD("hud");
+					m_hud->create("res/hud.xml");
+					m_hud->setScene(sScene);
+					m_hud->setSignalHandler(signalHandler);
+				}
+				else
+#endif
 				if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 					quit();
 			}
@@ -1345,7 +1364,7 @@ void Pony48Engine::handleKeys()
 	//Check joystick movement
 	Sint16 x_move = 0;
 	Sint16 y_move = 0;
-	if(m_joy && SDL_JoystickGetAttached(m_joy))
+	if(m_joy && SDL_JoystickGetAttached(m_joy) && m_bJoyControl)
 	{
 		x_move = SDL_JoystickGetAxis(m_joy, JOY_AXIS_HORIZ);
 		y_move = SDL_JoystickGetAxis(m_joy, JOY_AXIS_VERT);
