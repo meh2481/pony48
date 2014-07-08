@@ -44,4 +44,16 @@
 		</menu>
 		<textbox name="escquit" font="cmr" text="Press Start to quit" pos="0,-6" pt="0.75" />
 	</scene>
+	<!-- Credits HUD -->
+	<scene name="credits">
+		<textbox name="thanx" font="cmr" text="Thanks for playing!" pos="0,5.5" pt="2" />
+		<textbox name="proglogo" font="cmr" text="Programming/design by:" pos="0,3.5" pt="1.25" />
+		<textbox name="inderp" font="cmr" text="inDerpxar - http://inderpxar.tumblr.com/" pos="0,2.5" pt="0.8" />
+		<textbox name="muslogo" font="cmr" text="Music by the amazing:" pos="0,0.5" pt="1.25" />
+		<textbox name="tif" font="cmr" text="TIF WHITNEY - http://soundcloud.com/tifwhitney-1" pos="0,-0.5" pt="0.8" />
+		<textbox name="strach" font="cmr" text="DJ StrachAttack - http://soundcloud.com/djstrachattack" pos="0,-1.5" pt="0.8" />
+		<textbox name="mim" font="cmr" text="MIM - http://soundcloud.com/officialmimmusic" pos="0,-2.5" pt="0.8" />
+		<textbox name="seecredits" font="cmr" text="see credit.txt for vectors used" pos="0,-4.2" pt="0.8" />
+		<textbox name="escquitfinal" font="cmr" text="Press Start again to quit, B to cancel" pos="0,-5.9" pt="0.9" />
+	</scene>
 </hud>

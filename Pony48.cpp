@@ -80,6 +80,18 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 		HUDMenu* hMen = (HUDMenu*)hIt;
 		phaseColor(&hMen->m_sSelected, hMen->m_sSelected2, 0.13f, true);
 	}
+	hIt = m_hud->getChild("proglogo");
+	if(hIt != NULL)
+	{
+		HUDTextbox* hTxt = (HUDTextbox*)hIt;
+		phaseColor(&hTxt->col, Color(1,0,0,1), 0.3f, true);
+	}
+	hIt = m_hud->getChild("muslogo");
+	if(hIt != NULL)
+	{
+		HUDTextbox* hTxt = (HUDTextbox*)hIt;
+		phaseColor(&hTxt->col, Color(1,0,0,1), 0.3f, true);
+	}
 	
 	setTimeScale(DEFAULT_TIMESCALE);
 	
@@ -284,7 +296,7 @@ void Pony48Engine::frame(float32 dt)
 				(*i)->update(dt);
 			for(list<ParticleSystem*>::iterator i = m_selectedSongParticlesBg.begin(); i != m_selectedSongParticlesBg.end(); i++)
 				(*i)->update(dt);
-			
+		case CREDITS:
 			//Check and see if we should change bg colors
 			if(m_bg != NULL && m_bg->type == GRADIENT)
 			{
@@ -403,6 +415,23 @@ void Pony48Engine::draw()
 			break;
 		}
 		
+		case CREDITS:
+		{
+			HUDItem* hIt = m_hud->getChild("escquitfinal");
+			if(hIt != NULL)
+			{
+				HUDTextbox* txt = (HUDTextbox*)hIt;
+				if(m_bJoyControl)
+					txt->setText("Press Start again to quit, B to cancel");
+				else
+					txt->setText("Press Esc again to quit, Enter to cancel");
+			}
+			
+			if(m_bg != NULL)
+				m_bg->draw();
+			break;
+		}
+			
 		case SONGSELECT:
 		{
 			if(m_bg != NULL)
@@ -759,7 +788,25 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			}
 			else if(m_iCurMode == SONGSELECT)
 			{
-				#ifdef DEBUG
+#ifdef DEBUG
+				if(event.key.keysym.scancode == SDL_SCANCODE_F5)
+				{
+					string sScene = m_hud->getScene();
+					clearColors();
+					delete m_hud;
+					m_hud = new HUD("hud");
+					m_hud->create("res/hud.xml");
+					m_hud->setScene(sScene);
+					m_hud->setSignalHandler(signalHandler);
+				}
+				else
+#endif
+				if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+					changeMode(CREDITS);
+			}
+			else if(m_iCurMode == CREDITS)
+			{
+#ifdef DEBUG
 				if(event.key.keysym.scancode == SDL_SCANCODE_F5)
 				{
 					string sScene = m_hud->getScene();
@@ -774,6 +821,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #endif
 				if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 					quit();
+				else if(event.key.keysym.scancode == SDL_SCANCODE_RETURN)
+					changeMode(SONGSELECT);
 			}
 		}
 		
@@ -909,12 +958,16 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			{
 				if(m_iCurMode == PLAYING || m_iCurMode == GAMEOVER)
 					changeMode(SONGSELECT);
-				else
+				else if(m_iCurMode == CREDITS)
 					quit();
+				else if(m_iCurMode == SONGSELECT)
+					changeMode(CREDITS);
 			}
 			else if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
 			else if(m_iCurMode == INTRO)
+				changeMode(SONGSELECT);
+			else if(m_iCurMode == CREDITS && event.jbutton.button == JOY_BUTTON_B)
 				changeMode(SONGSELECT);
 			break;
 			
@@ -1512,29 +1565,36 @@ void Pony48Engine::changeMode(gameMode gm)
 		
 		case SONGSELECT:
 		{
-			gradientBg* bg = new gradientBg();
-			bg->ul = Color(1,0,0,0.5);
-			bg->ur = Color(0,1,0,0.5);
-			bg->bl = Color(0,0,1,0.5);
-			bg->br = Color(1,1,1,0.5);
-			if(m_bg != NULL) 
-				delete m_bg;
-			m_bg = (Background*) bg;
-			setCursor(m_mCursors["sel"]);
-			m_fMusicPos[m_sSongToPlay] = getMusicPos();
-			playMusic("res/mus/SleeplessNight.mp3", m_fMusicVolume);
-			if(m_iCurMode == INTRO)
-				m_fMusicScrubSpeed = soundFreqDefault;
-			else
-				m_fMusicScrubSpeed = 0;
-			if(m_fMusicPos.count("songselect"))
-				seekMusic(m_fMusicPos["songselect"]);
-			else
-				seekMusic(28.622f);
+			if(m_iCurMode != CREDITS)
+			{
+				gradientBg* bg = new gradientBg();
+				bg->ul = Color(1,0,0,0.5);
+				bg->ur = Color(0,1,0,0.5);
+				bg->bl = Color(0,0,1,0.5);
+				bg->br = Color(1,1,1,0.5);
+				if(m_bg != NULL) 
+					delete m_bg;
+				m_bg = (Background*) bg;
+				setCursor(m_mCursors["sel"]);
+				m_fMusicPos[m_sSongToPlay] = getMusicPos();
+				playMusic("res/mus/SleeplessNight.mp3", m_fMusicVolume);
+				if(m_iCurMode == INTRO || m_iCurMode == CREDITS)
+					m_fMusicScrubSpeed = soundFreqDefault;
+				else
+					m_fMusicScrubSpeed = 0;
+				if(m_fMusicPos.count("songselect"))
+					seekMusic(m_fMusicPos["songselect"]);
+				else
+					seekMusic(28.622f);
+			}
 			//musicLoop(76.389f, 120.025f);
 			m_hud->setScene("songselect");
 			break;
 		}
+		
+		case CREDITS:
+			m_hud->setScene("credits");
+			break;
 	}
 	m_iCurMode = gm;
 }

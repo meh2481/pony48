@@ -93,8 +93,7 @@ typedef enum
 	GAMEOVER,
 	INTRO,
 	SONGSELECT,
-	MAINMENU,
-	OPTIONSMENU,
+	CREDITS,
 } gameMode;
 
 class Pony48Engine : public Engine
