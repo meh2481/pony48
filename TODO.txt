@@ -1,6 +1,5 @@
 -Ingame pause menu with ESC/START - can resume, restart, or exit back to song select
 -Some kind of lead-in for main menu music
--Credits on game quit with vectors used / font used / music / etc
 -Song select menu bg
 -FX for going between modes
 -New high score celebration?
