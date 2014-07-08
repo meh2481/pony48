@@ -343,6 +343,7 @@ void Pony48Engine::drawBoard()
 		}
 	}
 	
+	//Draw particle fx for highest tile
 	if(m_highestTile != NULL)
 	{
 		for(int i = 0; i < BOARD_HEIGHT; i++)
@@ -355,7 +356,7 @@ void Pony48Engine::drawBoard()
 					Point ptDrawPos(-fTotalWidth/2.0 + TILE_SPACING + (TILE_SPACING + TILE_WIDTH) * j,
 								fTotalHeight/2.0 - TILE_SPACING - (TILE_SPACING + TILE_HEIGHT) * i);
 					glPushMatrix();
-					glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0+m_Board[j][i]->drawSlide.x, ptDrawPos.y-TILE_HEIGHT/2.0+m_Board[j][i]->drawSlide.y, JOINANIM_DRAWZ);
+					glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0+m_Board[j][i]->drawSlide.x, ptDrawPos.y-TILE_HEIGHT/2.0+m_Board[j][i]->drawSlide.y, TILE_DRAWZ + 0.1);
 					m_newHighTile->img = m_highestTile->bg->img;
 					m_newHighTile->draw();
 					m_newHighTile->img = m_highestTile->seg->img;

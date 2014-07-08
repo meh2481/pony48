@@ -619,6 +619,9 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	m_newHighTile->firing = false;
 	
 	INTRO_FADEIN_DELAY = 1.0 + getSeconds();
+#ifdef DEBUG
+	changeMode(SONGSELECT);
+#endif
 }
 
 
