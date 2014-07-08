@@ -74,25 +74,6 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_hud->setScene("intro");
 	m_hud->setSignalHandler(signalHandler);
 	
-	HUDItem* hIt = m_hud->getChild("songmenu");
-	if(hIt != NULL)
-	{
-		HUDMenu* hMen = (HUDMenu*)hIt;
-		phaseColor(&hMen->m_sSelected, hMen->m_sSelected2, 0.13f, true);
-	}
-	hIt = m_hud->getChild("proglogo");
-	if(hIt != NULL)
-	{
-		HUDTextbox* hTxt = (HUDTextbox*)hIt;
-		phaseColor(&hTxt->col, Color(1,0,0,1), 0.3f, true);
-	}
-	hIt = m_hud->getChild("muslogo");
-	if(hIt != NULL)
-	{
-		HUDTextbox* hTxt = (HUDTextbox*)hIt;
-		phaseColor(&hTxt->col, Color(1,0,0,1), 0.3f, true);
-	}
-	
 	setTimeScale(DEFAULT_TIMESCALE);
 	
 	m_joy = NULL;
@@ -198,6 +179,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_gameoverTileRot = 0;	//Happy now, Valgrind?
 	m_gameoverTileVel = 30;
 	m_gameoverTileAccel = 16;
+	startMenuPt = 0.0f;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -286,7 +268,6 @@ void Pony48Engine::frame(float32 dt)
 		}
 		
 		case SONGSELECT:
-			beatDetect();	//Bounce some menu stuff to the beat
 			m_fMusicScrubSpeed += dt * MUSIC_SCRUBIN_SPEED;
 			if(m_fMusicScrubSpeed > soundFreqDefault)
 				m_fMusicScrubSpeed = soundFreqDefault;
@@ -297,6 +278,7 @@ void Pony48Engine::frame(float32 dt)
 			for(list<ParticleSystem*>::iterator i = m_selectedSongParticlesBg.begin(); i != m_selectedSongParticlesBg.end(); i++)
 				(*i)->update(dt);
 		case CREDITS:
+			beatDetect();	//Bounce some menu stuff to the beat
 			//Check and see if we should change bg colors
 			if(m_bg != NULL && m_bg->type == GRADIENT)
 			{
@@ -1593,8 +1575,41 @@ void Pony48Engine::changeMode(gameMode gm)
 		}
 		
 		case CREDITS:
+		{
+			HUDItem* hIt = m_hud->getChild("proglogo");
+			if(hIt != NULL)
+			{
+				HUDTextbox* hTxt = (HUDTextbox*)hIt;
+				phaseColor(&hTxt->col, Color(1,0,0,1), 0.12f, true);
+			}
+			hIt = m_hud->getChild("muslogo");
+			if(hIt != NULL)
+			{
+				HUDTextbox* hTxt = (HUDTextbox*)hIt;
+				phaseColor(&hTxt->col, Color(1,0,0,1), 0.12f, true);
+			}
+			hIt = m_hud->getChild("seecredits");
+			if(hIt != NULL)
+			{
+				HUDTextbox* hTxt = (HUDTextbox*)hIt;
+				phaseColor(&hTxt->col, Color(1,0,0,1), 0.12f, true);
+			}
 			m_hud->setScene("credits");
 			break;
+		}
+	}
+	startMenuPt = 0.0f;
+	HUDItem* hIt = m_hud->getChild("choosesong");
+	if(hIt != NULL)
+	{
+		HUDTextbox* hMen = (HUDTextbox*)hIt;
+		hMen->pt = 1.25f;
+	}
+	hIt = m_hud->getChild("thanx");
+	if(hIt != NULL)
+	{
+		HUDTextbox* hMen = (HUDTextbox*)hIt;
+		hMen->pt = 2.0f;
 	}
 	m_iCurMode = gm;
 }

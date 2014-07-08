@@ -172,6 +172,7 @@ private:
 	float32 maxCamz;				//The maximum value for the camera's z axis
 	float32 m_fCamBounceBack;
 	map<string, ParticleSystem*> songParticles;
+	float32 startMenuPt;
 	
 	//Random gameover stuff!
 	TilePiece* m_highestTile;

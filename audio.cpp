@@ -6,7 +6,6 @@
 #include "Pony48.h"
 
 const int sampleSize = 64;
-static float32 startMenuPt = 0.0f;
 
 void Pony48Engine::beatDetect()
 {
@@ -45,16 +44,23 @@ void Pony48Engine::beatDetect()
 	}*/
 #endif
 
-	if(m_iCurMode == SONGSELECT)
+	if(m_iCurMode == SONGSELECT || m_iCurMode == CREDITS)
 	{
 		beatThresholdVolume = 0.95;
 		beatThresholdBar = 0;
 		beatMul = 0.05f;
-		maxCamz = 3.5f;
+		if(m_iCurMode == SONGSELECT)
+			maxCamz = 3.5f;
+		else
+			maxCamz = 4.25;
 		m_fCamBounceBack = 0.02f;
 		
 		//Bounce parta da menu to da beat
-		HUDItem* hIt = m_hud->getChild("choosesong");
+		HUDItem* hIt = NULL;
+		if(m_iCurMode == SONGSELECT)
+			hIt = m_hud->getChild("choosesong");
+		else
+			hIt = m_hud->getChild("thanx");
 		if(hIt != NULL)
 		{
 			HUDTextbox* hMen = (HUDTextbox*)hIt;
