@@ -226,6 +226,7 @@ void Pony48Engine::frame(float32 dt)
 				playSound("nowhacking_theyreponies", m_fVoxVolume);
 			}
 		case GAMEOVER:
+			m_newHighTile->update(dt);
 			m_gameoverTileRot += m_gameoverTileVel * dt;
 			m_gameoverTileVel += ((m_gameoverTileRot > 0)?(-m_gameoverTileAccel):(m_gameoverTileAccel)) * dt;
 			
@@ -610,6 +611,12 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	pSys->init();
 	pSys->firing = true;
 	m_selectedSongParticlesBg.push_back(pSys);
+	
+	//Create new-high-tile particle fx
+	m_newHighTile = new ParticleSystem();
+	m_newHighTile->fromXML("res/particles/newhightile.xml");
+	m_newHighTile->init();
+	m_newHighTile->firing = false;
 	
 	INTRO_FADEIN_DELAY = 1.0 + getSeconds();
 }

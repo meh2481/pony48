@@ -1,10 +1,26 @@
+Fanfare/explosions on new high tile
+Fanfare/fx/fireworks on beating game gameover
+Achievements for the lulz
+
+
+
+
+
+
+
+
+
+
+
+
+
 -Ingame pause menu with ESC/START - can resume, restart, or exit back to song select
 -Some kind of lead-in for main menu music
 -Song select menu bg
 -FX for going between modes
 -New high score celebration?
 -Hide mouse on joyhat / kb event in menu
-
+-Better handling of Esc/Start prompts
 
 
 

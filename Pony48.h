@@ -173,6 +173,7 @@ private:
 	float32 m_fCamBounceBack;
 	map<string, ParticleSystem*> songParticles;
 	float32 startMenuPt;
+	ParticleSystem* m_newHighTile;
 	
 	//Random gameover stuff!
 	TilePiece* m_highestTile;

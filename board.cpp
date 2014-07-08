@@ -160,7 +160,10 @@ void Pony48Engine::updateBoard(float32 dt)
 					m_Board[(*i)->destx][(*i)->desty]->drawSize.Set(TILE_WIDTH+0.001, TILE_HEIGHT+0.001);	//Start bounce animation
 					m_Board[(*i)->destx][(*i)->desty]->iAnimDir = 1;
 					if(!(m_highestTile) || m_highestTile->value < m_Board[(*i)->destx][(*i)->desty]->value)
+					{
 						m_highestTile = m_Board[(*i)->destx][(*i)->desty];
+						m_newHighTile->firing = true;
+					}
 				}
 				else
 					errlog << "Err board[x][y] == NULL" << (*i)->destx << "," << (*i)->desty << endl;
@@ -272,7 +275,10 @@ void Pony48Engine::clearBoardAnimations()
 				m_Board[(*i)->destx][(*i)->desty] = loadTile(oss.str());
 				m_Board[(*i)->destx][(*i)->desty]->drawSize.Set(TILE_WIDTH, TILE_HEIGHT);	//Don't have a newly-created piece make an appear animation here
 				if(!(m_highestTile) || m_highestTile->value < m_Board[(*i)->destx][(*i)->desty]->value)
+				{
 					m_highestTile = m_Board[(*i)->destx][(*i)->desty];
+					m_newHighTile->firing = true;
+				}
 			}
 		}
 		//Wipe this out (Step through list this way, rather than incrementing i)
@@ -335,6 +341,31 @@ void Pony48Engine::drawBoard()
 				glPopMatrix();
 			}
 		}
+	}
+	
+	if(m_highestTile != NULL)
+	{
+		for(int i = 0; i < BOARD_HEIGHT; i++)
+		{
+			for(int j = 0; j < BOARD_WIDTH; j++)
+			{
+				//Draw tile
+				if(m_Board[j][i] == m_highestTile)
+				{
+					Point ptDrawPos(-fTotalWidth/2.0 + TILE_SPACING + (TILE_SPACING + TILE_WIDTH) * j,
+								fTotalHeight/2.0 - TILE_SPACING - (TILE_SPACING + TILE_HEIGHT) * i);
+					glPushMatrix();
+					glTranslatef(ptDrawPos.x+TILE_WIDTH/2.0+m_Board[j][i]->drawSlide.x, ptDrawPos.y-TILE_HEIGHT/2.0+m_Board[j][i]->drawSlide.y, JOINANIM_DRAWZ);
+					m_newHighTile->img = m_highestTile->bg->img;
+					m_newHighTile->draw();
+					m_newHighTile->img = m_highestTile->seg->img;
+					m_newHighTile->draw();
+					glPopMatrix();
+					break;
+				}
+			}
+		}
+		
 	}
 	
 	//Draw arrows for direction the mouse will move the board
