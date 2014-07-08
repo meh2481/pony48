@@ -1576,6 +1576,8 @@ void Pony48Engine::changeMode(gameMode gm)
 		
 		case CREDITS:
 		{
+			setMusicFrequency(soundFreqDefault);
+			m_fMusicScrubSpeed = soundFreqDefault;
 			HUDItem* hIt = m_hud->getChild("proglogo");
 			if(hIt != NULL)
 			{
