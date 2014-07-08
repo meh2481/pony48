@@ -36,6 +36,8 @@
 #define BORED_VOX_TIME		300.0	//5mins until bored sfx
 #define TITLE_DISPLAY_TIME	5.0f
 #define TITLE_FADE_TIME		1.0f
+#define DEV_SCORE			24680
+#define LOW_SCORE			120
 
 class ColorPhase
 {
@@ -95,6 +97,18 @@ typedef enum
 	SONGSELECT,
 	CREDITS,
 } gameMode;
+
+class achievement
+{
+public:
+	achievement();
+	
+	string title;
+	string gottentxt;
+	string notgottentxt;
+	Image* gottenimg;
+	Image* notgottenimg;
+};
 
 class Pony48Engine : public Engine
 {
@@ -180,6 +194,10 @@ private:
 	float32 m_gameoverTileRot;
 	float32 m_gameoverTileVel;
 	float32 m_gameoverTileAccel;
+	
+	//Achievement stuff!
+	map<string, achievement*> m_achievements;
+	set<string> m_achievementsGotten;
 
 protected:
 	void frame(float32 dt);
@@ -243,6 +261,13 @@ public:
 	void pieceSlid(int startx, int starty, int endx, int endy);	//Called when a piece slides, to update animations
 	direction getDirOfVec2(Point ptVec);	//Get direction (UP, DOWN, LEFT, RIGHT) that given vector is mostly pointing towards
 	void spawnScoreParticles(uint32_t amt);	//Generate getting-points particle effect
+	
+	//achievements.cpp functions
+	void loadAchievements();
+	void loadAchievementsGotten(string sAchievements);
+	string saveAchievementsGotten();
+	void achievementGet(string sAch);
+	void cleanupAchievements();
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to the engine

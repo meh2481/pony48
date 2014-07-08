@@ -1,6 +1,12 @@
-Fanfare/explosions on new high tile
 Fanfare/fx/fireworks on beating game gameover
 Achievements for the lulz
+-Do you like pain? Good! = Launch with a controller attached
+-Maximum awesome = Launch with a controller and a webcam attached
+-Boo Hoo = Score less than 100 points in a game
+-Wut Up? = Beat the game
+-Ermagerd = Get to a 4096 tile
+-Better than the dev = Get a higher score than 24680
+-Aaaaugh what are you doing? = ???
 
 
 

@@ -189,6 +189,7 @@ Pony48Engine::~Pony48Engine()
 	clearBoard();	
 	clearColors();
 	cleanupSongGfx();
+	cleanupAchievements();
 	if(m_bg != NULL)
 		delete m_bg;
 	for(map<string, myCursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
@@ -224,6 +225,7 @@ void Pony48Engine::frame(float32 dt)
 			{
 				m_bHasBoredVox = true;
 				playSound("nowhacking_theyreponies", m_fVoxVolume);
+				achievementGet("augh");
 			}
 		case GAMEOVER:
 			m_newHighTile->update(dt);
@@ -530,6 +532,8 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	{
 		errlog << "Commandline argument. Switch: " << i->sSwitch << ", value: " << i->sValue << endl;
 	}
+	
+	loadAchievements();
 	
 	//Load our last screen position and such
 	if(!loadConfig(getSaveLocation() + "config.xml"))
@@ -898,6 +902,9 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			
 		//Gamepad stuff!
 		case SDL_JOYDEVICEADDED:
+			achievementGet("paingood");
+			if(m_cam->isOpen())
+				achievementGet("maxawesome");
 			errlog << "Joystick " << (int)event.jdevice.which << " connected." << endl;
 			m_joy = SDL_JoystickOpen(event.jdevice.which);
 
@@ -1552,6 +1559,8 @@ void Pony48Engine::changeMode(gameMode gm)
 			m_fGameoverKeyDelay = getSeconds();
 			m_fGameoverWebcamFreeze = getSeconds() + GAMEOVER_FREEZE_CAM_TIME;
 			m_bSavedFacepic = false;
+			if(m_iScore < LOW_SCORE)
+				achievementGet("boohoo");
 			break;
 		}
 		

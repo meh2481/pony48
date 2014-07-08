@@ -163,6 +163,10 @@ void Pony48Engine::updateBoard(float32 dt)
 					{
 						m_highestTile = m_Board[(*i)->destx][(*i)->desty];
 						m_newHighTile->firing = true;
+						if(m_highestTile->value == 2048)
+							achievementGet("wutup");
+						else if(m_highestTile->value == 4096)
+							achievementGet("ermahgerd");
 					}
 				}
 				else
@@ -278,6 +282,10 @@ void Pony48Engine::clearBoardAnimations()
 				{
 					m_highestTile = m_Board[(*i)->destx][(*i)->desty];
 					m_newHighTile->firing = true;
+					if(m_highestTile->value == 2048)
+						achievementGet("wutup");
+					else if(m_highestTile->value == 4096)
+						achievementGet("ermahgerd");
 				}
 			}
 		}
@@ -832,6 +840,8 @@ void Pony48Engine::addScore(uint32_t amt)
 	m_iScore += amt;
 	if(m_iScore > m_iHighScore)
 		m_iHighScore = m_iScore;
+	if(m_iScore > DEV_SCORE)
+		achievementGet("hiscore");
 	spawnScoreParticles(amt);
 }
 
