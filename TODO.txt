@@ -1,5 +1,5 @@
 Fanfare/fx/fireworks on beating game gameover
-Achievements for the lulz
+Achievement menu
 Fix ShySt3p bg error on second loop
 
 

@@ -37,6 +37,7 @@ protected:
 	float32*	m_tangentialAccel;	//Tangential acceleration (acceleration at an angle perpendicular to the emission point)
 	float32*	m_normalAccel;		//Normal acceleration (acceleration away from the emission point)
 	float32*	m_lifetime;			//How long this particle is alive for
+	float32*	m_lifePreFade;		//How long the particle is alive before it starts fading colors
 	float32*	m_created;			//When this particle was created/spawned
 	Vec3*		m_rotAxis;			//What axis this particle rotates around when it rotates
 	
@@ -80,6 +81,8 @@ public:
 	float32 		normalAccelVar;
 	float32 		lifetime;			//How many seconds the particles stay alive
 	float32 		lifetimeVar;
+	float32			lifetimePreFade;	//How long the particle stays alive before changing colors
+	float32			lifetimePreFadeVar;
 	float32			decay;				//How many seconds after firing to stop firing
 	Vec3			rotAxis;			//What axis these particles rotate around
 	Vec3			rotAxisVar;
@@ -96,6 +99,7 @@ public:
 	bool				firing;				//If we're creating new particles or not
 	bool				show;				//If this should draw or not
 	bool				velRotate;			//If these particles should rotate according to their velocity
+	bool				changeColor;		//If these particles change color as they update, or just alpha
 	
 	void update(float32 dt);
 	void draw();

@@ -22,6 +22,7 @@ ParticleSystem::ParticleSystem()
 	m_normalAccel = NULL;
 	m_lifetime = NULL;
 	m_created = NULL;
+	m_lifePreFade = NULL;
 	m_rotAxis = NULL;
 	m_num = 0;
 	
@@ -68,6 +69,8 @@ void ParticleSystem::_deleteAll()
 		delete [] m_lifetime;
 	if(m_created != NULL)
 		delete [] m_created;
+	if(m_lifePreFade != NULL)
+		delete [] m_lifePreFade;
 	if(m_rotAxis != NULL)
 		delete [] m_rotAxis;
 	
@@ -86,6 +89,7 @@ void ParticleSystem::_deleteAll()
 	m_normalAccel = NULL;
 	m_lifetime = NULL;
 	m_created = NULL;
+	m_lifePreFade = NULL;
 	m_rotAxis = NULL;
 	m_num = 0;
 }
@@ -164,6 +168,7 @@ void ParticleSystem::_newParticle()
 	m_normalAccel[m_num] = normalAccel + randFloat(-normalAccelVar,normalAccelVar);
 	m_lifetime[m_num] = lifetime + randFloat(-lifetimeVar,lifetimeVar);
 	m_created[m_num] = curTime;
+	m_lifePreFade[m_num] = lifetimePreFade + randFloat(-lifetimePreFadeVar, lifetimePreFadeVar);
 	m_rotAxis[m_num].x = rotAxis.x + randFloat(-rotAxisVar.x,rotAxisVar.x);
 	m_rotAxis[m_num].y = rotAxis.y + randFloat(-rotAxisVar.y,rotAxisVar.y);
 	m_rotAxis[m_num].z = rotAxis.z + randFloat(-rotAxisVar.z,rotAxisVar.z);
@@ -189,6 +194,7 @@ void ParticleSystem::_rmParticle(uint32_t idx)
 	m_normalAccel[idx] = m_normalAccel[m_num-1];
 	m_lifetime[idx] = m_lifetime[m_num-1];
 	m_created[idx] = m_created[m_num-1];
+	m_lifePreFade[idx] = m_lifePreFade[m_num-1];
 	m_rotAxis[idx] = m_rotAxis[m_num-1];
 	
 	m_num--;
@@ -233,6 +239,9 @@ void ParticleSystem::_initValues()
 	firing = true;
 	show = true;
 	velRotate = false;
+	changeColor = true;
+	lifetimePreFade = 0.0f;
+	lifetimePreFadeVar = 0.0f;
 }
 
 void ParticleSystem::update(float32 dt)
@@ -337,13 +346,20 @@ void ParticleSystem::draw()
 	
 	for(int i = 0; i < m_num; i++)	//Can't really help cache-thrashing here, so do it all in one loop
 	{
-		float32 fLifeFac = (curTime - m_created[i]) / m_lifetime[i];
-		if(fLifeFac > 1.0) continue;
+		float32 fLifeFac = (curTime - m_created[i] - m_lifePreFade[i]) / (m_lifetime[i] - m_lifePreFade[i]);
+		if(fLifeFac > 1.0) continue;	//Particle is already dead
+		if(curTime - m_created[i] <= m_lifePreFade[i])	//Particle hasn't started fading yet
+			fLifeFac = 0.0f;
 		Color drawcol;
 		Point drawsz;
-		drawcol.r = (m_colEnd[i].r - m_colStart[i].r) * fLifeFac + m_colStart[i].r;
-		drawcol.g = (m_colEnd[i].g - m_colStart[i].g) * fLifeFac + m_colStart[i].g;
-		drawcol.b = (m_colEnd[i].b - m_colStart[i].b) * fLifeFac + m_colStart[i].b;
+		if(changeColor)	//If we should fade color, do so
+		{
+			drawcol.r = (m_colEnd[i].r - m_colStart[i].r) * fLifeFac + m_colStart[i].r;
+			drawcol.g = (m_colEnd[i].g - m_colStart[i].g) * fLifeFac + m_colStart[i].g;
+			drawcol.b = (m_colEnd[i].b - m_colStart[i].b) * fLifeFac + m_colStart[i].b;
+		}
+		else
+			drawcol = m_colStart[i];
 		drawcol.a = (m_colEnd[i].a - m_colStart[i].a) * fLifeFac + m_colStart[i].a;
 		drawsz.x = (m_sizeEnd[i].x - m_sizeStart[i].x) * fLifeFac + m_sizeStart[i].x;
 		drawsz.y = (m_sizeEnd[i].y - m_sizeStart[i].y) * fLifeFac + m_sizeStart[i].y;
@@ -389,6 +405,7 @@ void ParticleSystem::init()
 	m_normalAccel = new float32[max];
 	m_lifetime = new float32[max];
 	m_created = new float32[max];
+	m_lifePreFade = new float32[max];
 	m_rotAxis = new Vec3[max];
 }
 
@@ -420,6 +437,7 @@ void ParticleSystem::fromXML(string sXMLFilename)
 		emitFrom = rectFromString(emfrom);
 	
 	root->QueryBoolAttribute("fireonstart", &firing);
+	root->QueryBoolAttribute("changecolor", &changeColor);
 	
 	const char* blendmode = root->Attribute("blend");
 	if(blendmode != NULL)
@@ -537,6 +555,8 @@ void ParticleSystem::fromXML(string sXMLFilename)
 		{
 			elem->QueryFloatAttribute("value", &lifetime);
 			elem->QueryFloatAttribute("var", &lifetimeVar);
+			elem->QueryFloatAttribute("prefade", &lifetimePreFade);
+			elem->QueryFloatAttribute("prefadevar", &lifetimePreFadeVar);
 		}
 		else
 			errlog << "Warning: Unknown element type \"" << sName << "\" found in XML file " << sXMLFilename << ". Ignoring..." << endl;
