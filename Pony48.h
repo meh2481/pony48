@@ -96,6 +96,7 @@ typedef enum
 	INTRO,
 	SONGSELECT,
 	CREDITS,
+	ACHIEVEMENTS,
 } gameMode;
 
 class achievement
@@ -268,6 +269,7 @@ public:
 	string saveAchievementsGotten();
 	void achievementGet(string sAch);
 	void cleanupAchievements();
+	void drawAchievementPopup();
 };
 
 void signalHandler(string sSignal); //Stub function for handling signals that come in from our HUD, and passing them on to the engine

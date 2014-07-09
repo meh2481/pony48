@@ -55,6 +55,8 @@ void Pony48Engine::loadAchievements()
 		const char* cNotGottenTxt = ach->Attribute("notgotten");
 		if(cNotGottenTxt != NULL && strlen(cNotGottenTxt))
 			a->notgottentxt = cNotGottenTxt;
+		else if(cGottenTxt != NULL && strlen(cGottenTxt))	//Gotten and not-gotten text are the same
+			a->notgottentxt = cGottenTxt;
 		
 		const char* cGottenImg = ach->Attribute("gotimg");
 		if(cGottenImg != NULL && strlen(cGottenImg))
@@ -101,3 +103,48 @@ void Pony48Engine::cleanupAchievements()
 		delete i->second;
 	m_achievements.clear();
 }
+
+void Pony48Engine::drawAchievementPopup()
+{
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

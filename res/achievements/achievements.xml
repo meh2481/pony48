@@ -1,9 +1,9 @@
 <achievements>
-	<achievement name="paingood" title="Do you like pain? Good!" gotten="Launch with a controller attached"/>
-	<achievement name="maxawesome" title="Maximum awesome" gotten="Launch with a controller and a webcam attached"/>
-	<achievement name="boohoo" title="Boo Hoo" gotten="Score less than 120 points in a game"/>
-	<achievement name="wutup" title="Wut Up?" gotten="Beat the game"/>
-	<achievement name="ermahgerd" title="Ermahgerd" gotten="Get to a 4096 tile"/>
-	<achievement name="hiscore" title="Better than the dev" gotten="Get a higher score than 24680" notgotten="Get a higher score than I can"/>
+	<achievement name="paingood" title="Do you like pain? Good!" gotten="Launch with a controller attached" gotimg="res/achievements/paing.png" notgotimg="res/achievements/painng.png"/>
+	<achievement name="maxawesome" title="Maximum awesome" gotten="Launch with a controller and a webcam attached" gotimg="res/achievements/awesomeg.png" notgotimg="res/achievements/awesomeng.png"/>
+	<achievement name="boohoo" title="Boo Hoo" gotten="Score less than 120 points in a game" gotimg="res/achievements/boohoog.png" notgotimg="res/achievements/boohoong.png"/>
+	<achievement name="wutup" title="Wut Up?" gotten="Beat the game" gotimg="res/achievements/wutupg.png" notgotimg="res/achievements/wutupng.png"/>
+	<achievement name="ermahgerd" title="Ermahgerd" gotten="Get to a 4096 tile" gotimg="res/achievements/ermahgerdg.png" notgotimg="res/achievements/ermahgerdng.png"/>
+	<achievement name="hiscore" title="Better than the dev" gotten="Get a higher score than 24680" notgotten="Get a higher score than I can" gotimg="res/achievements/hiscoreg.png" notgotimg="res/achievements/hiscoreng.png"/>
 	<achievement name="augh" title="Aaaaugh what are you doing?" gotten="Sit there and do nothing for 5 minutes" notgotten="???" gotimg="res/achievements/aughg.png" notgotimg="res/achievements/aughng.png"/>
 </achievements>

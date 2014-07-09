@@ -1,34 +1,38 @@
 Fonts used:
-Celestia Medium Redux - http://www.mattyhex.net/CMR/
+Celestia Medium Redux - http://www.mattyhex.net/CMR
 
-Vectors used:
-http://bobthelurker.deviantart.com/
-http://tryhardbrony.deviantart.com/
-http://vladimirmacholzraum.deviantart.com/
-http://theirishbronyx.deviantart.com/
-http://pinkiepie30.deviantart.com/
-http://fehlung.deviantart.com/
-http://iamadinosaurrarrr.deviantart.com/
-http://yetioner.deviantart.com/
-http://90sigma.deviantart.com/
-http://sakatagintoki117.deviantart.com/
-http://hazel-schnuffington.deviantart.com/
-http://psyxofthoros.deviantart.com/
-http://montanaferrin.deviantart.com/
-http://rudahn.deviantart.com/
-http://richhap.deviantart.com/
-http://evilturnover.deviantart.com/
-http://segfaultd.deviantart.com/
-http://datnaro.deviantart.com/
+Art used:
+http://bobthelurker.deviantart.com
+http://tryhardbrony.deviantart.com
+http://vladimirmacholzraum.deviantart.com
+http://theirishbronyx.deviantart.com
+http://pinkiepie30.deviantart.com
+http://fehlung.deviantart.com
+http://iamadinosaurrarrr.deviantart.com
+http://yetioner.deviantart.com
+http://90sigma.deviantart.com
+http://sakatagintoki117.deviantart.com
+http://hazel-schnuffington.deviantart.com
+http://psyxofthoros.deviantart.com
+http://montanaferrin.deviantart.com
+http://rudahn.deviantart.com
+http://richhap.deviantart.com
+http://evilturnover.deviantart.com
+http://segfaultd.deviantart.com
+http://datnaro.deviantart.com
+http://openclipart.org
 
 Libraries used:
-FMOD - http://www.fmod.org/
-SDL2 - https://www.libsdl.org/
-FreeImage - http://freeimage.sourceforge.net/
-Lua - http://www.lua.org/
-OpenCV - http://opencv.org/
+FMOD - http://www.fmod.org
+SDL2 - https://www.libsdl.org
+FreeImage - http://freeimage.sourceforge.net
+Lua - http://www.lua.org
+OpenCV - http://opencv.org
 TTVFS - https://github.com/fgenesis/ttvfs
-tinyXML2 - http://www.grinninglizard.com/tinyxml2/
-VideoInput - http://www.muonics.net/school/spring05/videoInput/
+tinyXML2 - http://www.grinninglizard.com/tinyxml2
+VideoInput - http://www.muonics.net/school/spring05/videoInput
+
+Voice Actors:
+NoWhacking - http://www.youtube.com/user/nowhacking
 
 My Little Pony is copyrighted by Hasbro. This is a fanmade game that falls under Fair Use and therefore doesn't conflict with their copyrights and trademarks. If, however, some silly doohickey person at Hasbro's legal department feels like C&D'ing me anyway, I'll gladly remove everything in this game having to do with My Little Pony. Then I'll laugh at them and point out just how little of the game has changed as a result. Have a nice day!

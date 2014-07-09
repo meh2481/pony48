@@ -1240,6 +1240,9 @@ bool Pony48Engine::loadConfig(string sFilename)
 		pony48->QueryFloatAttribute("musicvol", &m_fMusicVolume);
 		pony48->QueryFloatAttribute("soundvol", &m_fSoundVolume);
 		pony48->QueryFloatAttribute("voxvol", &m_fVoxVolume);
+		const char* cAchievements = pony48->Attribute("achievements");
+		if(cAchievements != NULL && strlen(cAchievements))
+			loadAchievementsGotten(cAchievements);
 	}
 	
 	XMLElement* joystick = root->FirstChildElement("joystick");
@@ -1345,6 +1348,7 @@ void Pony48Engine::saveConfig(string sFilename)
 	pony48->SetAttribute("musicvol", m_fMusicVolume);
 	pony48->SetAttribute("soundvol", m_fSoundVolume);
 	pony48->SetAttribute("voxvol", m_fVoxVolume);
+	pony48->SetAttribute("achievements", saveAchievementsGotten().c_str());
 	root->InsertEndChild(pony48);
 	
 	XMLElement* joystick = doc->NewElement("joystick");
