@@ -192,6 +192,7 @@ Pony48Engine::~Pony48Engine()
 {
 	errlog << "~Pony48Engine()" << endl;
 	saveConfig(getSaveLocation() + "config.xml");
+	delete m_rdFly;
 	clearBoard();	
 	clearColors();
 	cleanupSongGfx();
@@ -437,6 +438,7 @@ void Pony48Engine::draw()
 				glTranslatef(0, hMen->selectedY, 0);
 				m_selectedSongArc->p1.Set(-hMen->selectedX-3, m_selectedSongArc->height / 2.0f);
 				m_selectedSongArc->p2.Set(hMen->selectedX+3, m_selectedSongArc->height / 2.0f);
+				m_rdFly->pos.x = hMen->selectedX+4.4;
 			}
 			hIt = m_hud->getChild("escquit");
 			if(hIt != NULL)
@@ -450,6 +452,12 @@ void Pony48Engine::draw()
 			m_selectedSongArc->draw();
 			for(vector<ParticleSystem*>::iterator i = m_selectedSongParticles.begin(); i != m_selectedSongParticles.end(); i++)
 				(*i)->draw();
+			m_rdFly->pos.y = 0.1f;
+			m_rdFly->size.x = -abs(m_rdFly->size.x);
+			m_rdFly->draw();
+			m_rdFly->pos.x = -m_rdFly->pos.x;
+			m_rdFly->size.x = -m_rdFly->size.x;
+			m_rdFly->draw();
 			break;
 		}
 	}
@@ -633,6 +641,10 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	m_newHighTile->fromXML("res/particles/newhightile.xml");
 	m_newHighTile->init();
 	m_newHighTile->firing = false;
+	
+	m_rdFly = new physSegment();
+	m_rdFly->img = getImage("res/particles/rdfly.png");
+	m_rdFly->size = Point(3.0f, 1.20703125f);
 	
 	INTRO_FADEIN_DELAY = 1.0 + getSeconds();
 #ifdef DEBUG
