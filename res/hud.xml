@@ -39,8 +39,8 @@
 	<scene name="songselect">
 		<textbox name="choosesong" font="cmr" text="Choose a song!" pos="0,4" pt="1.25" />
 		<menu name="songmenu" font="cmr" pos="0,-0.5" pt="1" selectpt="1.25" vspacing="0.25" textcol="255,255,255,255" selectcol="255,0,0,255" selectcol2="255,200,200,255" selectsignal="select">
-			<menuitem signal="load res/mus/justfluttershy.xml" text="Just... Fluttershy"/>
-			<menuitem signal="load res/mus/shyst3pvip.xml" text="ShySt3p [VIP]"/>
+			<menuitem signal="load res/mus/justfluttershy.xml" text="Just... Fluttershy - Dubstep"/>
+			<menuitem signal="load res/mus/shyst3pvip.xml" text="ShySt3p [VIP] - Glitch Hop"/>
 		</menu>
 		<textbox name="escquit" font="cmr" text="Press Start to quit" pos="0,-6" pt="0.75" />
 	</scene>
@@ -56,4 +56,52 @@
 		<textbox name="seecredits" font="cmr" text="see credit.txt for vectors used" pos="0,-4.2" pt="0.8" />
 		<textbox name="escquitfinal" font="cmr" text="Press Start again to quit, B to cancel" pos="0,-5.9" pt="0.9" />
 	</scene>
+	<!-- Achievement popping up -->
+	<scene name="achievementpopup">
+		<geom name="achpopupbg" col="128,128,128,150">
+			<quad p1="-9, 7, 0" p2="9, 7, 0" p3="8, 5.5, 0" p4="-8, 5.5, 0" />
+		</geom>
+		<textbox name="achname" font="cmr" text="Achievement get! Aaaaugh what are you doing?" pos="0.7,6.05" pt="0.8" />
+		<bgimage name="achicon" img="pad" pos="-7,6.05" size="1,1" />
+	</scene>
+	<!-- Achievements menu -->
+	<scene name="achievementsmenu">
+		
+	</scene>
 </hud>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

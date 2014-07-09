@@ -199,6 +199,11 @@ private:
 	//Achievement stuff!
 	map<string, achievement*> m_achievements;
 	set<string> m_achievementsGotten;
+	list<string> m_achievementsToDraw;
+	float32 m_fStartedShowingAchievement;
+	float32 m_fAchievementAppearingTime;
+	float32 m_fShowAchievementTime;
+	float32 m_fAchievementVanishingTime;
 
 protected:
 	void frame(float32 dt);

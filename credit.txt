@@ -1,3 +1,8 @@
+Musicians:
+TIF WHITNEY - http://soundcloud.com/tifwhitney-1
+DJ StrachAttack - http://soundcloud.com/djstrachattack
+MIM - http://soundcloud.com/officialmimmusic
+
 Fonts used:
 Celestia Medium Redux - http://www.mattyhex.net/CMR
 
@@ -33,6 +38,6 @@ tinyXML2 - http://www.grinninglizard.com/tinyxml2
 VideoInput - http://www.muonics.net/school/spring05/videoInput
 
 Voice Actors:
-NoWhacking - http://www.youtube.com/user/nowhacking
+Nowhacking - http://www.youtube.com/user/nowhacking
 
 My Little Pony is copyrighted by Hasbro. This is a fanmade game that falls under Fair Use and therefore doesn't conflict with their copyrights and trademarks. If, however, some silly doohickey person at Hasbro's legal department feels like C&D'ing me anyway, I'll gladly remove everything in this game having to do with My Little Pony. Then I'll laugh at them and point out just how little of the game has changed as a result. Have a nice day!

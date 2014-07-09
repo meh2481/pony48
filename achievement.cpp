@@ -93,8 +93,8 @@ void Pony48Engine::achievementGet(string sAch)
 	if(m_achievementsGotten.count(sAch)) return;
 	if(!m_achievements.count(sAch)) return;
 	m_achievementsGotten.insert(sAch);
-	
-	//TODO Fanfare
+	m_achievementsToDraw.push_back(sAch);
+	playSound("bulk_yeah", m_fVoxVolume);
 }
 
 void Pony48Engine::cleanupAchievements()
@@ -106,7 +106,60 @@ void Pony48Engine::cleanupAchievements()
 
 void Pony48Engine::drawAchievementPopup()
 {
-	
+	list<string>::iterator ach = m_achievementsToDraw.begin();
+	if(ach != m_achievementsToDraw.end())
+	{
+		if(m_fStartedShowingAchievement == 0.0f)
+			//Start showing achievement
+			m_fStartedShowingAchievement = getSeconds();
+		else
+		{
+			//Move achievement popup vertically to make it appear onscreen
+			glPushMatrix();
+			string sScene = m_hud->getScene();
+			m_hud->setScene("achievementpopup");
+			float32 fPos = getSeconds() - m_fStartedShowingAchievement;
+			if(fPos < m_fAchievementAppearingTime)
+			{
+				float32 fFac = fPos / m_fAchievementAppearingTime;
+				glTranslatef(0, (1.0f - fFac) * 3, 0);
+			}
+			if(fPos > m_fAchievementAppearingTime + m_fShowAchievementTime)
+			{
+				fPos -= m_fAchievementAppearingTime + m_fShowAchievementTime;
+				float32 fFac = fPos / m_fAchievementVanishingTime;
+				glTranslatef(0, fFac * 3, 0);
+			}
+			
+			//Set the achievement text properly
+			achievement* a = m_achievements[*ach];
+			HUDItem* hIt = m_hud->getChild("achname");
+			if(hIt != NULL)
+			{
+				HUDTextbox* txt = (HUDTextbox*)hIt;
+				ostringstream oss;
+				oss << "Achievement get: \"" << a->title << '\"';
+				txt->setText(oss.str());
+			}
+			hIt = m_hud->getChild("achicon");
+			if(hIt != NULL)
+			{
+				HUDImage* img = (HUDImage*)hIt;
+				img->setImage(a->gottenimg);
+			}
+			
+			//Draw the popup HUD
+			m_hud->draw(0);
+			m_hud->setScene(sScene);
+			if(getSeconds() > m_fStartedShowingAchievement + m_fAchievementAppearingTime + m_fShowAchievementTime + m_fAchievementVanishingTime)
+			{
+				m_fStartedShowingAchievement = 0.0f;
+				m_achievementsToDraw.erase(ach);
+			}
+			glPopMatrix();
+		}
+		//TODO
+	}
 }
 
 

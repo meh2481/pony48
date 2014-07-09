@@ -180,6 +180,12 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_gameoverTileVel = 30;
 	m_gameoverTileAccel = 16;
 	startMenuPt = 0.0f;
+	
+	//Achievement stuff!
+	m_fStartedShowingAchievement = 0.0f;
+	m_fAchievementAppearingTime = 0.2f;
+	m_fShowAchievementTime = 5.0f;
+	m_fAchievementVanishingTime = 0.2f;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -221,7 +227,7 @@ void Pony48Engine::frame(float32 dt)
 	switch(m_iCurMode)
 	{
 		case PLAYING:
-			if(getSeconds() - m_fLastMovedSec > BORED_VOX_TIME && !m_bHasBoredVox)
+			if(getSeconds() - m_fLastMovedSec > 3 && !m_bHasBoredVox)
 			{
 				m_bHasBoredVox = true;
 				playSound("nowhacking_theyreponies", m_fVoxVolume);
@@ -523,6 +529,11 @@ void Pony48Engine::draw()
 		}
 	}
 	glColor4f(1,1,1,1);
+	
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+	glTranslatef(0, 0, m_fDefCameraZ);
+	drawAchievementPopup();
 }
 
 void Pony48Engine::init(list<commandlineArg> sArgs)
@@ -557,6 +568,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	createSound("res/sfx/select.ogg", "select");
 	createSound("res/sfx/camera_shutter.ogg", "camera");
 	createSound("res/vox/nowhacking_theyreponies.ogg", "nowhacking_theyreponies");
+	createSound("res/vox/bulk_yeah.ogg", "bulk_yeah");
 	
 	ParticleSystem* pSys = new ParticleSystem();
 	pSys->fromXML("res/particles/selectsong0.xml");
