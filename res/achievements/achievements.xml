@@ -1,6 +1,6 @@
 <achievements>
-	<achievement name="paingood" title="Do you like pain? Good!" gotten="Launch with a controller attached" gotimg="res/achievements/paing.png" notgotimg="res/achievements/painng.png"/>
-	<achievement name="maxawesome" title="Maximum awesome" gotten="Launch with a controller and a webcam attached" gotimg="res/achievements/awesomeg.png" notgotimg="res/achievements/awesomeng.png"/>
+	<achievement name="paingood" title="Do you like pain? Good!" gotten="Play the game with a controller" gotimg="res/achievements/paing.png" notgotimg="res/achievements/painng.png"/>
+	<achievement name="maxawesome" title="Maximum awesome" gotten="Play the game with a controller and a webcam" gotimg="res/achievements/awesomeg.png" notgotimg="res/achievements/awesomeng.png"/>
 	<achievement name="boohoo" title="Boo Hoo" gotten="Score less than 120 points in a game" gotimg="res/achievements/boohoog.png" notgotimg="res/achievements/boohoong.png"/>
 	<achievement name="wutup" title="Wut Up?" gotten="Beat the game" gotimg="res/achievements/wutupg.png" notgotimg="res/achievements/wutupng.png"/>
 	<achievement name="ermahgerd" title="Ermahgerd" gotten="Get to a 4096 tile" gotimg="res/achievements/ermahgerdg.png" notgotimg="res/achievements/ermahgerdng.png"/>

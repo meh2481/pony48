@@ -228,7 +228,7 @@ void Pony48Engine::frame(float32 dt)
 	switch(m_iCurMode)
 	{
 		case PLAYING:
-			if(getSeconds() - m_fLastMovedSec > 3 && !m_bHasBoredVox)
+			if(getSeconds() - m_fLastMovedSec > BORED_VOX_TIME && !m_bHasBoredVox)
 			{
 				m_bHasBoredVox = true;
 				playSound("nowhacking_theyreponies", m_fVoxVolume);
