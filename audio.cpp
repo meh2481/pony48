@@ -44,7 +44,7 @@ void Pony48Engine::beatDetect()
 	}*/
 #endif
 
-	if(m_iCurMode == SONGSELECT || m_iCurMode == CREDITS)
+	if(m_iCurMode == SONGSELECT || m_iCurMode == CREDITS || m_iCurMode == ACHIEVEMENTS)
 	{
 		beatThresholdVolume = 0.95;
 		beatThresholdBar = 0;
@@ -59,8 +59,10 @@ void Pony48Engine::beatDetect()
 		HUDItem* hIt = NULL;
 		if(m_iCurMode == SONGSELECT)
 			hIt = m_hud->getChild("choosesong");
-		else
+		else if(m_iCurMode == CREDITS)
 			hIt = m_hud->getChild("thanx");
+		else if(m_iCurMode == ACHIEVEMENTS)
+			hIt = m_hud->getChild("achtitle");
 		if(hIt != NULL)
 		{
 			HUDTextbox* hMen = (HUDTextbox*)hIt;

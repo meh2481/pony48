@@ -66,7 +66,21 @@
 	</scene>
 	<!-- Achievements menu -->
 	<scene name="achievementsmenu">
-		
+		<textbox name="achtitle" font="cmr" text="Achievements" pos="0,5.5" pt="2" />
+		<textbox name="ach1" font="cmr" text="achievement_text_1" pos="0.7,4.05" pt="1.0" />
+		<bgimage name="achicon1" img="pad" pos="-7,4.05" size="1,1" />
+		<textbox name="ach2" font="cmr" text="achievement_text_2" pos="0.7,3.05" pt="1.0" />
+		<bgimage name="achicon2" img="pad" pos="-7,3.05" size="1,1" />
+		<textbox name="ach3" font="cmr" text="achievement_text_3" pos="0.7,2.05" pt="1.0" />
+		<bgimage name="achicon3" img="pad" pos="-7,2.05" size="1,1" />
+		<textbox name="ach4" font="cmr" text="achievement_text_4" pos="0.7,1.05" pt="1.0" />
+		<bgimage name="achicon4" img="pad" pos="-7,1.05" size="1,1" />
+		<textbox name="ach5" font="cmr" text="achievement_text_5" pos="0.7,0.05" pt="1.0" />
+		<bgimage name="achicon5" img="pad" pos="-7,0.05" size="1,1" />
+		<textbox name="ach6" font="cmr" text="achievement_text_6" pos="0.7,-1.05" pt="1.0" />
+		<bgimage name="achicon6" img="pad" pos="-7,-1.05" size="1,1" />
+		<textbox name="ach7" font="cmr" text="achievement_text_7" pos="0.7,-2.05" pt="1.0" />
+		<bgimage name="achicon7" img="pad" pos="-7,-2.05" size="1,1" />
 	</scene>
 </hud>
 

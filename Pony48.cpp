@@ -289,6 +289,7 @@ void Pony48Engine::frame(float32 dt)
 			for(list<ParticleSystem*>::iterator i = m_selectedSongParticlesBg.begin(); i != m_selectedSongParticlesBg.end(); i++)
 				(*i)->update(dt);
 		case CREDITS:
+		case ACHIEVEMENTS:
 			beatDetect();	//Bounce some menu stuff to the beat
 			//Check and see if we should change bg colors
 			if(m_bg != NULL && m_bg->type == GRADIENT)
@@ -425,6 +426,14 @@ void Pony48Engine::draw()
 				m_bg->draw();
 			break;
 		}
+		
+		case ACHIEVEMENTS:
+		{
+			//TODO: Change icons and such
+			if(m_bg != NULL)
+				m_bg->draw();
+			break;
+		}
 			
 		case SONGSELECT:
 		{
@@ -447,9 +456,9 @@ void Pony48Engine::draw()
 			{
 				HUDTextbox* txt = (HUDTextbox*)hIt;
 				if(m_bJoyControl)
-					txt->setText("Press Start to quit");
+					txt->setText("Press Start to quit, Back to view achievements");
 				else
-					txt->setText("Press Esc to quit");
+					txt->setText("Press Esc to quit, A to view achievements");
 			}
 			m_selectedSongArc->draw();
 			for(vector<ParticleSystem*>::iterator i = m_selectedSongParticles.begin(); i != m_selectedSongParticles.end(); i++)
@@ -638,11 +647,6 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	pSys->init();
 	pSys->firing = true;
 	m_selectedSongParticlesBg.push_back(pSys);
-	pSys = new ParticleSystem();
-	pSys->fromXML("res/particles/bgflash.xml");
-	pSys->init();
-	pSys->firing = true;
-	m_selectedSongParticlesBg.push_back(pSys);
 	m_fireworksFx = new ParticleSystem();
 	m_fireworksFx->fromXML("res/particles/test.xml");
 	m_fireworksFx->init();
@@ -814,7 +818,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				}
 				break;
 			}
-			else if(m_iCurMode == INTRO)
+			else if(m_iCurMode == INTRO || m_iCurMode == ACHIEVEMENTS)
 			{
 #ifdef DEBUG
 				if(event.key.keysym.scancode == SDL_SCANCODE_F5)
@@ -848,6 +852,8 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #endif
 				if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 					changeMode(CREDITS);
+				else if(event.key.keysym.scancode == SDL_SCANCODE_A)
+					changeMode(ACHIEVEMENTS);
 			}
 			else if(m_iCurMode == CREDITS)
 			{
@@ -1010,13 +1016,23 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					quit();
 				else if(m_iCurMode == SONGSELECT)
 					changeMode(CREDITS);
+				else if(m_iCurMode == ACHIEVEMENTS)
+					changeMode(SONGSELECT);
 			}
+			else if(event.jbutton.button == JOY_BUTTON_BACK && m_iCurMode == SONGSELECT)
+				changeMode(ACHIEVEMENTS);
+			else if(m_iCurMode == ACHIEVEMENTS)
+				changeMode(SONGSELECT);
 			else if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
 			else if(m_iCurMode == INTRO)
 				changeMode(SONGSELECT);
 			else if(m_iCurMode == CREDITS && event.jbutton.button == JOY_BUTTON_B)
 				changeMode(SONGSELECT);
+#ifdef DEBUG
+			else if(event.jbutton.button == JOY_BUTTON_Y)
+				m_fireworksFx->show = !m_fireworksFx->show;
+#endif
 			break;
 			
 		case SDL_JOYBUTTONUP:
@@ -1619,7 +1635,7 @@ void Pony48Engine::changeMode(gameMode gm)
 		
 		case SONGSELECT:
 		{
-			if(m_iCurMode != CREDITS)
+			if(m_iCurMode != CREDITS && m_iCurMode != ACHIEVEMENTS)
 			{
 				gradientBg* bg = new gradientBg();
 				bg->ul = Color(1,0,0,0.5);
@@ -1674,6 +1690,10 @@ void Pony48Engine::changeMode(gameMode gm)
 			m_hud->setScene("credits");
 			break;
 		}
+		
+		case ACHIEVEMENTS:
+			m_hud->setScene("achievementsmenu");
+			break;
 	}
 	startMenuPt = 0.0f;
 	HUDItem* hIt = m_hud->getChild("choosesong");
