@@ -71,6 +71,7 @@ void Pony48Engine::loadAchievements()
 		
 		//Add to list
 		m_achievements[cName] = a;
+		m_achievementOrderedDrawHelper.push_back(cName);
 	}
 	delete doc;
 }

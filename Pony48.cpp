@@ -429,7 +429,54 @@ void Pony48Engine::draw()
 		
 		case ACHIEVEMENTS:
 		{
-			//TODO: Change icons and such
+			//Change icons and such
+			int i = 1;
+			for(list<string>::iterator it = m_achievementOrderedDrawHelper.begin(); it != m_achievementOrderedDrawHelper.end(); i++, it++)
+			{
+				bool bGotten = m_achievementsGotten.count(*it);
+				achievement* a = m_achievements[*it];
+				ostringstream oss;
+				oss << "ach" << i;
+				HUDItem* hIt = m_hud->getChild(oss.str());
+				if(hIt != NULL)
+				{
+					HUDTextbox* txt = (HUDTextbox*)hIt;
+					txt->setText(a->title);
+					if(bGotten)
+						txt->col = Color(1,1,1,1);
+					else
+						txt->col = Color(0.5,0.5,0.5,1);
+				}
+				oss.str("");
+				oss << "achsub" << i;
+				hIt = m_hud->getChild(oss.str());
+				if(hIt != NULL)
+				{
+					HUDTextbox* txt = (HUDTextbox*)hIt;
+					if(bGotten)
+					{
+						txt->setText(a->gottentxt);
+						txt->col = Color(1,1,1,1);
+					}
+					else
+					{
+						txt->setText(a->notgottentxt);
+						txt->col = Color(0.5,0.5,0.5,1);
+					}
+				}
+				oss.str("");
+				oss << "achicon" << i;
+				hIt = m_hud->getChild(oss.str());
+				if(hIt != NULL)
+				{
+					HUDImage* img = (HUDImage*)hIt;
+					if(bGotten)
+						img->setImage(a->gottenimg);
+					else
+						img->setImage(a->notgottenimg);
+				}
+			}
+			
 			if(m_bg != NULL)
 				m_bg->draw();
 			break;
@@ -690,7 +737,36 @@ void Pony48Engine::hudSignalHandler(string sSignal)
 
 void Pony48Engine::handleEvent(SDL_Event event)
 {
-	if(m_hud->event(event)) return;	//Let our HUD handle any events it needs to, and back out if it got handled
+	if(m_hud->event(event))
+	{
+		if(event.type == SDL_KEYDOWN)
+		{
+			m_bJoyControl = false;
+			m_iMouseControl = 0;
+			hideCursor();
+		}
+		else if(event.type == SDL_MOUSEMOTION)
+		{
+			if(++m_iMouseControl >= MOUSE_MOVE_TRIP_AMT)
+			{
+				showCursor();
+				m_bJoyControl = false;
+			}
+		}
+		else if(event.type == SDL_JOYAXISMOTION)
+		{
+			m_iMouseControl = 0;
+			hideCursor();
+			m_bJoyControl = true;
+		}
+		else if(event.type == SDL_JOYHATMOTION)
+		{
+			m_iMouseControl = 0;
+			hideCursor();
+			m_bJoyControl = true;
+		}
+		return;	//Let our HUD handle any events it needs to, and back out if it got handled
+	}
 	switch(event.type)
 	{
 		//Key pressed
@@ -699,11 +775,13 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #ifdef DEBUG
 			if(event.key.keysym.scancode == SDL_SCANCODE_F5)
 			{
+				bool b = m_fireworksFx->show;
 				delete m_fireworksFx;
-					m_fireworksFx = new ParticleSystem();
-					m_fireworksFx->fromXML("res/particles/test.xml");
-					m_fireworksFx->init();
-					m_fireworksFx->firing = true;
+				m_fireworksFx = new ParticleSystem();
+				m_fireworksFx->fromXML("res/particles/test.xml");
+				m_fireworksFx->init();
+				m_fireworksFx->firing = true;
+				m_fireworksFx->show = b;
 			}
 #endif
 			if(event.key.keysym.scancode != SDL_SCANCODE_ESCAPE)
@@ -892,7 +970,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				move(getDirOfVec2(worldPosFromCursor(getCursorPos())));	//Nested functions much?
 			if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
-			else if(m_iCurMode == INTRO)
+			else if(m_iCurMode == INTRO || m_iCurMode == ACHIEVEMENTS)
 				changeMode(SONGSELECT);
 			m_iMouseControl = MOUSE_MOVE_TRIP_AMT;
 			showCursor();

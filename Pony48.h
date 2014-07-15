@@ -201,6 +201,7 @@ private:
 	//Achievement stuff!
 	map<string, achievement*> m_achievements;
 	set<string> m_achievementsGotten;
+	list<string> m_achievementOrderedDrawHelper;
 	list<string> m_achievementsToDraw;
 	float32 m_fStartedShowingAchievement;
 	float32 m_fAchievementAppearingTime;

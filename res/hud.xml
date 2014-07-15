@@ -67,20 +67,34 @@
 	<!-- Achievements menu -->
 	<scene name="achievementsmenu">
 		<textbox name="achtitle" font="cmr" text="Achievements" pos="0,5.5" pt="2" />
-		<textbox name="ach1" font="cmr" text="achievement_text_1" pos="0.7,4.05" pt="1.0" />
-		<bgimage name="achicon1" img="pad" pos="-7,4.05" size="1,1" />
-		<textbox name="ach2" font="cmr" text="achievement_text_2" pos="0.7,3.05" pt="1.0" />
-		<bgimage name="achicon2" img="pad" pos="-7,3.05" size="1,1" />
-		<textbox name="ach3" font="cmr" text="achievement_text_3" pos="0.7,2.05" pt="1.0" />
-		<bgimage name="achicon3" img="pad" pos="-7,2.05" size="1,1" />
-		<textbox name="ach4" font="cmr" text="achievement_text_4" pos="0.7,1.05" pt="1.0" />
-		<bgimage name="achicon4" img="pad" pos="-7,1.05" size="1,1" />
-		<textbox name="ach5" font="cmr" text="achievement_text_5" pos="0.7,0.05" pt="1.0" />
-		<bgimage name="achicon5" img="pad" pos="-7,0.05" size="1,1" />
-		<textbox name="ach6" font="cmr" text="achievement_text_6" pos="0.7,-1.05" pt="1.0" />
-		<bgimage name="achicon6" img="pad" pos="-7,-1.05" size="1,1" />
-		<textbox name="ach7" font="cmr" text="achievement_text_7" pos="0.7,-2.05" pt="1.0" />
-		<bgimage name="achicon7" img="pad" pos="-7,-2.05" size="1,1" />
+		
+		<textbox name="ach1" font="cmr" text="achievement_text_1" pos="-2.0,4.25" pt="1.0" />
+		<textbox name="achsub1" font="cmr" text="achievement_subtext_1" pos="-0.5,3.65" pt="0.8" />
+		<bgimage name="achicon1" img="pad" pos="-7,3.95" size="1,1" />
+		
+		<textbox name="ach2" font="cmr" text="achievement_text_2" pos="-2.0,2.75" pt="1.0" />
+		<textbox name="achsub2" font="cmr" text="achievement_subtext_2" pos="2.5,2.15" pt="0.8" />
+		<bgimage name="achicon2" img="pad" pos="-6,2.45" size="1,1" />
+		
+		<textbox name="ach3" font="cmr" text="achievement_text_3" pos="-2.75,1.25" pt="1.0" />
+		<textbox name="achsub3" font="cmr" text="achievement_subtext_3" pos="2,0.65" pt="0.8" />
+		<bgimage name="achicon3" img="pad" pos="-5,0.95" size="1,1" />
+		
+		<textbox name="ach4" font="cmr" text="achievement_text_4" pos="-1.5,-0.25" pt="1.0" />
+		<textbox name="achsub4" font="cmr" text="achievement_subtext_4" pos="0,-0.85" pt="0.8" />
+		<bgimage name="achicon4" img="pad" pos="-4,-0.55" size="1,1" />
+		
+		<textbox name="ach5" font="cmr" text="achievement_text_5" pos="-0.25,-1.75" pt="1.0" />
+		<textbox name="achsub5" font="cmr" text="achievement_subtext_5" pos="1.75,-2.35" pt="0.8" />
+		<bgimage name="achicon5" img="pad" pos="-3,-2.05" size="1,1" />
+		
+		<textbox name="ach6" font="cmr" text="achievement_text_6" pos="2.5,-3.25" pt="1.0" />
+		<textbox name="achsub6" font="cmr" text="achievement_subtext_6" pos="4.5,-3.85" pt="0.8" />
+		<bgimage name="achicon6" img="pad" pos="-2,-3.55" size="1,1" />
+		
+		<textbox name="ach7" font="cmr" text="achievement_text_7" pos="2.5,-4.75" pt="1.0" />
+		<textbox name="achsub7" font="cmr" text="achievement_subtext_7" pos="4.5,-5.35" pt="0.8" />
+		<bgimage name="achicon7" img="pad" pos="-1,-5.05" size="1,1" />
 	</scene>
 </hud>
 
