@@ -74,13 +74,6 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_hud->setScene("intro");
 	m_hud->setSignalHandler(signalHandler);
 	
-	HUDItem* hIt = m_hud->getChild("songmenu");
-	if(hIt != NULL)
-	{
-		HUDMenu* hMen = (HUDMenu*)hIt;
-		phaseColor(&hMen->m_sSelected, hMen->m_sSelected2, 0.13f, true);
-	}
-	
 	setTimeScale(DEFAULT_TIMESCALE);
 	
 	m_joy = NULL;
@@ -187,15 +180,24 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_gameoverTileVel = 30;
 	m_gameoverTileAccel = 16;
 	m_fireworksFx = NULL;
+	startMenuPt = 0.0f;
+	
+	//Achievement stuff!
+	m_fStartedShowingAchievement = 0.0f;
+	m_fAchievementAppearingTime = 0.2f;
+	m_fShowAchievementTime = 5.0f;
+	m_fAchievementVanishingTime = 0.2f;
 }
 
 Pony48Engine::~Pony48Engine()
 {
 	errlog << "~Pony48Engine()" << endl;
 	saveConfig(getSaveLocation() + "config.xml");
+	delete m_rdFly;
 	clearBoard();	
 	clearColors();
 	cleanupSongGfx();
+	cleanupAchievements();
 	if(m_bg != NULL)
 		delete m_bg;
 	for(map<string, myCursor*>::iterator i = m_mCursors.begin(); i != m_mCursors.end(); i++)
@@ -231,8 +233,10 @@ void Pony48Engine::frame(float32 dt)
 			{
 				m_bHasBoredVox = true;
 				playSound("nowhacking_theyreponies", m_fVoxVolume);
+				achievementGet("augh");
 			}
 		case GAMEOVER:
+			m_newHighTile->update(dt);
 			m_gameoverTileRot += m_gameoverTileVel * dt;
 			m_gameoverTileVel += ((m_gameoverTileRot > 0)?(-m_gameoverTileAccel):(m_gameoverTileAccel)) * dt;
 			
@@ -275,7 +279,6 @@ void Pony48Engine::frame(float32 dt)
 		}
 		
 		case SONGSELECT:
-			beatDetect();	//Bounce some menu stuff to the beat
 			m_fMusicScrubSpeed += dt * MUSIC_SCRUBIN_SPEED;
 			if(m_fMusicScrubSpeed > soundFreqDefault)
 				m_fMusicScrubSpeed = soundFreqDefault;
@@ -285,7 +288,8 @@ void Pony48Engine::frame(float32 dt)
 				(*i)->update(dt);
 			for(list<ParticleSystem*>::iterator i = m_selectedSongParticlesBg.begin(); i != m_selectedSongParticlesBg.end(); i++)
 				(*i)->update(dt);
-			
+		case CREDITS:
+			beatDetect();	//Bounce some menu stuff to the beat
 			//Check and see if we should change bg colors
 			if(m_bg != NULL && m_bg->type == GRADIENT)
 			{
@@ -385,6 +389,11 @@ void Pony48Engine::draw()
 			txt = (HUDTextbox*)m_hud->getChild("hiscorebox");
 			oss << "BEST: " << m_iHighScore;
 			txt->setText(oss.str());
+			txt = (HUDTextbox*)m_hud->getChild("restart");
+			if(m_bJoyControl)
+				txt->setText("Press Start to quit, any other button to play again");
+			else
+				txt->setText("Press Esc to quit, any other key to play again");
 			
 			float32 fSec = getSeconds();
 			txt = (HUDTextbox*)m_hud->getChild("title");
@@ -400,6 +409,23 @@ void Pony48Engine::draw()
 			break;
 		}
 		
+		case CREDITS:
+		{
+			HUDItem* hIt = m_hud->getChild("escquitfinal");
+			if(hIt != NULL)
+			{
+				HUDTextbox* txt = (HUDTextbox*)hIt;
+				if(m_bJoyControl)
+					txt->setText("Press Start again to quit, B to cancel");
+				else
+					txt->setText("Press Esc again to quit, Enter to cancel");
+			}
+			
+			if(m_bg != NULL)
+				m_bg->draw();
+			break;
+		}
+			
 		case SONGSELECT:
 		{
 			if(m_bg != NULL)
@@ -414,10 +440,26 @@ void Pony48Engine::draw()
 				glTranslatef(0, hMen->selectedY, 0);
 				m_selectedSongArc->p1.Set(-hMen->selectedX-3, m_selectedSongArc->height / 2.0f);
 				m_selectedSongArc->p2.Set(hMen->selectedX+3, m_selectedSongArc->height / 2.0f);
+				m_rdFly->pos.x = hMen->selectedX+4.4;
+			}
+			hIt = m_hud->getChild("escquit");
+			if(hIt != NULL)
+			{
+				HUDTextbox* txt = (HUDTextbox*)hIt;
+				if(m_bJoyControl)
+					txt->setText("Press Start to quit");
+				else
+					txt->setText("Press Esc to quit");
 			}
 			m_selectedSongArc->draw();
 			for(vector<ParticleSystem*>::iterator i = m_selectedSongParticles.begin(); i != m_selectedSongParticles.end(); i++)
 				(*i)->draw();
+			m_rdFly->pos.y = 0.1f;
+			m_rdFly->size.x = -fabs(m_rdFly->size.x);
+			m_rdFly->draw();
+			m_rdFly->pos.x = -m_rdFly->pos.x;
+			m_rdFly->size.x = -m_rdFly->size.x;
+			m_rdFly->draw();
 			break;
 		}
 	}
@@ -498,6 +540,11 @@ void Pony48Engine::draw()
 	}
 	glColor4f(1,1,1,1);
 	m_fireworksFx->draw();
+	
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+	glTranslatef(0, 0, m_fDefCameraZ);
+	drawAchievementPopup();
 }
 
 void Pony48Engine::init(list<commandlineArg> sArgs)
@@ -507,6 +554,8 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	{
 		errlog << "Commandline argument. Switch: " << i->sSwitch << ", value: " << i->sValue << endl;
 	}
+	
+	loadAchievements();
 	
 	//Load our last screen position and such
 	if(!loadConfig(getSaveLocation() + "config.xml"))
@@ -530,6 +579,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	createSound("res/sfx/select.ogg", "select");
 	createSound("res/sfx/camera_shutter.ogg", "camera");
 	createSound("res/vox/nowhacking_theyreponies.ogg", "nowhacking_theyreponies");
+	createSound("res/vox/bulk_yeah.ogg", "bulk_yeah");
 	
 	ParticleSystem* pSys = new ParticleSystem();
 	pSys->fromXML("res/particles/selectsong0.xml");
@@ -601,7 +651,20 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	//for(int i = 0; i < 60; i++)
 	//	pSys->update(0.25);
 	
+	//Create new-high-tile particle fx
+	m_newHighTile = new ParticleSystem();
+	m_newHighTile->fromXML("res/particles/newhightile.xml");
+	m_newHighTile->init();
+	m_newHighTile->firing = false;
+	
+	m_rdFly = new physSegment();
+	m_rdFly->img = getImage("res/particles/rdfly.png");
+	m_rdFly->size = Point(3.0f, 1.20703125f);
+	
 	INTRO_FADEIN_DELAY = 1.0 + getSeconds();
+#ifdef DEBUG
+	changeMode(SONGSELECT);
+#endif
 }
 
 
@@ -770,8 +833,41 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			}
 			else if(m_iCurMode == SONGSELECT)
 			{
+#ifdef DEBUG
+				if(event.key.keysym.scancode == SDL_SCANCODE_F5)
+				{
+					string sScene = m_hud->getScene();
+					clearColors();
+					delete m_hud;
+					m_hud = new HUD("hud");
+					m_hud->create("res/hud.xml");
+					m_hud->setScene(sScene);
+					m_hud->setSignalHandler(signalHandler);
+				}
+				else
+#endif
+				if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+					changeMode(CREDITS);
+			}
+			else if(m_iCurMode == CREDITS)
+			{
+#ifdef DEBUG
+				if(event.key.keysym.scancode == SDL_SCANCODE_F5)
+				{
+					string sScene = m_hud->getScene();
+					clearColors();
+					delete m_hud;
+					m_hud = new HUD("hud");
+					m_hud->create("res/hud.xml");
+					m_hud->setScene(sScene);
+					m_hud->setSignalHandler(signalHandler);
+				}
+				else
+#endif
 				if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 					quit();
+				else if(event.key.keysym.scancode == SDL_SCANCODE_RETURN)
+					changeMode(SONGSELECT);
 			}
 		}
 		
@@ -855,6 +951,9 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			
 		//Gamepad stuff!
 		case SDL_JOYDEVICEADDED:
+			achievementGet("paingood");
+			if(m_cam->isOpen())
+				achievementGet("maxawesome");
 			errlog << "Joystick " << (int)event.jdevice.which << " connected." << endl;
 			m_joy = SDL_JoystickOpen(event.jdevice.which);
 
@@ -907,12 +1006,16 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			{
 				if(m_iCurMode == PLAYING || m_iCurMode == GAMEOVER)
 					changeMode(SONGSELECT);
-				else
+				else if(m_iCurMode == CREDITS)
 					quit();
+				else if(m_iCurMode == SONGSELECT)
+					changeMode(CREDITS);
 			}
 			else if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
 			else if(m_iCurMode == INTRO)
+				changeMode(SONGSELECT);
+			else if(m_iCurMode == CREDITS && event.jbutton.button == JOY_BUTTON_B)
 				changeMode(SONGSELECT);
 			break;
 			
@@ -1186,6 +1289,9 @@ bool Pony48Engine::loadConfig(string sFilename)
 		pony48->QueryFloatAttribute("musicvol", &m_fMusicVolume);
 		pony48->QueryFloatAttribute("soundvol", &m_fSoundVolume);
 		pony48->QueryFloatAttribute("voxvol", &m_fVoxVolume);
+		const char* cAchievements = pony48->Attribute("achievements");
+		if(cAchievements != NULL && strlen(cAchievements))
+			loadAchievementsGotten(cAchievements);
 	}
 	
 	XMLElement* joystick = root->FirstChildElement("joystick");
@@ -1291,6 +1397,7 @@ void Pony48Engine::saveConfig(string sFilename)
 	pony48->SetAttribute("musicvol", m_fMusicVolume);
 	pony48->SetAttribute("soundvol", m_fSoundVolume);
 	pony48->SetAttribute("voxvol", m_fVoxVolume);
+	pony48->SetAttribute("achievements", saveAchievementsGotten().c_str());
 	root->InsertEndChild(pony48);
 	
 	XMLElement* joystick = doc->NewElement("joystick");
@@ -1362,7 +1469,7 @@ void Pony48Engine::handleKeys()
 	//Check joystick movement
 	Sint16 x_move = 0;
 	Sint16 y_move = 0;
-	if(m_joy && SDL_JoystickGetAttached(m_joy))
+	if(m_joy && SDL_JoystickGetAttached(m_joy) && m_bJoyControl)
 	{
 		x_move = SDL_JoystickGetAxis(m_joy, JOY_AXIS_HORIZ);
 		y_move = SDL_JoystickGetAxis(m_joy, JOY_AXIS_VERT);
@@ -1505,34 +1612,81 @@ void Pony48Engine::changeMode(gameMode gm)
 			m_fGameoverKeyDelay = getSeconds();
 			m_fGameoverWebcamFreeze = getSeconds() + GAMEOVER_FREEZE_CAM_TIME;
 			m_bSavedFacepic = false;
+			if(m_iScore < LOW_SCORE)
+				achievementGet("boohoo");
 			break;
 		}
 		
 		case SONGSELECT:
 		{
-			gradientBg* bg = new gradientBg();
-			bg->ul = Color(1,0,0,0.5);
-			bg->ur = Color(0,1,0,0.5);
-			bg->bl = Color(0,0,1,0.5);
-			bg->br = Color(1,1,1,0.5);
-			if(m_bg != NULL) 
-				delete m_bg;
-			m_bg = (Background*) bg;
-			setCursor(m_mCursors["sel"]);
-			m_fMusicPos[m_sSongToPlay] = getMusicPos();
-			playMusic("res/mus/SleeplessNight.mp3", m_fMusicVolume);
-			if(m_iCurMode == INTRO)
-				m_fMusicScrubSpeed = soundFreqDefault;
-			else
-				m_fMusicScrubSpeed = 0;
-			if(m_fMusicPos.count("songselect"))
-				seekMusic(m_fMusicPos["songselect"]);
-			else
-				seekMusic(28.622f);
+			if(m_iCurMode != CREDITS)
+			{
+				gradientBg* bg = new gradientBg();
+				bg->ul = Color(1,0,0,0.5);
+				bg->ur = Color(0,1,0,0.5);
+				bg->bl = Color(0,0,1,0.5);
+				bg->br = Color(1,1,1,0.5);
+				if(m_bg != NULL) 
+					delete m_bg;
+				m_bg = (Background*) bg;
+				setCursor(m_mCursors["sel"]);
+				m_fMusicPos[m_sSongToPlay] = getMusicPos();
+				playMusic("res/mus/SleeplessNight.mp3", m_fMusicVolume);
+				if(m_iCurMode == INTRO || m_iCurMode == CREDITS)
+					m_fMusicScrubSpeed = soundFreqDefault;
+				else
+					m_fMusicScrubSpeed = 0;
+				if(m_fMusicPos.count("songselect"))
+					seekMusic(m_fMusicPos["songselect"]);
+				else
+					seekMusic(28.622f);
+			}
 			//musicLoop(76.389f, 120.025f);
 			m_hud->setScene("songselect");
 			break;
 		}
+		
+		case CREDITS:
+		{
+#ifdef DEBUG
+			quit();
+#endif
+			setMusicFrequency(soundFreqDefault);
+			m_fMusicScrubSpeed = soundFreqDefault;
+			HUDItem* hIt = m_hud->getChild("proglogo");
+			if(hIt != NULL)
+			{
+				HUDTextbox* hTxt = (HUDTextbox*)hIt;
+				phaseColor(&hTxt->col, Color(1,0,0,1), 0.12f, true);
+			}
+			hIt = m_hud->getChild("muslogo");
+			if(hIt != NULL)
+			{
+				HUDTextbox* hTxt = (HUDTextbox*)hIt;
+				phaseColor(&hTxt->col, Color(1,0,0,1), 0.12f, true);
+			}
+			hIt = m_hud->getChild("seecredits");
+			if(hIt != NULL)
+			{
+				HUDTextbox* hTxt = (HUDTextbox*)hIt;
+				phaseColor(&hTxt->col, Color(1,0,0,1), 0.12f, true);
+			}
+			m_hud->setScene("credits");
+			break;
+		}
+	}
+	startMenuPt = 0.0f;
+	HUDItem* hIt = m_hud->getChild("choosesong");
+	if(hIt != NULL)
+	{
+		HUDTextbox* hMen = (HUDTextbox*)hIt;
+		hMen->pt = 1.25f;
+	}
+	hIt = m_hud->getChild("thanx");
+	if(hIt != NULL)
+	{
+		HUDTextbox* hMen = (HUDTextbox*)hIt;
+		hMen->pt = 2.0f;
 	}
 	m_iCurMode = gm;
 }

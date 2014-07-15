@@ -17,14 +17,14 @@
 	<scene name="gameover">
 		<geom name="gameovertextbg" col="128,128,128,200">
 			<quad p1="-8, 5.5, 0" p2="8, 5.5, 0" p3="8, 1.5, 0" p4="-8, 1.5, 0" />
-			<quad p1="-5, -4.5, 0" p2="5, -4.5, 0" p3="5, -5.55, 0" p4="-5, -5.55, 0" />
+			<quad p1="-9, -4.5, 0" p2="9, -4.5, 0" p3="9, -5.55, 0" p4="-9, -5.55, 0" />
 		</geom>
 		<geom name="gameoverdarken" col="128,128,128,100">
 			<quad p1="-50, 50, 0" p2="50, 50, 0" p3="50, -50, 0" p4="-50, -50, 0" />
 		</geom>
 		<textbox name="gameover" font="cmr" text="GAME OVER" pos="0,4" pt="4" col="255,255,255,255" />
 		<textbox name="finalscore" font="cmr" text="FINAL SCORE: 0" pos="0,2.25" pt="1.5" col="255,255,255,255" />
-		<textbox name="restart" font="cmr" text="Press any key to play again" pos="0,-5" pt="1.0" col="255,255,255,255" />
+		<textbox name="restart" font="cmr" text="Press Start to quit, any other button to play again" pos="0,-5" pt="1.0" col="255,255,255,255" />
 	</scene>
 	<!-- "plug all the stuff in" HUD -->
 	<scene name="intro">
@@ -42,5 +42,66 @@
 			<menuitem signal="load res/mus/justfluttershy.xml" text="Just... Fluttershy"/>
 			<menuitem signal="load res/mus/shyst3pvip.xml" text="ShySt3p [VIP]"/>
 		</menu>
+		<textbox name="escquit" font="cmr" text="Press Start to quit" pos="0,-6" pt="0.75" />
+	</scene>
+	<!-- Credits HUD -->
+	<scene name="credits">
+		<textbox name="thanx" font="cmr" text="Thanks for playing!" pos="0,5.5" pt="2" />
+		<textbox name="proglogo" font="cmr" text="Programming/design by:" pos="0,3.5" pt="1.25" />
+		<textbox name="inderp" font="cmr" text="inDerpxar - http://inderpxar.tumblr.com/" pos="0,2.5" pt="0.8" />
+		<textbox name="muslogo" font="cmr" text="Music by the amazing:" pos="0,0.5" pt="1.25" />
+		<textbox name="tif" font="cmr" text="TIF WHITNEY - http://soundcloud.com/tifwhitney-1" pos="0,-0.5" pt="0.8" />
+		<textbox name="strach" font="cmr" text="DJ StrachAttack - http://soundcloud.com/djstrachattack" pos="0,-1.5" pt="0.8" />
+		<textbox name="mim" font="cmr" text="MIM - http://soundcloud.com/officialmimmusic" pos="0,-2.5" pt="0.8" />
+		<textbox name="seecredits" font="cmr" text="see credit.txt for vectors used" pos="0,-4.2" pt="0.8" />
+		<textbox name="escquitfinal" font="cmr" text="Press Start again to quit, B to cancel" pos="0,-5.9" pt="0.9" />
+	</scene>
+	<!-- Achievement popping up -->
+	<scene name="achievementpopup">
+		<geom name="achpopupbg" col="128,128,128,150">
+			<quad p1="-9, 7, 0" p2="9, 7, 0" p3="8, 5.5, 0" p4="-8, 5.5, 0" />
+		</geom>
+		<textbox name="achname" font="cmr" text="Achievement get! Aaaaugh what are you doing?" pos="0.7,6.05" pt="0.8" />
+		<bgimage name="achicon" img="pad" pos="-7,6.05" size="1,1" />
+	</scene>
+	<!-- Achievements menu -->
+	<scene name="achievementsmenu">
+		
 	</scene>
 </hud>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

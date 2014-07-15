@@ -7,7 +7,7 @@
 	<rotvel value="140" var="40" />
 	<rotaccel value="0" var="0" />
 	<rotaxis value="0,0,0" var="1,1,1"/>
-	<col start="255,255,255,255" end="255,255,255,255"/>
+	<col start="255,255,255,150" end="255,255,255,150"/>
 	<tanaccel value="0" var="0" />
 	<normaccel value="0" var="0" />
 	<life value="100000" var="0" />

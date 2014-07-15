@@ -1,6 +1,7 @@
 #include "luainterface.h"
 #include "luadefines.h"
 #include "luafuncs.h"
+#include "globaldefs.h"
 
 #include <assert.h>
 #include <sstream>
