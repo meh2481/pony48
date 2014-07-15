@@ -1,0 +1,9 @@
+<particlesystem emitfrom="0,0,0,0" fireonstart="true" blend="normal" rate="100" max="150000">
+	<img path="res/particles/particlesheet1.png">
+		<rect val="0,0,127,127"/>
+	</img>
+	<size start="5,5" end="10,10" var="8"/>
+	<col start="255,0,255,255" end="255,0,255,0" var="0,0,0,0"/>
+	<life value="0.6" var="0.4"/>
+	<rotstart value="0" var="180"/>
+</particlesystem>

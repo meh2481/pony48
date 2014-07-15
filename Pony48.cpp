@@ -186,6 +186,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_gameoverTileRot = 0;	//Happy now, Valgrind?
 	m_gameoverTileVel = 30;
 	m_gameoverTileAccel = 16;
+	m_fireworksFx = NULL;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -314,6 +315,7 @@ void Pony48Engine::frame(float32 dt)
 			break;
 	}
 	updateColors(dt);
+	m_fireworksFx->update(dt);
 }
 
 void Pony48Engine::draw()
@@ -495,6 +497,7 @@ void Pony48Engine::draw()
 		}
 	}
 	glColor4f(1,1,1,1);
+	m_fireworksFx->draw();
 }
 
 void Pony48Engine::init(list<commandlineArg> sArgs)
@@ -590,6 +593,10 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	pSys->init();
 	pSys->firing = true;
 	m_selectedSongParticlesBg.push_back(pSys);
+	m_fireworksFx = new ParticleSystem();
+	m_fireworksFx->fromXML("res/particles/test.xml");
+	m_fireworksFx->init();
+	m_fireworksFx->firing = true;
 	//HACK Make this look ok on the first frame by fake-updating it for a bit
 	//for(int i = 0; i < 60; i++)
 	//	pSys->update(0.25);
@@ -622,6 +629,16 @@ void Pony48Engine::handleEvent(SDL_Event event)
 		//Key pressed
 		case SDL_KEYDOWN:
 		{
+#ifdef DEBUG
+			if(event.key.keysym.scancode == SDL_SCANCODE_F5)
+			{
+				delete m_fireworksFx;
+					m_fireworksFx = new ParticleSystem();
+					m_fireworksFx->fromXML("res/particles/test.xml");
+					m_fireworksFx->init();
+					m_fireworksFx->firing = true;
+			}
+#endif
 			if(event.key.keysym.scancode != SDL_SCANCODE_ESCAPE)
 			{
 				m_bJoyControl = false;
