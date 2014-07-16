@@ -34,8 +34,6 @@ ParticleSystem::ParticleSystem()
 
 ParticleSystem::~ParticleSystem()
 {
-	if(!particleDeathSpawn && spawnOnDeath.size())
-		spawnNewParticleSystem(spawnOnDeath, emitFrom.center());
 	_deleteAll();
 }
 
@@ -181,7 +179,7 @@ void ParticleSystem::_newParticle()
 void ParticleSystem::_rmParticle(uint32_t idx)
 {
 	if(particleDeathSpawn && spawnOnDeath.size())
-		spawnNewParticleSystem(spawnOnDeath, m_pos[idx]);
+		spawnNewParticleSystem(spawnOnDeath[randInt(0, spawnOnDeath.size()-1)], m_pos[idx]);
 	//Order doesn't matter, so just shift the newest particle over to replace this one
 	m_imgRect[idx] = m_imgRect[m_num-1];
 	m_pos[idx] = m_pos[m_num-1];
@@ -256,10 +254,12 @@ void ParticleSystem::update(float32 dt)
 	curTime += dt;
 	if(startedFiring)
 	{
-		if(curTime - startedFiring > decay)
+		if(curTime - startedFiring > decay)	//Stop firing if we've decayed to that point
 		{
 			firing = false;
 			startedFiring = 0.0f;
+			if(!particleDeathSpawn && spawnOnDeath.size())
+				spawnNewParticleSystem(spawnOnDeath[randInt(0, spawnOnDeath.size()-1)], emitFrom.center());
 		}
 	}
 	else if(firing)
@@ -471,20 +471,6 @@ void ParticleSystem::fromXML(string sXMLFilename)
 	root->QueryFloatAttribute("decayvar", &fDecayVar);
 	decay += randFloat(-fDecayVar, fDecayVar);
 	
-	const char* cDeathSpawn = root->Attribute("spawnondeath");
-	if(cDeathSpawn && strlen(cDeathSpawn))
-		spawnOnDeath = cDeathSpawn;
-	
-	const char* cDeathSpawnType = root->Attribute("deathspawntype");
-	if(cDeathSpawnType && strlen(cDeathSpawnType))
-	{
-		string sDeathSpawntype = cDeathSpawnType;
-		if(sDeathSpawntype == "system")
-			particleDeathSpawn = false;
-		else if(sDeathSpawntype == "particle")
-			particleDeathSpawn = true;
-	}
-	
 	for(XMLElement* elem = root->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
 	{
 		string sName = elem->Name();
@@ -586,6 +572,25 @@ void ParticleSystem::fromXML(string sXMLFilename)
 			elem->QueryFloatAttribute("var", &lifetimeVar);
 			elem->QueryFloatAttribute("prefade", &lifetimePreFade);
 			elem->QueryFloatAttribute("prefadevar", &lifetimePreFadeVar);
+		}
+		else if(sName == "spawnondeath")
+		{
+			const char* cDeathSpawnType = elem->Attribute("deathspawntype");
+			if(cDeathSpawnType && strlen(cDeathSpawnType))
+			{
+				string sDeathSpawntype = cDeathSpawnType;
+				if(sDeathSpawntype == "system")
+					particleDeathSpawn = false;
+				else if(sDeathSpawntype == "particle")
+					particleDeathSpawn = true;
+			}
+			
+			for(XMLElement* particle = elem->FirstChildElement("particle"); particle != NULL; particle = particle->NextSiblingElement("particle"))
+			{
+				const char* cPath = particle->Attribute("path");
+				if(cPath != NULL)
+					spawnOnDeath.push_back(cPath);
+			}
 		}
 		else
 			errlog << "Warning: Unknown element type \"" << sName << "\" found in XML file " << sXMLFilename << ". Ignoring..." << endl;

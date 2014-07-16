@@ -1,0 +1,12 @@
+<particlesystem emitfrom="0,0,0,0" fireonstart="true" blend="normal" rate="30000" max="1500" decay="0.0" changecolor="false">
+	<img path="res/particles/particlesheet1.png">
+		<rect val="0,0,128,128"/>
+		<rect val="128,0,256,128"/>
+	</img>
+	<size start="0.2,0.2" end="0.1,0.1"/>
+	<emit angle="0" var="180" />
+	<speed value="5" var="5" />
+	<col start="random_pastel" end="0,0,0,0"/>
+	<life value="1"/>
+	<accel value="0,-10"/>
+</particlesystem>

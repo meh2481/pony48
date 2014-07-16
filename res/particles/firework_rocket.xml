@@ -1,0 +1,13 @@
+<particlesystem emitfrom="0,0,0,0" emitfromvel="0,12" fireonstart="true" blend="additive" rate="300" max="1500" decay="1" decayvar="0.3">
+	<img path="res/particles/particlesheet1.png">
+		<rect val="0,0,128,128"/>
+	</img>
+	<spawnondeath deathspawntype="system">
+		<particle path="res/particles/firework_explosion1.xml"/>
+	</spawnondeath>
+	<size start="0.2,0.2" end="0.02,0.02" var="0.05"/>
+	<emit angle="-90" var="3" />
+	<speed value="5" var="2" />
+	<col start="255,255,255,255" end="255,255,255,0"/>
+	<life value="0.5"/>
+</particlesystem>

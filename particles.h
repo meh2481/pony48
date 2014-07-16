@@ -100,7 +100,7 @@ public:
 	bool				show;				//If this should draw or not
 	bool				velRotate;			//If these particles should rotate according to their velocity
 	bool				changeColor;		//If these particles change color as they update, or just alpha
-	string				spawnOnDeath;		//Spawn a new particle system whenever one of these dies
+	vector<string>		spawnOnDeath;		//Spawn a new particle system whenever one of these dies
 	Point				emissionVel;		//Move the emission point every frame
 	bool				particleDeathSpawn;	//If we spawn new particle systems on particle death or system death
 	

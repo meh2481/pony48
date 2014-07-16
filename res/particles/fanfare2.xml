@@ -1,0 +1,14 @@
+<particlesystem emitfrom="11,-8,11,-8" fireonstart="true" blend="normal" rate="300" max="1500" decay="0.75" velrotate="true">
+	<img path="res/particles/particlesheet1.png">
+		<rect val="256,128,384,192"/>
+		<rect val="256,192,384,255"/>
+		<rect val="384,128,512,192"/>
+		<rect val="384,192,512,256"/>
+	</img>
+	<size start="1.0,0.5" end="1.0,0.5" var="0.2"/>
+	<emit angle="105" var="3" />
+	<speed value="25" var="4" />
+	<col start="192,192,192,192" end="192,192,192,192" var="64,64,64,34"/>
+	<life value="3"/>
+	<accel value="0,-30"/>
+</particlesystem>
