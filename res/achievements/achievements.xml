@@ -5,5 +5,5 @@
 	<achievement name="wutup" title="Wut Up?" gotten="Beat the game" gotimg="res/achievements/wutupg.png" notgotimg="res/achievements/wutupng.png"/>
 	<achievement name="ermahgerd" title="Ermahgerd" gotten="Get to a 4096 tile" gotimg="res/achievements/ermahgerdg.png" notgotimg="res/achievements/ermahgerdng.png"/>
 	<achievement name="hiscore" title="Better than the dev" gotten="Get a higher score than 24680" notgotten="Get a higher score than I can" gotimg="res/achievements/hiscoreg.png" notgotimg="res/achievements/hiscoreng.png"/>
-	<achievement name="augh" title="Aaaaaaaaaugh" gotten="Do nothing for 5 minutes" notgotten="???" gotimg="res/achievements/aughg.png" notgotimg="res/achievements/aughng.png"/>
+	<achievement name="augh" title="Aaaaaaaaaugh" gotten="Do nothing for 5 minutes" notgotten="???                   " gotimg="res/achievements/aughg.png" notgotimg="res/achievements/aughng.png"/>
 </achievements>

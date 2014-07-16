@@ -1,6 +1,7 @@
 Fanfare/fx/fireworks on beating game gameover
-Achievement menu
+Achievement menu fanfare when all completed
 Fix ShySt3p bg error on second loop
+Particle fac
 
 
 

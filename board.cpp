@@ -803,7 +803,7 @@ bool Pony48Engine::slide(direction dir)
 void Pony48Engine::placenew()
 {
 	ostringstream oss;
-	oss << "res/tiles/" << randInt(1,2) * 2 << ".xml";
+	oss << "res/tiles/" << 128 << ".xml";
 	if(movePossible())	//Make sure there aren't no blank spaces or something
 	{
 		while(true)	//Could possibly hang here for a while

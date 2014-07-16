@@ -100,6 +100,9 @@ public:
 	bool				show;				//If this should draw or not
 	bool				velRotate;			//If these particles should rotate according to their velocity
 	bool				changeColor;		//If these particles change color as they update, or just alpha
+	string				spawnOnDeath;		//Spawn a new particle system whenever one of these dies
+	Point				emissionVel;		//Move the emission point every frame
+	bool				particleDeathSpawn;	//If we spawn new particle systems on particle death or system death
 	
 	void update(float32 dt);
 	void draw();
@@ -108,7 +111,11 @@ public:
 	uint32_t count() {return m_num;};		//How many particles are currently alive (read-only because reasons)
 	void killParticles()	{m_num=0;};		//Kill all active particles
 	void reload()			{fromXML(m_sXMLFrom);};	//Reload 
+	bool done()				{return !(m_num || firing);};	//Test and see if effect is done
 };
+
+//External function you need to declare
+void spawnNewParticleSystem(string sFilename, Point ptPos);
 
 #endif
 

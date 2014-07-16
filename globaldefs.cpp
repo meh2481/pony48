@@ -324,4 +324,10 @@ Color HsvToRgb(int h, int s, int v)
 	return rgb;
 }
 
+void Rect::centerOn(Point p)
+{
+	Point cen = center();
+	offset(p.x - cen.x, p.y - cen.y);
+}
+
 

@@ -30,6 +30,7 @@
 #define GAMEOVER_FREEZE_CAM_TIME	0.7f
 
 #define MAX_TILE_VALUE	4096	//Above this, the game would crash, so cap it here
+#define WIN_TILE_VALUE	2048
 
 #define INTRO_FADEIN_TIME	2.0	//How long the intro fadein takes
 
@@ -207,6 +208,7 @@ private:
 	float32 m_fAchievementAppearingTime;
 	float32 m_fShowAchievementTime;
 	float32 m_fAchievementVanishingTime;
+	list<ParticleSystem*> m_allAchievementsFanfare;
 
 protected:
 	void frame(float32 dt);
@@ -239,6 +241,7 @@ public:
 	Rect getCameraView();		//Return the rectangle, in world position z=0, that the camera can see 
 	void changeMode(gameMode gm);	//Change to the specified game mode
 	void rumbleController(float32 strength, float32 sec, bool priority = false);	//Rumble the controller, if certain conditions are met
+	void spawnNewParticleSystem(string sFilename, Point ptPos);
 	
 	//color.cpp functions
 	void updateColors(float32 dt);

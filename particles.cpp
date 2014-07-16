@@ -34,6 +34,8 @@ ParticleSystem::ParticleSystem()
 
 ParticleSystem::~ParticleSystem()
 {
+	if(!particleDeathSpawn && spawnOnDeath.size())
+		spawnNewParticleSystem(spawnOnDeath, emitFrom.center());
 	_deleteAll();
 }
 
@@ -178,6 +180,8 @@ void ParticleSystem::_newParticle()
 
 void ParticleSystem::_rmParticle(uint32_t idx)
 {
+	if(particleDeathSpawn && spawnOnDeath.size())
+		spawnNewParticleSystem(spawnOnDeath, m_pos[idx]);
 	//Order doesn't matter, so just shift the newest particle over to replace this one
 	m_imgRect[idx] = m_imgRect[m_num-1];
 	m_pos[idx] = m_pos[m_num-1];
@@ -228,6 +232,7 @@ void ParticleSystem::_initValues()
 	startedFiring = 0.0f;
 	rotAxis.set(0.0f, 0.0f, 1.0f);
 	rotAxisVar.setZero();
+	emissionVel.SetZero();
 	
 	img = NULL;
 	max = 100;
@@ -242,6 +247,7 @@ void ParticleSystem::_initValues()
 	changeColor = true;
 	lifetimePreFade = 0.0f;
 	lifetimePreFadeVar = 0.0f;
+	particleDeathSpawn = true;
 }
 
 void ParticleSystem::update(float32 dt)
@@ -258,6 +264,8 @@ void ParticleSystem::update(float32 dt)
 	}
 	else if(firing)
 		startedFiring = curTime;
+	
+	emitFrom.offset(emissionVel.x * dt, emissionVel.y * dt);	//Move our emission point as needed
 	
 	spawnCounter += dt * rate;
 	int iSpawnAmt = floor(spawnCounter);
@@ -411,6 +419,7 @@ void ParticleSystem::init()
 
 void ParticleSystem::fromXML(string sXMLFilename)
 {
+	errlog << "Load particles " << sXMLFilename << endl;
 	_initValues();
 	
 	XMLDocument* doc = new XMLDocument();
@@ -435,6 +444,9 @@ void ParticleSystem::fromXML(string sXMLFilename)
 	const char* emfrom = root->Attribute("emitfrom");
 	if(emfrom != NULL)
 		emitFrom = rectFromString(emfrom);
+	const char* emfromvel = root->Attribute("emitfromvel");
+	if(emfromvel != NULL)
+		emissionVel = pointFromString(emfromvel);
 	
 	root->QueryBoolAttribute("fireonstart", &firing);
 	root->QueryBoolAttribute("changecolor", &changeColor);
@@ -455,6 +467,23 @@ void ParticleSystem::fromXML(string sXMLFilename)
 	root->QueryFloatAttribute("rate", &rate);
 	root->QueryBoolAttribute("velrotate", &velRotate);
 	root->QueryFloatAttribute("decay", &decay);
+	float32 fDecayVar = 0.0f;
+	root->QueryFloatAttribute("decayvar", &fDecayVar);
+	decay += randFloat(-fDecayVar, fDecayVar);
+	
+	const char* cDeathSpawn = root->Attribute("spawnondeath");
+	if(cDeathSpawn && strlen(cDeathSpawn))
+		spawnOnDeath = cDeathSpawn;
+	
+	const char* cDeathSpawnType = root->Attribute("deathspawntype");
+	if(cDeathSpawnType && strlen(cDeathSpawnType))
+	{
+		string sDeathSpawntype = cDeathSpawnType;
+		if(sDeathSpawntype == "system")
+			particleDeathSpawn = false;
+		else if(sDeathSpawntype == "particle")
+			particleDeathSpawn = true;
+	}
 	
 	for(XMLElement* elem = root->FirstChildElement(); elem != NULL; elem = elem->NextSiblingElement())
 	{

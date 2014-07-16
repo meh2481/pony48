@@ -46,6 +46,11 @@ void signalHandler(string sSignal)
 	g_pGlobalEngine->hudSignalHandler(sSignal);
 }
 
+void spawnNewParticleSystem(string sFilename, Point ptPos)
+{
+	g_pGlobalEngine->spawnNewParticleSystem(sFilename, ptPos);
+}
+
 Pony48Engine::Pony48Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName, string sIcon, bool bResizable) : 
 Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 {
@@ -208,6 +213,8 @@ Pony48Engine::~Pony48Engine()
 		delete *i;
 	for(list<ParticleSystem*>::iterator i = m_selectedSongParticlesBg.begin(); i != m_selectedSongParticlesBg.end(); i++)
 		delete *i;
+	for(list<ParticleSystem*>::iterator i = m_allAchievementsFanfare.begin(); i != m_allAchievementsFanfare.end(); i++)
+		delete *i;
 	errlog << "delete hud" << endl;
 	delete m_hud;
 	if(m_rumble != NULL)
@@ -216,6 +223,7 @@ Pony48Engine::~Pony48Engine()
 		SDL_JoystickClose(m_joy);
 	delete m_selectedSongArc;
 	delete m_cam;
+	cleanupParticles();
 }
 
 const float32 MUSIC_SCRUBIN_SPEED = soundFreqDefault * 2.0f;
@@ -226,6 +234,7 @@ void Pony48Engine::frame(float32 dt)
 	if(m_joy != NULL && SDL_JoystickGetButton(m_joy, 4))	//Slooow waaay dooown so we can see if everything's working properly
 		dt /= 64.0;
 #endif
+	updateParticles(dt);
 	switch(m_iCurMode)
 	{
 		case PLAYING:
@@ -321,6 +330,8 @@ void Pony48Engine::frame(float32 dt)
 	}
 	updateColors(dt);
 	m_fireworksFx->update(dt);
+	for(list<ParticleSystem*>::iterator i = m_allAchievementsFanfare.begin(); i != m_allAchievementsFanfare.end(); i++)
+		(*i)->update(dt);
 }
 
 void Pony48Engine::draw()
@@ -407,6 +418,7 @@ void Pony48Engine::draw()
 			//oss << 1.0 / (fSec - m_fLastFrame);
 			//txt->setText(oss.str());
 			//m_fLastFrame = fSec;
+			
 			break;
 		}
 		
@@ -479,6 +491,10 @@ void Pony48Engine::draw()
 			
 			if(m_bg != NULL)
 				m_bg->draw();
+			
+			for(list<ParticleSystem*>::iterator i = m_allAchievementsFanfare.begin(); i != m_allAchievementsFanfare.end(); i++)
+				(*i)->draw();
+			
 			break;
 		}
 			
@@ -528,6 +544,8 @@ void Pony48Engine::draw()
 	//Draw HUD
 	m_hud->draw(0);
 	
+	drawParticles();	//Draw engine particles here
+	
 	if(m_iCurMode == GAMEOVER)
 	{
 		//If webcam there, draw reaction image
@@ -572,27 +590,7 @@ void Pony48Engine::draw()
 	{
 		i->second->pos = worldPosFromCursor(getCursorPos());
 		if(i->first == "dir")
-		{
 			i->second->rot = -RAD2DEG * atan2(i->second->pos.x, i->second->pos.y) + 90;
-			/*switch(getDirOfVec2(i->second->pos))
-			{
-				case UP:
-					i->second->rot = 90;
-					break;
-					
-				case DOWN:
-					i->second->rot = -90;
-					break;
-					
-				case LEFT:
-					i->second->rot = 180;
-					break;
-					
-				case RIGHT:
-					i->second->rot = 1;
-					break;
-			}*/
-		}
 	}
 	glColor4f(1,1,1,1);
 	m_fireworksFx->draw();
@@ -607,9 +605,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 {
 	//Run through list for arguments we recognize
 	for(list<commandlineArg>::iterator i = sArgs.begin(); i != sArgs.end(); i++)
-	{
 		errlog << "Commandline argument. Switch: " << i->sSwitch << ", value: " << i->sValue << endl;
-	}
 	
 	loadAchievements();
 	
@@ -698,6 +694,12 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	m_fireworksFx->fromXML("res/particles/test.xml");
 	m_fireworksFx->init();
 	m_fireworksFx->firing = true;
+	
+	pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/achievementfanfare.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_allAchievementsFanfare.push_back(pSys);
 	//HACK Make this look ok on the first frame by fake-updating it for a bit
 	//for(int i = 0; i < 60; i++)
 	//	pSys->update(0.25);
@@ -1100,7 +1102,14 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			else if(event.jbutton.button == JOY_BUTTON_BACK && m_iCurMode == SONGSELECT)
 				changeMode(ACHIEVEMENTS);
 			else if(m_iCurMode == ACHIEVEMENTS)
+			{
+#ifdef DEBUG
+				if(event.jbutton.button == JOY_BUTTON_X)
+					m_fireworksFx->firing = true;
+				else if(event.jbutton.button != JOY_BUTTON_Y)
+#endif
 				changeMode(SONGSELECT);
+			}
 			else if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
 			else if(m_iCurMode == INTRO)
@@ -1667,6 +1676,8 @@ void Pony48Engine::handleKeys()
 void Pony48Engine::changeMode(gameMode gm)
 {
 	clearColors();
+	for(list<ParticleSystem*>::iterator i = m_allAchievementsFanfare.begin(); i != m_allAchievementsFanfare.end(); i++)
+		(*i)->show = false;
 	switch(gm)
 	{
 		case PLAYING:
@@ -1708,6 +1719,20 @@ void Pony48Engine::changeMode(gameMode gm)
 			m_bSavedFacepic = false;
 			if(m_iScore < LOW_SCORE)
 				achievementGet("boohoo");
+			
+			if(m_highestTile && m_highestTile->value >= WIN_TILE_VALUE)
+			{
+				ParticleSystem* pSys = new ParticleSystem();
+				pSys->fromXML("res/particles/fanfare1.xml");
+				pSys->init();
+				pSys->firing = true;
+				addParticles(pSys);
+				pSys = new ParticleSystem();
+				pSys->fromXML("res/particles/fanfare2.xml");
+				pSys->init();
+				pSys->firing = true;
+				addParticles(pSys);
+			}
 			break;
 		}
 		
@@ -1771,6 +1796,9 @@ void Pony48Engine::changeMode(gameMode gm)
 		
 		case ACHIEVEMENTS:
 			m_hud->setScene("achievementsmenu");
+			//TODO: Only if all achievements are gotten
+			for(list<ParticleSystem*>::iterator i = m_allAchievementsFanfare.begin(); i != m_allAchievementsFanfare.end(); i++)
+				(*i)->show = true;
 			break;
 	}
 	startMenuPt = 0.0f;
@@ -1802,7 +1830,15 @@ void Pony48Engine::rumbleController(float32 strength, float32 sec, bool priority
 		SDL_HapticRumblePlay(m_rumble, strength, sec*1000);
 }
 
-
+void Pony48Engine::spawnNewParticleSystem(string sFilename, Point ptPos)
+{
+	ParticleSystem* pSys = new ParticleSystem();
+	pSys->fromXML(sFilename);
+	pSys->emitFrom.centerOn(ptPos);
+	pSys->init();
+	pSys->firing = true;
+	addParticles(pSys);
+}
 
 
 

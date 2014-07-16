@@ -69,6 +69,7 @@ private:
 	myCursor* m_cursor;
 	bool m_bCursorShow;
 	bool m_bCursorOutOfWindow;	//If the cursor is outside of the window, don't draw it
+	list<ParticleSystem*> m_particles;
 	
 	multimap<string, FMOD_CHANNEL*> m_channels;
 	map<string, FMOD_SOUND*> m_sounds;
@@ -193,6 +194,12 @@ public:
 	void setImgBlur(bool b)		{g_imageBlur = b;};
 	void setGamma(float32 fGamma)	{m_fGamma = fGamma;};
 	float32 getGamma()				{return m_fGamma;};
+	
+	//Particle functions
+	void addParticles(ParticleSystem* sys)	{if(sys)m_particles.push_back(sys);};
+	void cleanupParticles();
+	void drawParticles();
+	void updateParticles(float32 dt);
 
 };
 

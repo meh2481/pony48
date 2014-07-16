@@ -104,12 +104,13 @@ public:
 	float32 area()  {return width()*height();};
 	void	offset(float32 x, float32 y)	{left+=x;right+=x;top+=y;bottom+=y;};
 	void	offset(Point pt)				{offset(pt.x,pt.y);};
-	Point   center() {Point pt; pt.x = (right-left)/2.0 + right; pt.y = (bottom-top)/2.0 + top; return pt;};
+	Point	center() {Point pt; pt.x = (right-left)/2.0 + right; pt.y = (bottom-top)/2.0 + top; return pt;};
 	void	center(float32* x, float32* y)	{Point pt = center(); if(x!=NULL)*x = pt.x; if(y!=NULL)*y = pt.y;};
 	void	scale(float32 fScale) {left*=fScale;right*=fScale;top*=fScale;bottom*=fScale;};
 	void	scale(float32 fScalex, float32 fScaley) {left*=fScalex;right*=fScalex;top*=fScaley;bottom*=fScaley;};
 	void	set(float32 fleft,float32 ftop,float32 fright,float32 fbottom)  {left=fleft;top=ftop;right=fright;bottom=fbottom;};
-	bool    inside(Point p)	{return(p.x >= left && p.x <= right && p.y <= top && p.y >= bottom);};
+	bool	inside(Point p)	{return(p.x >= left && p.x <= right && p.y <= top && p.y >= bottom);};
+	void	centerOn(Point p);
 };
 
 class Vec3
