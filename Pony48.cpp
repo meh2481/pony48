@@ -11,6 +11,7 @@
 
 //For our engine functions to be able to call our Engine class functions
 Pony48Engine* g_pGlobalEngine;
+float32 g_fParticleFac;
 
 //Keybinding stuff!
 uint32_t JOY_BUTTON_BACK;
@@ -195,6 +196,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fShowAchievementTime = 5.0f;
 	m_fAchievementVanishingTime = 0.2f;
 	m_fStartFade = -1.0f;
+	g_fParticleFac = 1.0f;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -1441,6 +1443,7 @@ bool Pony48Engine::loadConfig(string sFilename)
 		pony48->QueryFloatAttribute("musicvol", &m_fMusicVolume);
 		pony48->QueryFloatAttribute("soundvol", &m_fSoundVolume);
 		pony48->QueryFloatAttribute("voxvol", &m_fVoxVolume);
+		pony48->QueryFloatAttribute("particlefac", &g_fParticleFac);
 		const char* cAchievements = pony48->Attribute("achievements");
 		if(cAchievements != NULL && strlen(cAchievements))
 			loadAchievementsGotten(cAchievements);
@@ -1550,6 +1553,7 @@ void Pony48Engine::saveConfig(string sFilename)
 	pony48->SetAttribute("soundvol", m_fSoundVolume);
 	pony48->SetAttribute("voxvol", m_fVoxVolume);
 	pony48->SetAttribute("achievements", saveAchievementsGotten().c_str());
+	pony48->SetAttribute("particlefac", g_fParticleFac);
 	root->InsertEndChild(pony48);
 	
 	XMLElement* joystick = doc->NewElement("joystick");

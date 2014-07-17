@@ -96,7 +96,7 @@ void ParticleSystem::_deleteAll()
 
 void ParticleSystem::_newParticle()
 {
-	if(m_num == max) return;	//Don't create more particles than we can!
+	if(m_num == m_totalAmt) return;	//Don't create more particles than we can!
 	if(!firing) return;
 	
 	if(!imgRect.size())
@@ -267,7 +267,7 @@ void ParticleSystem::update(float32 dt)
 	
 	emitFrom.offset(emissionVel.x * dt, emissionVel.y * dt);	//Move our emission point as needed
 	
-	spawnCounter += dt * rate;
+	spawnCounter += dt * rate * g_fParticleFac;
 	int iSpawnAmt = floor(spawnCounter);
 	spawnCounter -= iSpawnAmt;
 	for(int i = 0; i < iSpawnAmt; i++)
@@ -396,25 +396,27 @@ void ParticleSystem::init()
 	if(m_num)
 		_deleteAll();
 	
-	if(!max) return;
+	m_totalAmt = max * g_fParticleFac;
 	
-	m_imgRect = new Rect[max];
-	m_pos = new Point[max];
-	m_sizeStart = new Point[max];
-	m_sizeEnd = new Point[max];
-	m_vel = new Point[max];
-	m_accel = new Point[max];
-	m_rot = new float32[max];
-	m_rotVel = new float32[max];
-	m_rotAccel = new float32[max];
-	m_colStart = new Color[max];
-	m_colEnd = new Color[max];
-	m_tangentialAccel = new float32[max];
-	m_normalAccel = new float32[max];
-	m_lifetime = new float32[max];
-	m_created = new float32[max];
-	m_lifePreFade = new float32[max];
-	m_rotAxis = new Vec3[max];
+	if(!m_totalAmt) return;
+	
+	m_imgRect = new Rect[m_totalAmt];
+	m_pos = new Point[m_totalAmt];
+	m_sizeStart = new Point[m_totalAmt];
+	m_sizeEnd = new Point[m_totalAmt];
+	m_vel = new Point[m_totalAmt];
+	m_accel = new Point[m_totalAmt];
+	m_rot = new float32[m_totalAmt];
+	m_rotVel = new float32[m_totalAmt];
+	m_rotAccel = new float32[m_totalAmt];
+	m_colStart = new Color[m_totalAmt];
+	m_colEnd = new Color[m_totalAmt];
+	m_tangentialAccel = new float32[m_totalAmt];
+	m_normalAccel = new float32[m_totalAmt];
+	m_lifetime = new float32[m_totalAmt];
+	m_created = new float32[m_totalAmt];
+	m_lifePreFade = new float32[m_totalAmt];
+	m_rotAxis = new Vec3[m_totalAmt];
 }
 
 void ParticleSystem::fromXML(string sXMLFilename)

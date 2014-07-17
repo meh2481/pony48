@@ -12,6 +12,8 @@
 #ifndef PARTICLES_H
 #define PARICLES_H
 
+extern float32 g_fParticleFac;
+
 typedef enum 
 {
 	ADDITIVE,
@@ -41,7 +43,8 @@ protected:
 	float32*	m_created;			//When this particle was created/spawned
 	Vec3*		m_rotAxis;			//What axis this particle rotates around when it rotates
 	
-	uint32_t m_num;					//How many actual particles there are active (i.e. size of above arrays)
+	uint32_t m_num;					//How many actual particles there are active (i.e. current size of above arrays)
+	uint32_t m_totalAmt;			//max times particle factor (i.e. true total max)
 	void _deleteAll();				//Delete all memory associated with particles
 	void _newParticle();			//Create a new particle
 	void _rmParticle(uint32_t idx);	//Delete an expired particle (i.e. copy particle at end of the list to where this one was)
