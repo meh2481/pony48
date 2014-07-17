@@ -630,6 +630,7 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	createSound("res/sfx/jointile.ogg", "jointile");
 	createSound("res/sfx/select.ogg", "select");
 	createSound("res/sfx/camera_shutter.ogg", "camera");
+	createSound("res/sfx/applause.ogg", "applause");
 	createSound("res/vox/nowhacking_theyreponies.ogg", "nowhacking_theyreponies");
 	createSound("res/vox/bulk_yeah.ogg", "bulk_yeah");
 	
@@ -1726,6 +1727,7 @@ void Pony48Engine::changeMode(gameMode gm)
 			if(m_iScore < LOW_SCORE)
 				achievementGet("boohoo");
 			
+			//If we've just beaten the game, show fanfare
 			if(m_highestTile && m_highestTile->value >= WIN_TILE_VALUE)
 			{
 				ParticleSystem* pSys = new ParticleSystem();
@@ -1738,6 +1740,25 @@ void Pony48Engine::changeMode(gameMode gm)
 				pSys->init();
 				pSys->firing = true;
 				addParticles(pSys);
+				pSys = new ParticleSystem();
+				pSys->fromXML("res/particles/firework_launcher.xml");
+				pSys->init();
+				pSys->firing = true;
+				addParticles(pSys);
+				
+				//Also put YOU WIN text
+				HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("gameover");
+				if(txt != NULL)
+					txt->setText("YOU WIN!");
+				
+				//Also cheering
+				playSound("applause", m_fSoundVolume);
+			}
+			else
+			{
+				HUDTextbox* txt = (HUDTextbox*)m_hud->getChild("gameover");
+				if(txt != NULL)
+					txt->setText("GAME OVER");
 			}
 			break;
 		}
