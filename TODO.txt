@@ -1,22 +1,16 @@
+Fade out of intro mode / into songselect mode
+
+
+
+
+
+
 Fix ShySt3p bg error on second loop
 Particle fac
-
-
-
-
-
-
-
-
-
-
-
-
-
--Ingame pause menu with ESC/START - can resume, restart, or exit back to song select
--Some kind of lead-in for main menu music
--FX for going between modes
--New high score celebration?
+Ingame pause menu with ESC/START - can resume, restart, or exit back to song select
+Some kind of lead-in for main menu music
+FX for going between modes
+New high score celebration?
 
 
 

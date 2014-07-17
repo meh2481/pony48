@@ -33,6 +33,7 @@
 #define WIN_TILE_VALUE	2048
 
 #define INTRO_FADEIN_TIME	2.0	//How long the intro fadein takes
+#define INTRO_SIT_THERE_TIME	5.0	//How long we wait for user input before giving up and going to the main menu
 
 #define BORED_VOX_TIME		300.0	//5mins until bored sfx
 #define TITLE_DISPLAY_TIME	5.0f
@@ -179,7 +180,9 @@ private:
 	vector<float32> m_selectedSongParticlesThresh;		//Threshold for above for fine-tweaking
 	float32 INTRO_FADEIN_DELAY;
 	list<ParticleSystem*> m_selectedSongParticlesBg;	//Aaand background particle effects
+#ifdef DEBUG
 	ParticleSystem* m_fireworksFx;						//Aaaand fireworks stuff
+#endif
 	physSegment* m_rdFly;
 	
 	//audio.cpp stuff!

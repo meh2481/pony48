@@ -184,7 +184,9 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_gameoverTileRot = 0;	//Happy now, Valgrind?
 	m_gameoverTileVel = 30;
 	m_gameoverTileAccel = 16;
+#ifdef DEBUG
 	m_fireworksFx = NULL;
+#endif
 	startMenuPt = 0.0f;
 	
 	//Achievement stuff!
@@ -284,6 +286,10 @@ void Pony48Engine::frame(float32 dt)
 			HUDItem* hIt = m_hud->getChild("coverintro");
 			if(hIt != NULL)
 				hIt->col.a = 1.0-alpha;
+			
+			//Done waiting for the player; start the game in case they're derp and haven't hit a key already
+			if(getSeconds() > INTRO_FADEIN_DELAY + INTRO_FADEIN_TIME + INTRO_SIT_THERE_TIME)
+				changeMode(SONGSELECT);
 			break;
 		}
 		
@@ -329,7 +335,9 @@ void Pony48Engine::frame(float32 dt)
 			break;
 	}
 	updateColors(dt);
+#ifdef DEBUG
 	m_fireworksFx->update(dt);
+#endif
 	for(list<ParticleSystem*>::iterator i = m_allAchievementsFanfare.begin(); i != m_allAchievementsFanfare.end(); i++)
 		(*i)->update(dt);
 }
@@ -593,7 +601,9 @@ void Pony48Engine::draw()
 			i->second->rot = -RAD2DEG * atan2(i->second->pos.x, i->second->pos.y) + 90;
 	}
 	glColor4f(1,1,1,1);
+#ifdef DEBUG
 	m_fireworksFx->draw();
+#endif
 	
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
@@ -691,10 +701,12 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	pSys->init();
 	pSys->firing = true;
 	m_selectedSongParticlesBg.push_back(pSys);
+#ifdef DEBUG
 	m_fireworksFx = new ParticleSystem();
 	m_fireworksFx->fromXML("res/particles/test.xml");
 	m_fireworksFx->init();
 	m_fireworksFx->firing = true;
+#endif
 	
 	pSys = new ParticleSystem();
 	pSys->fromXML("res/particles/achievementfanfare.xml");
@@ -706,9 +718,10 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	pSys->init();
 	pSys->firing = true;
 	m_allAchievementsFanfare.push_back(pSys);
-	//HACK Make this look ok on the first frame by fake-updating it for a bit
-	//for(int i = 0; i < 60; i++)
-	//	pSys->update(0.25);
+	
+	//WHY ARE THESE EVEN BEING DRAWN IN THE INTRO I DON'T EVEN
+	for(list<ParticleSystem*>::iterator i = m_allAchievementsFanfare.begin(); i != m_allAchievementsFanfare.end(); i++)
+		(*i)->show = false;
 	
 	//Create new-high-tile particle fx
 	m_newHighTile = new ParticleSystem();
