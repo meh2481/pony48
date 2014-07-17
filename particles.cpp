@@ -419,7 +419,6 @@ void ParticleSystem::init()
 
 void ParticleSystem::fromXML(string sXMLFilename)
 {
-	errlog << "Load particles " << sXMLFilename << endl;
 	_initValues();
 	
 	XMLDocument* doc = new XMLDocument();

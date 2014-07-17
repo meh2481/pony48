@@ -700,6 +700,11 @@ void Pony48Engine::init(list<commandlineArg> sArgs)
 	pSys->init();
 	pSys->firing = true;
 	m_allAchievementsFanfare.push_back(pSys);
+	pSys = new ParticleSystem();
+	pSys->fromXML("res/particles/firework_launcher.xml");
+	pSys->init();
+	pSys->firing = true;
+	m_allAchievementsFanfare.push_back(pSys);
 	//HACK Make this look ok on the first frame by fake-updating it for a bit
 	//for(int i = 0; i < 60; i++)
 	//	pSys->update(0.25);
@@ -1676,6 +1681,7 @@ void Pony48Engine::handleKeys()
 void Pony48Engine::changeMode(gameMode gm)
 {
 	clearColors();
+	cleanupParticles();
 	for(list<ParticleSystem*>::iterator i = m_allAchievementsFanfare.begin(); i != m_allAchievementsFanfare.end(); i++)
 		(*i)->show = false;
 	switch(gm)
@@ -1796,9 +1802,12 @@ void Pony48Engine::changeMode(gameMode gm)
 		
 		case ACHIEVEMENTS:
 			m_hud->setScene("achievementsmenu");
-			//TODO: Only if all achievements are gotten
-			for(list<ParticleSystem*>::iterator i = m_allAchievementsFanfare.begin(); i != m_allAchievementsFanfare.end(); i++)
-				(*i)->show = true;
+			//Show fanfare if all achievements are gotten
+			if(m_achievementsGotten.size() >= m_achievements.size())
+			{
+				for(list<ParticleSystem*>::iterator i = m_allAchievementsFanfare.begin(); i != m_allAchievementsFanfare.end(); i++)
+					(*i)->show = true;
+			}
 			break;
 	}
 	startMenuPt = 0.0f;
