@@ -832,6 +832,11 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				m_fireworksFx->show = b;
 			}
 #endif
+			if(event.key.keysym.scancode == SDL_SCANCODE_G)
+			{
+				if(keyDown(SDL_SCANCODE_CTRL))
+					grabMouse(!isMouseGrabbed());
+			}
 			if(event.key.keysym.scancode != SDL_SCANCODE_ESCAPE)
 			{
 				m_bJoyControl = false;

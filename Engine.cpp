@@ -145,6 +145,7 @@ void Engine::_render()
 	draw();
 	
 	//Draw cursor over everything
+	glClear(GL_DEPTH_BUFFER_BIT);
 	if(m_cursor && m_bCursorShow && !m_bCursorOutOfWindow)
 		m_cursor->draw();
 	
