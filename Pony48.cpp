@@ -194,6 +194,7 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fAchievementAppearingTime = 0.2f;
 	m_fShowAchievementTime = 5.0f;
 	m_fAchievementVanishingTime = 0.2f;
+	m_fStartFade = -1.0f;
 }
 
 Pony48Engine::~Pony48Engine()
@@ -281,6 +282,11 @@ void Pony48Engine::frame(float32 dt)
 		{			
 			//Calculate the proper alpha value for the black cover-up-intro graphic for our fadein time
 			float alpha = (getSeconds() - INTRO_FADEIN_DELAY) / INTRO_FADEIN_TIME;
+			if(m_fStartFade > 0.0f) //We're fading into songselect mode
+			{
+				float32 a = (getSeconds() - m_fStartFade) / INTRO_FADEOUT_TIME;
+				alpha = 1.0f - a;
+			}
 			if(alpha < 0) alpha = 0;
 			if(alpha > 1) alpha = 1;
 			HUDItem* hIt = m_hud->getChild("coverintro");
@@ -288,12 +294,21 @@ void Pony48Engine::frame(float32 dt)
 				hIt->col.a = 1.0-alpha;
 			
 			//Done waiting for the player; start the game in case they're derp and haven't hit a key already
-			if(getSeconds() > INTRO_FADEIN_DELAY + INTRO_FADEIN_TIME + INTRO_SIT_THERE_TIME)
+			if(getSeconds() > INTRO_FADEIN_DELAY + INTRO_FADEIN_TIME + INTRO_SIT_THERE_TIME && m_fStartFade < 0.0f)
+				m_fStartFade = getSeconds();
+			
+			//Fadeout done; enter song select mode
+			if(m_fStartFade > 0.0f && getSeconds() > m_fStartFade + INTRO_FADEOUT_TIME)
 				changeMode(SONGSELECT);
 			break;
 		}
 		
 		case SONGSELECT:
+			{
+				float32 musvol = (getSeconds() - m_fStartFade) / SONGSEL_FADEIN_TIME;
+				if(musvol > 1.0f) musvol = 1.0f;
+				volumeMusic(musvol * m_fMusicVolume);
+			}
 			m_fMusicScrubSpeed += dt * MUSIC_SCRUBIN_SPEED;
 			if(m_fMusicScrubSpeed > soundFreqDefault)
 				m_fMusicScrubSpeed = soundFreqDefault;
@@ -608,6 +623,16 @@ void Pony48Engine::draw()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	glTranslatef(0, 0, m_fDefCameraZ);
+	
+	//Fade in screen if we're coming in from the intro
+	if(m_iCurMode == SONGSELECT)
+	{
+		float32 alpha = (getSeconds() - m_fStartFade) / SONGSEL_FADEIN_TIME;
+		if(alpha > 1.0f) alpha = 1.0f;
+		alpha = 1.0f - alpha;
+		fillScreen(Color(0,0,0,alpha));
+	}
+	
 	drawAchievementPopup();
 }
 
@@ -932,7 +957,10 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				}
 				else
 #endif
+				if(m_iCurMode == ACHIEVEMENTS)
 					changeMode(SONGSELECT);
+				else
+					m_fStartFade = getSeconds();
 			}
 			else if(m_iCurMode == SONGSELECT)
 			{
@@ -991,7 +1019,9 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				move(getDirOfVec2(worldPosFromCursor(getCursorPos())));	//Nested functions much?
 			if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
-			else if(m_iCurMode == INTRO || m_iCurMode == ACHIEVEMENTS)
+			else if(m_iCurMode == INTRO)
+				m_fStartFade = getSeconds();
+			else if(m_iCurMode == ACHIEVEMENTS)
 				changeMode(SONGSELECT);
 			m_iMouseControl = MOUSE_MOVE_TRIP_AMT;
 			showCursor();
@@ -1132,7 +1162,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			else if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
 			else if(m_iCurMode == INTRO)
-				changeMode(SONGSELECT);
+				m_fStartFade = getSeconds();
 			else if(m_iCurMode == CREDITS && event.jbutton.button == JOY_BUTTON_B)
 				changeMode(SONGSELECT);
 #ifdef DEBUG
@@ -1208,7 +1238,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					if(m_iCurMode == GAMEOVER)
 						changeMode(PLAYING);
 					else if(m_iCurMode == INTRO)
-						changeMode(SONGSELECT);
+						m_fStartFade = getSeconds();
 				}
 #ifdef DEBUG	//DEBUG: right trigger fast-forwards music
 				FMOD_CHANNEL* channel = getChannel("music");
@@ -1226,7 +1256,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 					if(m_iCurMode == GAMEOVER)
 						changeMode(PLAYING);
 					else if(m_iCurMode == INTRO)
-						changeMode(SONGSELECT);
+						m_fStartFade = getSeconds();
 				}
 #ifdef DEBUG_REVSOUND	//DEBUG: left trigger rewinds music
 				FMOD_CHANNEL* channel = getChannel("music");
@@ -1247,7 +1277,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			if(m_iCurMode == GAMEOVER && event.jhat.value && getSeconds() - m_fGameoverKeyDelay >= GAMEOVER_KEY_DELAY)
 				changeMode(PLAYING);
 			else if(m_iCurMode == INTRO && event.jhat.value)
-				changeMode(SONGSELECT);
+				m_fStartFade = getSeconds();
 			else if(m_iCurMode == PLAYING)
 			{
 				switch(event.jhat.value)
@@ -1795,6 +1825,8 @@ void Pony48Engine::changeMode(gameMode gm)
 					m_fMusicScrubSpeed = soundFreqDefault;
 				else
 					m_fMusicScrubSpeed = 0;
+				if(m_iCurMode == INTRO)
+					m_fStartFade = getSeconds();
 				if(m_fMusicPos.count("songselect"))
 					seekMusic(m_fMusicPos["songselect"]);
 				else

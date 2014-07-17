@@ -32,8 +32,10 @@
 #define MAX_TILE_VALUE	4096	//Above this, the game would crash, so cap it here
 #define WIN_TILE_VALUE	2048
 
-#define INTRO_FADEIN_TIME	2.0	//How long the intro fadein takes
+#define INTRO_FADEIN_TIME		2.0	//How long the intro fadein takes
 #define INTRO_SIT_THERE_TIME	5.0	//How long we wait for user input before giving up and going to the main menu
+#define INTRO_FADEOUT_TIME		0.5
+#define SONGSEL_FADEIN_TIME		0.5
 
 #define BORED_VOX_TIME		300.0	//5mins until bored sfx
 #define TITLE_DISPLAY_TIME	5.0f
@@ -184,6 +186,7 @@ private:
 	ParticleSystem* m_fireworksFx;						//Aaaand fireworks stuff
 #endif
 	physSegment* m_rdFly;
+	float32 m_fStartFade;
 	
 	//audio.cpp stuff!
 	string sLuaUpdateFunc;
