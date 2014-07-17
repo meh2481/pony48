@@ -396,7 +396,7 @@ void ParticleSystem::init()
 	if(m_num)
 		_deleteAll();
 	
-	m_totalAmt = max * g_fParticleFac;
+	m_totalAmt = ceilf(max * g_fParticleFac);
 	
 	if(!m_totalAmt) return;
 	
