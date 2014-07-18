@@ -9,7 +9,7 @@ Webcam::Webcam()
 {
 #ifndef USE_VIDEOINPUT
 	m_VideoCap = NULL;
-#else
+#elif !defined(NO_WEBCAM)
 	m_device = 0;
 #endif
 	m_hTex = 0;
@@ -97,19 +97,13 @@ void Webcam::getNewFrame()
 			glBindTexture(GL_TEXTURE_2D, m_hTex);
 			
 			int mode, modeflip;
-	#ifdef __BIG_ENDIAN__
 			mode = GL_RGB;
-			modeflip = GL_RGB;
-	#else
-			mode = GL_RGB;
-			modeflip = GL_BGR;
-	#endif
-			glTexImage2D(GL_TEXTURE_2D, 0, mode, m_iWidth, m_iHeight, 0, modeflip, GL_UNSIGNED_BYTE, m_curFrame);
+			modeflip = GL_BGR;			glTexImage2D(GL_TEXTURE_2D, 0, mode, m_iWidth, m_iHeight, 0, modeflip, GL_UNSIGNED_BYTE, m_curFrame);
 			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 		}
 	}
-#else
+#elif !defined(NO_WEBCAM)
 	if(m_VideoCap == NULL || !m_VideoCap->isOpened())
 		return;
 	if(m_curFrame == NULL)
@@ -126,13 +120,8 @@ void Webcam::getNewFrame()
 			glBindTexture(GL_TEXTURE_2D, m_hTex);
 			
 			int mode, modeflip;
-	#ifdef __BIG_ENDIAN__	//TODO: Test
-			mode = GL_RGB;
-			modeflip = GL_RGB;
-	#else
 			mode = GL_RGB;
 			modeflip = GL_BGR;
-	#endif
 			glTexImage2D(GL_TEXTURE_2D, 0, mode, m_iWidth, m_iHeight, 0, modeflip, GL_UNSIGNED_BYTE, m_curFrame->data);
 			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
@@ -148,7 +137,7 @@ void Webcam::open(int device)
 #ifdef USE_VIDEOINPUT
 	m_device = device;
 	VI.setupDevice(m_device);
-#else
+#elif !defined(NO_WEBCAM)
 	//Open the webcam with OpenCV
 	m_VideoCap = new cv::VideoCapture(device);
 	if(!m_VideoCap->isOpened())	
@@ -173,7 +162,7 @@ void Webcam::_clear()
 {
 #ifdef USE_VIDEOINPUT
 	VI.stopDevice(m_device);
-#else
+#elif !defined(NO_WEBCAM)
 	if(m_VideoCap)
 	{
 		m_VideoCap->release();
@@ -195,8 +184,10 @@ bool Webcam::isOpen()
 	if(!use) return false;
 #ifdef USE_VIDEOINPUT
 	return (VI.isDeviceSetup(m_device));
-#else
+#elif !defined(NO_WEBCAM)
 	return (m_VideoCap != NULL && m_VideoCap->isOpened());
+#else
+  return false;
 #endif
 }
 
@@ -206,8 +197,10 @@ bool Webcam::saveFrame(string sFilename, bool bMirror)
 	if(!m_curFrame) return false;
 #ifdef USE_VIDEOINPUT
 	FIBITMAP* bmp = FreeImage_ConvertFromRawBits(m_curFrame, m_iWidth, m_iHeight, m_iWidth * 3, 24, 0x0000FF, 0x00FF00, 0xFF0000, true);
-#else
+#elif !defined(NO_WEBCAM)
 	FIBITMAP* bmp = FreeImage_ConvertFromRawBits(m_curFrame->data, m_iWidth, m_iHeight, m_iWidth * 3, 24, 0x0000FF, 0x00FF00, 0xFF0000, true);
+#else
+  FIBITMAP* bmp = NULL;
 #endif
 	if(!bmp) return false;
 	if(bMirror)

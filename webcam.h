@@ -8,7 +8,7 @@
 
 #ifdef USE_VIDEOINPUT
 	#include "videoInput.h"
-#else
+#elif !defined(NO_WEBCAM)
 	#include "opencv2/opencv.hpp"
 #endif
 #include "globaldefs.h"
@@ -20,9 +20,12 @@ protected:
 	videoInput VI;
 	unsigned char* m_curFrame;
 	int m_device;
-#else
+#elseif !defined(NO_WEBCAM)
 	cv::VideoCapture*	m_VideoCap;
 	cv::Mat* 			m_curFrame;
+#else
+  char* m_VideoCap;
+  char* m_curFrame; //Stub these out
 #endif
 	GLuint   			m_hTex;
 	
