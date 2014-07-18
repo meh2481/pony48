@@ -1,5 +1,7 @@
+Hitting key in intro fades out even if it's not showing currently
 Ctrl-G to grab/ungrab mouse is kinda broken
 Fix ShySt3p bg error on second loop
+Fix ShySt3p bg stars not moving bug
 Ingame pause menu with ESC/START - can resume, restart, or exit back to song select
 FX for going between modes
 New high score celebration?

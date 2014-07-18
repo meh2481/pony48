@@ -966,7 +966,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 #endif
 				if(m_iCurMode == ACHIEVEMENTS)
 					changeMode(SONGSELECT);
-				else
+				else if(m_fStartFade < 0.0f)
 					m_fStartFade = getSeconds();
 			}
 			else if(m_iCurMode == SONGSELECT)
@@ -1026,7 +1026,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				move(getDirOfVec2(worldPosFromCursor(getCursorPos())));	//Nested functions much?
 			if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
-			else if(m_iCurMode == INTRO)
+			else if(m_iCurMode == INTRO && m_fStartFade < 0.0f)
 				m_fStartFade = getSeconds();
 			else if(m_iCurMode == ACHIEVEMENTS)
 				changeMode(SONGSELECT);
@@ -1168,7 +1168,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			}
 			else if(m_iCurMode == GAMEOVER)
 				changeMode(PLAYING);
-			else if(m_iCurMode == INTRO)
+			else if(m_iCurMode == INTRO && m_fStartFade < 0.0f)
 				m_fStartFade = getSeconds();
 			else if(m_iCurMode == CREDITS && event.jbutton.button == JOY_BUTTON_B)
 				changeMode(SONGSELECT);
@@ -1244,7 +1244,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				{
 					if(m_iCurMode == GAMEOVER)
 						changeMode(PLAYING);
-					else if(m_iCurMode == INTRO)
+					else if(m_iCurMode == INTRO && m_fStartFade < 0.0f)
 						m_fStartFade = getSeconds();
 				}
 #ifdef DEBUG	//DEBUG: right trigger fast-forwards music
@@ -1262,7 +1262,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 				{
 					if(m_iCurMode == GAMEOVER)
 						changeMode(PLAYING);
-					else if(m_iCurMode == INTRO)
+					else if(m_iCurMode == INTRO && m_fStartFade < 0.0f)
 						m_fStartFade = getSeconds();
 				}
 #ifdef DEBUG_REVSOUND	//DEBUG: left trigger rewinds music
@@ -1283,7 +1283,7 @@ void Pony48Engine::handleEvent(SDL_Event event)
 			m_lastJoyHatMoved = event.jhat.which;
 			if(m_iCurMode == GAMEOVER && event.jhat.value && getSeconds() - m_fGameoverKeyDelay >= GAMEOVER_KEY_DELAY)
 				changeMode(PLAYING);
-			else if(m_iCurMode == INTRO && event.jhat.value)
+			else if(m_iCurMode == INTRO && event.jhat.value && m_fStartFade < 0.0f)
 				m_fStartFade = getSeconds();
 			else if(m_iCurMode == PLAYING)
 			{
