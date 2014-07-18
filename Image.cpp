@@ -231,10 +231,17 @@ void Image::render(Point size, Rect rcImg)
     };
     const GLfloat texCoords[] =
     {
+#ifdef __BIG_ENDIAN__
+      rcImg.left, 1.0-rcImg.top, // upper left
+      rcImg.right, 1.0-rcImg.top, // upper right
+      rcImg.left, 1.0-rcImg.bottom, // lower left
+      rcImg.right, 1.0-rcImg.bottom, // lower right
+#else
         rcImg.left, rcImg.top, // upper left
         rcImg.right, rcImg.top, // upper right
         rcImg.left, rcImg.bottom, // lower left
         rcImg.right, rcImg.bottom, // lower right
+#endif
     };
     glVertexPointer(2, GL_FLOAT, 0, &vertexData);
     glTexCoordPointer(2, GL_FLOAT, 0, &texCoords);
