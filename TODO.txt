@@ -1,4 +1,5 @@
 Hitting key in intro fades out even if it's not showing currently
+Fix white bg for new-high-tile animations
 Ctrl-G to grab/ungrab mouse is kinda broken
 Fix ShySt3p bg error on second loop
 Fix ShySt3p bg stars not moving bug

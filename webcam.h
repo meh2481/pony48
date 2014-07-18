@@ -20,7 +20,7 @@ protected:
 	videoInput VI;
 	unsigned char* m_curFrame;
 	int m_device;
-#elseif !defined(NO_WEBCAM)
+#elif !defined(NO_WEBCAM)
 	cv::VideoCapture*	m_VideoCap;
 	cv::Mat* 			m_curFrame;
 #else
