@@ -198,6 +198,8 @@ private:
 	map<string, ParticleSystem*> songParticles;
 	float32 startMenuPt;
 	ParticleSystem* m_newHighTile;
+	float startedDecay;
+	bool bPaused;
 	
 	//Random gameover stuff!
 	TilePiece* m_highestTile;

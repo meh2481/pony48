@@ -197,6 +197,8 @@ Engine(iWidth, iHeight, sTitle, sAppName, sIcon, bResizable)
 	m_fAchievementVanishingTime = 0.2f;
 	m_fStartFade = -1.0f;
 	g_fParticleFac = 1.0f;
+	startedDecay = 0;
+	bPaused = false;
 }
 
 Pony48Engine::~Pony48Engine()

@@ -210,7 +210,7 @@ Engine::Engine(uint16_t iWidth, uint16_t iHeight, string sTitle, string sAppName
 	m_fTimeScale = 1.0f;
 
 	errlog << "Initializing FMOD..." << endl;
-	if(FMOD_System_Create(&m_audioSystem) != FMOD_OK || FMOD_System_Init(m_audioSystem, 32, FMOD_INIT_NORMAL, 0) != FMOD_OK)
+	if(FMOD_System_Create(&m_audioSystem) != FMOD_OK || FMOD_System_Init(m_audioSystem, 128, FMOD_INIT_NORMAL, 0) != FMOD_OK)
 	{
 		errlog << "Failed to init FMOD." << std::endl;
 		m_bSoundDied = true;

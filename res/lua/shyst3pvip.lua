@@ -4,7 +4,7 @@
 
 local starbgvel
 local starbgaccel
-local lasttime
+local lasttime_ss
 local maxstarspeed
 local starszx
 local starszy
@@ -24,7 +24,7 @@ local maxboardrot
 local function ss_init()
 	starbgvel = 0
 	starbgaccel = 0
-	lasttime = -0.001
+	lasttime_ss = -0.001
 	maxstarspeed = 15
 	starszx = 0.15
 	starszy = 0.15
@@ -369,10 +369,10 @@ local timetab = {
 }
 
 local function ss_update(curtime)
-	starbgvel = starbgvel + (curtime - lasttime) * starbgaccel
+	starbgvel = starbgvel + (curtime - lasttime_ss) * starbgaccel
 	for key,val in ipairs(timetab) do
 		if curtime > val.startat and curtime < val.endat then
-			val.func(lasttime < val.startat or lasttime > val.endat, curtime, val.startat, val.endat, curtime-lasttime)
+			val.func(lasttime_ss < val.startat or lasttime_ss > val.endat, curtime, val.startat, val.endat, curtime-lasttime_ss)
 		end
 	end
 	boardrot = math.sin(curtime) * maxboardrot
@@ -380,7 +380,7 @@ local function ss_update(curtime)
 	setstarbgsize(starszx, starszy, starszz)
 	setstarbgcol(star_r, star_g, star_b, star_a)
 	setboardrot(boardrot)
-	lasttime = curtime
+	lasttime_ss = curtime
 end
 setglobal("ss_update", ss_update)
 

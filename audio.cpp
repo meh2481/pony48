@@ -122,6 +122,9 @@ void Pony48Engine::beatDetect()
 
 void Pony48Engine::loadSongXML(string sFilename)
 {
+	bPaused = false;
+	startedDecay = 0.0f;
+	
 	//Clean up old data
 	cleanupSongGfx();
 	
@@ -195,6 +198,7 @@ void Pony48Engine::loadSongXML(string sFilename)
 				const char* cPath = elem->Attribute("path");
 				if(cPath != NULL && strlen(cPath))
 					playMusic(cPath, m_fMusicVolume);
+				setMusicFrequency(soundFreqDefault);
 			}
 			else if(name == "loop")
 			{
@@ -299,20 +303,19 @@ void Pony48Engine::loadSongXML(string sFilename)
 	}
 }
 
-static float startedDecay = 0;
-
 void Pony48Engine::scrubPause()
 {
 	startedDecay = getSeconds();
+	setMusicFrequency(soundFreqDefault);
 }
 
 void Pony48Engine::scrubResume()
 {
 	startedDecay = -getSeconds();
+	setMusicFrequency(0);
 }
 
 const float timeToDecay = 0.75f;
-static bool bPaused = false;
 
 void Pony48Engine::soundUpdate(float32 dt)
 {
