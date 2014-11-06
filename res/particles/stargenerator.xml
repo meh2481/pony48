@@ -1,0 +1,11 @@
+<particlesystem emitfrom="-12,-8,12,8" fireonstart="true" blend="normal" rate="250" max="1500" decay="2">
+	<img path="res/particles/particlesheet1.png">
+		<rect val="0,0,0,0"/>
+	</img>
+	<spawnondeath deathspawntype="particle">
+		<particle path="res/particles/startwinkle.xml"/>
+	</spawnondeath>
+	<size start="0.0,0.0" end="0.0,0.0"/>
+	<col start="255,255,255,0" end="255,255,255,0"/>
+	<life value="0.001"/>
+</particlesystem>

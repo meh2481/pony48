@@ -1923,7 +1923,16 @@ void Pony48Engine::spawnNewParticleSystem(string sFilename, Point ptPos)
 	pSys->emitFrom.centerOn(ptPos);
 	pSys->init();
 	pSys->firing = true;
-	addParticles(pSys);
+	//HACK: Star bg particles are supposed to be behind everything... gotta add to BEGINNING of song particle list...
+	if(m_iCurMode == PLAYING)
+	{
+		map<string, ParticleSystem*>::iterator it = songParticles.begin();
+		string s = it->first;
+		s.insert(s.begin(), 0);
+		songParticles[s] = pSys;
+	}
+	else
+		addParticles(pSys);
 }
 
 

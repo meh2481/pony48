@@ -261,7 +261,25 @@ void Pony48Engine::loadSongXML(string sFilename)
 							bg->avoidCam = pointFromString(cAvoidCam);
 						bg->init();
 					}
-					//TODO
+					else if(sBgType == "gradient")
+					{
+						gradientBg* bg = new gradientBg();
+						if(m_bg != NULL)
+							delete m_bg;
+						m_bg = (Background*)bg;
+						const char *ul = elem->Attribute("ul");
+						if(ul != NULL)
+							bg->ul = colorFromString(ul);
+						const char *ur = elem->Attribute("ur");
+						if(ur != NULL)
+							bg->ur = colorFromString(ur);
+						const char *bl = elem->Attribute("bl");
+						if(bl != NULL)
+							bg->bl = colorFromString(bl);
+						const char *br = elem->Attribute("br");
+						if(br != NULL)
+							bg->br = colorFromString(br);
+					}
 				}
 			}
 			else if(name == "bounce")

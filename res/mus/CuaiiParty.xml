@@ -1,0 +1,10 @@
+<song title="Party In The Stars Remix" artist="Cuaii">
+	<sfx path="res/mus/Cuaii-PartyInTheStarsRemix.mp3"/>
+	<particles effect="res/particles/stargenerator.xml" name="stargenerator" autofire="true"/>
+	<particles effect="res/particles/cloudsleft.xml" name="cloudsleft" autofire="true"/>
+	<background type="gradient" ul="106,39,171,255" ur="106,39,171,255" bl="76,36,124,255" br="76,36,124,255" />
+	<loop start="36.781" end="307.839"/>
+	<lua file="res/lua/cuaiiparty.lua" update="pits_update" init="pits_init"/>
+	<bounce threshold="0.6" bar="0" mul="0.5" max="5.5" bounceback="0.075"/>
+</song>
+ 

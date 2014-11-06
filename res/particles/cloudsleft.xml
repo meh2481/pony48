@@ -1,4 +1,4 @@
-<particlesystem emitfrom="-24,-8,-24,-3" fireonstart="true" blend="normal" rate="0" max="200">
+<particlesystem emitfrom="-24,-8,-24,-3" fireonstart="true" blend="normal" rate="2.75" max="200">
 	<img path="res/particles/clouds.png">
 		<rect val="0,0,1024,424"/>
 		<rect val="0,425,1024,851"/>

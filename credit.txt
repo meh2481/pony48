@@ -2,6 +2,7 @@ Musicians:
 TIF WHITNEY - http://soundcloud.com/tifwhitney-1
 DJ StrachAttack - http://soundcloud.com/djstrachattack
 MIM - http://soundcloud.com/officialmimmusic
+Cuaii - http://cuaii.bandcamp.com
 
 Fonts used:
 Celestia Medium Redux - http://www.mattyhex.net/CMR
@@ -26,6 +27,8 @@ http://evilturnover.deviantart.com
 http://segfaultd.deviantart.com
 http://datnaro.deviantart.com
 http://openclipart.org
+http://boneswolbach.deviantart.com
+http://gurugrendo.deviantart.com
 
 Libraries used:
 FMOD - http://www.fmod.org
